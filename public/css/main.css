@@ -1,0 +1,28 @@
+.navbar {
+  position: absolute;
+  top: 0;
+  left: 80px;
+  right: 0;
+  height: 70px;
+  border: solid black 1px;
+  background: #EEE;
+}
+.sidebar {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 80px;
+  border: solid black 1px;
+  background: #DDD;
+}
+.content {
+  position: absolute;
+  border: solid black 1px;
+  background: #CCC;
+  position: absolute;
+  top: 70px;
+  bottom: 0;
+  left: 80px;
+  right: 0;
+}
