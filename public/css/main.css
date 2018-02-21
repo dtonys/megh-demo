@@ -1,28 +1,81 @@
-.navbar {
-  position: absolute;
-  top: 0;
-  left: 80px;
-  right: 0;
-  height: 70px;
-  border: solid black 1px;
-  background: #EEE;
-}
-.sidebar {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  width: 80px;
-  border: solid black 1px;
-  background: #DDD;
-}
+.navbar,
+.subnav,
+.sidebar,
 .content {
   position: absolute;
   border: solid black 1px;
+}
+
+.navbar {
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 80px;
+  background: #EEE;
+  display: flex;
+  padding: 15px;
+}
+.subnav {
+  top: 80px;
+  left: 80px;
+  right: 0;
+  height: 80px;
+  background: #EEE;
+  display: flex;
+  padding-left: 20px;
+}
+.sidebar {
+  top: 80px;
+  bottom: 0;
+  left: 0;
+  width: 80px;
+  background: #DDD;
+  text-align: center;
+}
+.content {
   background: #CCC;
   position: absolute;
-  top: 70px;
+  top: 160px;
   bottom: 0;
   left: 80px;
   right: 0;
 }
+
+.navbar__left {
+  display: flex;
+}
+.navbar__spacer {
+  display: flex;
+  flex: 1;
+}
+.navbar__right {
+  display: flex;
+}
+
+.navbar__item {
+  align-self: center;
+}
+
+.navbar__logo {
+  margin-right: 20px;
+}
+
+.navbar__title {
+  font-size: 24px;
+}
+
+.navbar__menuItem {
+  margin-right: 40px;
+}
+
+.sidebar__item {
+  margin-bottom: 25px;
+}
+
+.sidebar__top {
+  border-bottom: solid black 1px;
+  height: 80px;
+  padding: 15px;
+  margin-bottom: 15px;
+}
+
