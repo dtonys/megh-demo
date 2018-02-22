@@ -1,5 +1,15 @@
-// config
+/**
+ * config, constants
+ */
 const GOOGLE_MAPS_API_KEY = 'AIzaSyCuQdzHfDq_NrjkpiUk7mXGFJ3NxDLretY';
+
+const ICON_GREEN_BRANCH = 'img/icons/green_branch.png';
+const ICON_YELLOW_BRANCH = 'img/icons/yellow_branch.png';
+const ICON_RED_BRANCH = 'img/icons/red_branch.png';
+
+const ICON_GREEN_CLOUD = 'img/icons/green_cloud.png';
+const ICON_YELLOW_CLOUD = 'img/icons/yellow_cloud.png';
+const ICON_RED_CLOUD = 'img/icons/red_cloud.png';
 
 const getMapControlOptions = function(){
   return {
@@ -26,7 +36,9 @@ const getMapControlOptions = function(){
   };
 };
 
-// globals
+/**
+ * global variables
+ */
 window.googleMap = null;
 const mapRegionDOM = document.querySelector('#mapRegion');
 const points = [
@@ -40,7 +52,11 @@ const points = [
 const lines = [
   [ points[0], points[1] ],
 ];
+const infoWindows = [];
 
+/**
+ * map rendering functions
+ */
 function loadGoogleMapsScript() {
   return new Promise((resolve) => {
     window.initMap = resolve;
@@ -68,14 +84,47 @@ function setupEvents() {
   });
 }
 
+const toolTipTemplate = _.template(`
+  <div class="tooltip" >
+    <div> Branch Name </div>
+    <div> Location: <%= location %> </div>
+    <div> Status: <%= status %> </div>
+    <div> IP Address: <%= ip_address %> </div>
+    <div> Clients: <%= num_client %> </div>
+    <div class="tooltip__cta" > View Details </div>
+  </div>
+`);
+
 function addPoint( point ) {
+  const toolTipHtml = toolTipTemplate({
+    location: 'Turlock',
+    status: 'Down',
+    ip_address: '195.168.103',
+    num_client: 7,
+  });
+  const infoWindow = new google.maps.InfoWindow({
+    content: toolTipHtml
+  });
+  infoWindows.push( infoWindow );
   const marker = new google.maps.Marker({
     position: {
       lat: point.lat,
       lng: point.lng,
     },
     map: window.googleMap,
-    // icon: saved ? ICON_PATH : GREYED_ICON_PATH,
+    icon: {
+      url: ICON_GREEN_CLOUD,
+      // This marker is 20 pixels wide by 32 pixels high.
+      scaledSize: new google.maps.Size(40, 40),
+      // The origin for this image is (0, 0).
+      origin: new google.maps.Point(0, 0),
+      // The anchor for this image is the base of the flagpole at (0, 32).
+      anchor: new google.maps.Point(20, 20)
+    },
+  });
+  marker.addListener('click', function() {
+    infoWindows.forEach(( item ) => { item.close(); })
+    infoWindow.open(window.googleMap, marker);
   });
 }
 
@@ -98,12 +147,14 @@ function addLines() {
   lines.forEach(addLine);
 }
 
-// entry point
+/**
+ * entry point
+ */
 loadGoogleMapsScript()
   .then(() => {
     createGoogleMap();
     setupEvents();
     addPoints();
-    addLines();
+    // addLines();
   });
 

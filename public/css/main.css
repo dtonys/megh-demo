@@ -79,3 +79,10 @@
   margin-bottom: 15px;
 }
 
+.tooltip {
+
+}
+.tooltip__cta {
+  color: white;
+  background: orange;
+}
