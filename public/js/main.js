@@ -41,18 +41,24 @@ const getMapControlOptions = function(){
  */
 window.googleMap = null;
 const mapRegionDOM = document.querySelector('#mapRegion');
-const points = [
-  { lat: 37.47360064083576, lng: -122.25839401562502 },
-  { lat: 37.45288986053689, lng: -122.17736984570314 },
-  { lat: 37.5084689856724, lng: -122.19522262890627 },
-  { lat: 37.47360064083576, lng: -122.25839401562502 },
-  { lat: 37.51173705842232, lng: -121.97137619335939 },
-  { lat: 37.56944941254819, lng: -121.92605758984377 },
-];
-const lines = [
-  [ points[0], points[1] ],
-];
+let points = null;
 const infoWindows = [];
+
+function mockLoadData() {
+  return new Promise(( resolve ) => {
+    setTimeout(() => {
+      points = [
+        { lat: 37.47360064083576, lng: -122.25839401562502 },
+        { lat: 37.45288986053689, lng: -122.17736984570314 },
+        { lat: 37.5084689856724, lng: -122.19522262890627 },
+        { lat: 37.47360064083576, lng: -122.25839401562502 },
+        { lat: 37.51173705842232, lng: -121.97137619335939 },
+        { lat: 37.56944941254819, lng: -121.92605758984377 },
+      ];
+      resolve();
+    }, 100)
+  });
+}
 
 /**
  * map rendering functions
@@ -132,29 +138,22 @@ function addPoints() {
   points.forEach(addPoint);
 }
 
-function addLine( line ) {
-  const polyLine = new google.maps.Polyline({
-    path: line,
-    geodesic: true,
-    strokeColor: '#000',
-    strokeOpacity: 1.0,
-    strokeWeight: 2,
-  });
-  polyLine.setMap(window.googleMap);
-}
-
-function addLines() {
-  lines.forEach(addLine);
-}
-
 /**
  * entry point
  */
-loadGoogleMapsScript()
+const googleMapsPromise = loadGoogleMapsScript();
+const loadDataPromise = mockLoadData();
+
+googleMapsPromise
   .then(() => {
     createGoogleMap();
     setupEvents();
-    addPoints();
-    // addLines();
   });
 
+Promise.all([
+  googleMapsPromise,
+  loadDataPromise,
+])
+  .then(() => {
+    addPoints();
+  });
