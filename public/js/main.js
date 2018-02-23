@@ -42,8 +42,25 @@ const getMapControlOptions = function(){
 window.googleMap = null;
 const mapRegionDOM = document.querySelector('#mapRegion');
 let infoBox = null;
-let points = null;
+// infoBox defaults
+const ibOptions = {
+  disableAutoPan: false,
+  maxWidth: 0,
+  pixelOffset: new google.maps.Size(-100, 29),
+  zIndex: null,
+  boxStyle: {
+    padding: '0px 0px 0px 0px',
+    width: '200px',
+    height: '40px'
+  },
+  closeBoxURL : '',
+  infoBoxClearance: new google.maps.Size(1, 1),
+  isHidden: false,
+  pane: 'floatPane',
+  enableEventPropagation: false
+};
 
+let points = null;
 function mockLoadData() {
   return new Promise(( resolve ) => {
     setTimeout(() => {
@@ -75,14 +92,6 @@ function createGoogleMap() {
   });
 }
 
-function setupEvents() {
-  this.googleMap.addListener('click', (event) => {
-    const clickedLat = event.latLng.lat();
-    const clickedLng = event.latLng.lng();
-    console.log(`clicked map at ${clickedLat} ${clickedLng} `);
-  });
-}
-
 const toolTipTemplate = _.template(`
   <div class="tooltip" >
     <div class="tooltip__content" >
@@ -110,6 +119,47 @@ const toolTipTemplate = _.template(`
   </div>
 `);
 
+const MOUSEOVER_DISABLED_MS = 200;
+let disableMouseOver = false;
+
+function hideToolTip() {
+  disableMouseOver = true;
+  setTimeout(() => {
+    disableMouseOver = false;
+  }, MOUSEOVER_DISABLED_MS);
+  infoBox.close();
+  infoBox = null;
+}
+
+function showToolTip( marker ) {
+  // Render box content
+  const toolTipHtml = toolTipTemplate({
+    location: 'Turlock',
+    status: 'Up',
+    ip_address: '195.168.103',
+    num_client: 7,
+  });
+  const boxText = document.createElement('div');
+  boxText.style.cssText = "margin-top: 0px; background: #fff; padding: 0px;";
+  boxText.innerHTML = toolTipHtml;
+  ibOptions.content = boxText;
+
+  // close existing tooltip
+  if ( infoBox ) {
+    infoBox.close();
+  }
+  // create and show new tooltip
+  infoBox = new InfoBox(ibOptions);
+  infoBox.open(window.googleMap, marker);
+  google.maps.event.addDomListener( boxText, 'click', () => {
+    hideToolTip(infoBox);
+  });
+}
+
+function toggleToolTip( marker ) {
+  infoBox ? hideToolTip() : showToolTip( marker );
+}
+
 function addPoint( point, index ) {
   // create marker
   const marker = new google.maps.Marker({
@@ -129,63 +179,29 @@ function addPoint( point, index ) {
     },
   });
 
-  // create infoBox
-  const ibOptions = {
-    disableAutoPan: false,
-    maxWidth: 0,
-    pixelOffset: new google.maps.Size(-100, 29),
-    zIndex: null,
-    boxStyle: {
-      padding: '0px 0px 0px 0px',
-      width: '200px',
-      height: '40px'
-    },
-    closeBoxURL : '',
-    infoBoxClearance: new google.maps.Size(1, 1),
-    isHidden: false,
-    pane: 'floatPane',
-    enableEventPropagation: false
-  };
-
-  function toggleToolTip() {
-    infoBox ? hideToolTip() : showToolTip();
-  }
-
-  function showToolTip() {
-    // Render box content
-    const toolTipHtml = toolTipTemplate({
-      location: 'Turlock',
-      status: 'Up',
-      ip_address: '195.168.103',
-      num_client: 7,
-    });
-    const boxText = document.createElement('div');
-    boxText.style.cssText = "margin-top: 0px; background: #fff; padding: 0px;";
-    boxText.innerHTML = toolTipHtml;
-    ibOptions.content = boxText;
-
-    if ( infoBox ) {
-      infoBox.close();
-    }
-    infoBox = new InfoBox(ibOptions);
-    infoBox.open(window.googleMap, marker);
-    google.maps.event.addDomListener( boxText, 'click', hideToolTip);
-  }
-
-  function hideToolTip() {
-    infoBox.close();
-    infoBox = null;
-  }
-
-  if ( index === 0 ) showToolTip();
-
-  marker.addListener('click', toggleToolTip);
-  marker.addListener('mouseover', showToolTip);
+  if ( index === 0 ) showToolTip( marker );
+  // add tooltip event listeners
+  marker.addListener('click', () => {
+    toggleToolTip( marker );
+  });
+  marker.addListener('mouseover', () => {
+    if ( disableMouseOver ) return;
+    showToolTip( marker );
+  });
 
 }
 
 function addPoints() {
   points.forEach(addPoint);
+}
+
+function setupEvents() {
+  this.googleMap.addListener('click', (event) => {
+    const clickedLat = event.latLng.lat();
+    const clickedLng = event.latLng.lng();
+    console.log(`clicked map at ${clickedLat} ${clickedLng} `);
+    hideToolTip();
+  });
 }
 
 /**
@@ -194,6 +210,4 @@ function addPoints() {
 const loadDataPromise = mockLoadData();
 createGoogleMap();
 setupEvents();
-loadDataPromise.then(() => {
-  addPoints();
-});
+loadDataPromise.then(addPoints);
