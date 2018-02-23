@@ -41,8 +41,8 @@ const getMapControlOptions = function(){
  */
 window.googleMap = null;
 const mapRegionDOM = document.querySelector('#mapRegion');
+let infoBox = null;
 let points = null;
-const infoWindows = [];
 
 function mockLoadData() {
   return new Promise(( resolve ) => {
@@ -63,13 +63,6 @@ function mockLoadData() {
 /**
  * map rendering functions
  */
-function loadGoogleMapsScript() {
-  return new Promise((resolve) => {
-    window.initMap = resolve;
-    Util.appendScriptToHead(`https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&callback=initMap`);
-  });
-}
-
 function createGoogleMap() {
   window.googleMap = new google.maps.Map(mapRegionDOM, {
     center: {
@@ -92,26 +85,31 @@ function setupEvents() {
 
 const toolTipTemplate = _.template(`
   <div class="tooltip" >
-    <div> Branch Name </div>
-    <div> Location: <%= location %> </div>
-    <div> Status: <%= status %> </div>
-    <div> IP Address: <%= ip_address %> </div>
-    <div> Clients: <%= num_client %> </div>
+    <div class="tooltip__content" >
+      <div class="tooltip__head" > Branch Name </div>
+      <div class="tooltip__row" >
+        <div class="tooltip__col" > Location </div>
+        <div class="tooltip__col" > <%= location %> </div>
+      </div>
+      <div class="tooltip__row" >
+        <div class="tooltip__col" > Status </div>
+        <div class="tooltip__col tooltip__status" > <%= status %> </div>
+      </div>
+      <div class="tooltip__row" >
+        <div class="tooltip__col" > IP Address </div>
+        <div class="tooltip__col" > <%= ip_address %> </div>
+      </div>
+      <div class="tooltip__row" >
+        <div class="tooltip__col" > Clients </div>
+        <div class="tooltip__col" > <%= num_client %> </div>
+      </div>
+    </div>
     <div class="tooltip__cta" > View Details </div>
   </div>
 `);
 
-function addPoint( point ) {
-  const toolTipHtml = toolTipTemplate({
-    location: 'Turlock',
-    status: 'Down',
-    ip_address: '195.168.103',
-    num_client: 7,
-  });
-  const infoWindow = new google.maps.InfoWindow({
-    content: toolTipHtml
-  });
-  infoWindows.push( infoWindow );
+function addPoint( point, index ) {
+  // create marker
   const marker = new google.maps.Marker({
     position: {
       lat: point.lat,
@@ -128,10 +126,48 @@ function addPoint( point ) {
       anchor: new google.maps.Point(20, 20)
     },
   });
-  marker.addListener('click', function() {
-    infoWindows.forEach(( item ) => { item.close(); })
-    infoWindow.open(window.googleMap, marker);
-  });
+
+  // create infoBox
+  const ibOptions = {
+    disableAutoPan: false,
+    maxWidth: 0,
+    pixelOffset: new google.maps.Size(-100, 29),
+    zIndex: null,
+    boxStyle: {
+      padding: '0px 0px 0px 0px',
+      width: '200px',
+      height: '40px'
+    },
+    closeBoxURL : '',
+    infoBoxClearance: new google.maps.Size(1, 1),
+    isHidden: false,
+    pane: 'floatPane',
+    enableEventPropagation: false
+  };
+
+  function onMarkerClick() {
+    // Render box content
+    const toolTipHtml = toolTipTemplate({
+      location: 'Turlock',
+      status: 'Up',
+      ip_address: '195.168.103',
+      num_client: 7,
+    });
+    const boxText = document.createElement('div');
+    boxText.style.cssText = "margin-top: 0px; background: #fff; padding: 0px;";
+    boxText.innerHTML = toolTipHtml;
+    ibOptions.content = boxText;
+
+    if ( infoBox ) {
+      infoBox.close();
+    }
+    infoBox = new InfoBox(ibOptions);
+    infoBox.open(window.googleMap, marker);
+  }
+
+  if ( index === 0 ) onMarkerClick();
+
+  marker.addListener('click', onMarkerClick);
 }
 
 function addPoints() {
@@ -141,19 +177,9 @@ function addPoints() {
 /**
  * entry point
  */
-const googleMapsPromise = loadGoogleMapsScript();
 const loadDataPromise = mockLoadData();
-
-googleMapsPromise
-  .then(() => {
-    createGoogleMap();
-    setupEvents();
-  });
-
-Promise.all([
-  googleMapsPromise,
-  loadDataPromise,
-])
-  .then(() => {
-    addPoints();
-  });
+createGoogleMap();
+setupEvents();
+loadDataPromise.then(() => {
+  addPoints();
+});

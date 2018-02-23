@@ -80,9 +80,68 @@
 }
 
 .tooltip {
-
+  border: solid #CCC 1px;
+  -webkit-box-shadow: 1px 1px 1px 0px #666;
+  -moz-box-shadow: 1px 1px 1px 0px #666;
+  box-shadow: 1px 1px 1px 0px #666;
 }
 .tooltip__cta {
   color: white;
   background: orange;
+  text-align: center;
+  padding: 5px;
+}
+.tooltip__content {
+  padding: 10px 15px;
+  min-width: 200px;
+}
+.tooltip__arrow {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background: #FFF;
+  left: 90px;
+  top: -1;
+  transform: rotate(45deg);
+  border-top: solid #CCC 1px;
+  border-left: solid #CCC 1px;
+}
+.tooltip__row {
+  margin-bottom: 5px;
+  display: flex;
+}
+.tooltip__col {
+  flex: 1;
+}
+.tooltip__head {
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+.tooltip__status {
+  font-weight: 600;
+}
+
+.tooltip:before,
+.tooltip:after {
+  bottom: 98%;
+  left: 50%;
+  border: solid transparent;
+  content : " ";
+  height: 0;
+  width: 0;
+  position: absolute;
+}
+
+.tooltip:before {
+  border-color: transparent;
+  border-bottom-color: #CCC;
+  border-width: 12px;
+  margin-left: -12px
+}
+.tooltip:after {
+  border-color: transparent;
+  border-bottom-color: #FFF;
+  border-width: 10px;
+  margin-left: -10px;
 }
