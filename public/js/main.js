@@ -10,30 +10,29 @@ const ICON_RED_BRANCH = 'img/icons/red_branch.png';
 const ICON_GREEN_CLOUD = 'img/icons/green_cloud.png';
 const ICON_YELLOW_CLOUD = 'img/icons/yellow_cloud.png';
 const ICON_RED_CLOUD = 'img/icons/red_cloud.png';
+const ICON_BLUE_HOME = 'img/icons/blue_home.png';
 
-const getMapControlOptions = function(){
-  return {
-    // mapTypeControl: Map / Satellite toggle
-    mapTypeControl: false,
-    mapTypeControlOptions: {
-      style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
-      position: google.maps.ControlPosition.TOP_CENTER,
-    },
-    // zoomControl: + / - toggle
-    zoomControl: true,
-    zoomControlOptions: {
-      position: google.maps.ControlPosition.LEFT_BOTTOM,
-    },
-    // scaleControl: 2KM distance in legend
-    scaleControl: false,
-    // streetViewControl: enables pegman
-    streetViewControl: false,
-    streetViewControlOptions: {
-      position: google.maps.ControlPosition.LEFT_TOP,
-    },
-    // fullscreenControl: allow full screen
-    fullscreenControl: false,
-  };
+const mapOptions = {
+  // mapTypeControl: Map / Satellite toggle
+  mapTypeControl: false,
+  mapTypeControlOptions: {
+    style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
+    position: google.maps.ControlPosition.TOP_CENTER,
+  },
+  // zoomControl: + / - toggle
+  zoomControl: true,
+  zoomControlOptions: {
+    position: google.maps.ControlPosition.LEFT_BOTTOM,
+  },
+  // scaleControl: 2KM distance in legend
+  scaleControl: false,
+  // streetViewControl: enables pegman
+  streetViewControl: false,
+  streetViewControlOptions: {
+    position: google.maps.ControlPosition.LEFT_TOP,
+  },
+  // fullscreenControl: allow full screen
+  fullscreenControl: false,
 };
 
 /**
@@ -61,16 +60,31 @@ const ibOptions = {
 };
 
 let points = null;
+let HQ_point = null;
 function mockLoadData() {
   return new Promise(( resolve ) => {
     setTimeout(() => {
+      HQ_point = {
+        lat: 37.3691261,
+        lng: -121.919605
+      };
+
       points = [
         { lat: 37.47360064083576, lng: -122.25839401562502 },
         { lat: 37.45288986053689, lng: -122.17736984570314 },
         { lat: 37.5084689856724, lng: -122.19522262890627 },
-        { lat: 37.47360064083576, lng: -122.25839401562502 },
         { lat: 37.51173705842232, lng: -121.97137619335939 },
         { lat: 37.56944941254819, lng: -121.92605758984377 },
+        { lat: 37.72031641754861, lng: -122.43285251296783 },
+        { lat: 37.76266931206604, lng: -122.43422580398345 },
+        { lat: 37.75289771812296, lng: -122.49053073562408 },
+        { lat: 37.66598239336537, lng: -122.51113010085845 },
+        { lat: 37.6627210859622, lng: -122.44658542312408 },
+        { lat: 37.68989426898018, lng: -122.36693454421783 },
+        { lat: 37.47253816730712, lng: -122.19906650971052 },
+        { lat: 37.47771503954888, lng: -122.14997135590193 },
+        { lat: 37.43492696738677, lng: -122.22344242523786 }
+        // { lat: '', lng: '' }
       ];
       resolve();
     }, 100)
@@ -87,8 +101,8 @@ function createGoogleMap() {
       lng: -122.04780556144539,
     },
     zoom: 11,
-    mapTypeId: 'roadmap',
-    ...getMapControlOptions(),
+    mapTypeId: google.maps.MapTypeId.ROADMAP,
+    ...mapOptions,
   });
 }
 
@@ -127,8 +141,10 @@ function hideToolTip() {
   setTimeout(() => {
     disableMouseOver = false;
   }, MOUSEOVER_DISABLED_MS);
-  infoBox.close();
-  infoBox = null;
+  if ( infoBox ) {
+    infoBox.close();
+    infoBox = null;
+  }
 }
 
 function showToolTip( marker ) {
@@ -160,7 +176,7 @@ function toggleToolTip( marker ) {
   infoBox ? hideToolTip() : showToolTip( marker );
 }
 
-function addPoint( point, index ) {
+function addPoint( point, index, isHQ ) {
   // create marker
   const marker = new google.maps.Marker({
     position: {
@@ -169,7 +185,7 @@ function addPoint( point, index ) {
     },
     map: window.googleMap,
     icon: {
-      url: ICON_GREEN_CLOUD,
+      url: isHQ ? ICON_BLUE_HOME : ICON_GREEN_CLOUD,
       // This marker is 20 pixels wide by 32 pixels high.
       scaledSize: new google.maps.Size(40, 40),
       // The origin for this image is (0, 0).
@@ -178,8 +194,9 @@ function addPoint( point, index ) {
       anchor: new google.maps.Point(20, 20)
     },
   });
+  // don't show tooltip for HQ
+  if ( isHQ ) return marker;
 
-  if ( index === 0 ) showToolTip( marker );
   // add tooltip event listeners
   marker.addListener('click', () => {
     toggleToolTip( marker );
@@ -188,11 +205,16 @@ function addPoint( point, index ) {
     if ( disableMouseOver ) return;
     showToolTip( marker );
   });
-
+  return marker;
 }
 
 function addPoints() {
-  points.forEach(addPoint);
+  addPoint( HQ_point, null, true );
+  const markers = points.map(( point, index ) => {
+    return addPoint(point, index);
+  });
+  // setup cluster
+  const markerCluster = new MarkerClusterer(window.googleMap, markers);
 }
 
 function setupEvents() {

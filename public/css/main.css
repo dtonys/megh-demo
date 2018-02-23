@@ -124,7 +124,7 @@
 
 .tooltip:before,
 .tooltip:after {
-  bottom: 96%;
+  bottom: 97%;
   left: 50%;
   border: solid transparent;
   content : " ";
