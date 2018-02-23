@@ -104,7 +104,9 @@ const toolTipTemplate = _.template(`
         <div class="tooltip__col" > <%= num_client %> </div>
       </div>
     </div>
-    <div class="tooltip__cta" > View Details </div>
+    <a href="#" >
+      <div class="tooltip__cta" > View Details </div>
+    </a>
   </div>
 `);
 
@@ -145,7 +147,11 @@ function addPoint( point, index ) {
     enableEventPropagation: false
   };
 
-  function onMarkerClick() {
+  function toggleToolTip() {
+    infoBox ? hideToolTip() : showToolTip();
+  }
+
+  function showToolTip() {
     // Render box content
     const toolTipHtml = toolTipTemplate({
       location: 'Turlock',
@@ -163,11 +169,19 @@ function addPoint( point, index ) {
     }
     infoBox = new InfoBox(ibOptions);
     infoBox.open(window.googleMap, marker);
+    google.maps.event.addDomListener( boxText, 'click', hideToolTip);
   }
 
-  if ( index === 0 ) onMarkerClick();
+  function hideToolTip() {
+    infoBox.close();
+    infoBox = null;
+  }
 
-  marker.addListener('click', onMarkerClick);
+  if ( index === 0 ) showToolTip();
+
+  marker.addListener('click', toggleToolTip);
+  marker.addListener('mouseover', showToolTip);
+
 }
 
 function addPoints() {

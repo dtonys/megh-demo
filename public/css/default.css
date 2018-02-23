@@ -11,3 +11,7 @@ html {
   display: table;
   clear: both;
 }
+
+a {
+  text-decoration: none;
+}
