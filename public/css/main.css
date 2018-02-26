@@ -3,7 +3,6 @@
 .sidebar,
 .content {
   position: absolute;
-  border: solid black 1px;
 }
 
 .navbar {
@@ -11,31 +10,35 @@
   left: 0;
   right: 0;
   height: 80px;
-  background: #EEE;
+  background: #f3f3f3;
   display: flex;
   padding: 15px;
+  border: none;
+  z-index: 1;
+  box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.3);
 }
 .subnav {
   top: 80px;
   left: 80px;
   right: 0;
-  height: 80px;
-  background: #EEE;
+  height: 60px;
+  background: #FFF;
   display: flex;
   padding-left: 20px;
+  border-bottom: solid #CCC 1px;
 }
 .sidebar {
   top: 80px;
   bottom: 0;
   left: 0;
   width: 80px;
-  background: #DDD;
+  background: #548135;;
   text-align: center;
 }
 .content {
   background: #CCC;
   position: absolute;
-  top: 160px;
+  top: 140px;
   bottom: 0;
   left: 80px;
   right: 0;
@@ -52,31 +55,69 @@
   display: flex;
 }
 
-.navbar__item {
-  align-self: center;
+.navbar__logo {
+  width: 50px;
+  height: 50px;
+  background: #bbbeb8;
+  margin-right: 15px;
 }
 
-.navbar__logo {
-  margin-right: 20px;
+.navbar__item {
+  align-self: center;
+  font-size: 18px;
 }
 
 .navbar__title {
-  font-size: 24px;
+  font-size: 25px;
 }
 
 .navbar__menuItem {
   margin-right: 40px;
+  font-size: 18px;
+}
+
+.navbar__alarmsIcon {
+  width: 20px;
+  height: 20px;
+  padding-top: 4px;
+  border-radius: 10px;
+  background: #ff0000;
+  display: inline-block;
+  vertical-align: top;
+  text-align: center;
+}
+.navbar__alarmsIconText {
+  color: white;
+  font-size: 12px;
+  font-family: 'PT Sans', sans-serif;
+}
+
+.subnav__logo {
+  margin-right: 15px;
+}
+
+.subnav__title {
+  font-size: 20px;
 }
 
 .sidebar__item {
   margin-bottom: 25px;
 }
 
+.sidebar__itemImage {
+  margin: 15px 15px 10px 15px;
+}
+
+.sidebar__itemText {
+  font-size: 12px;
+  color: white;
+}
+
 .sidebar__top {
   border-bottom: solid black 1px;
   height: 80px;
-  padding: 15px;
   margin-bottom: 15px;
+  background: #2c5013;
 }
 
 .tooltip {

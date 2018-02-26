@@ -3,14 +3,15 @@
  */
 const GOOGLE_MAPS_API_KEY = 'AIzaSyCuQdzHfDq_NrjkpiUk7mXGFJ3NxDLretY';
 
-const ICON_GREEN_BRANCH = 'img/icons/green_branch.png';
-const ICON_YELLOW_BRANCH = 'img/icons/yellow_branch.png';
-const ICON_RED_BRANCH = 'img/icons/red_branch.png';
+const ICON_GREEN_BRANCH = 'img/icons/branch-green.svg';
+const ICON_YELLOW_BRANCH = 'img/icons/branch-yellow.svg';
+const ICON_RED_BRANCH = 'img/icons/branch-red.svg';
 
-const ICON_GREEN_CLOUD = 'img/icons/green_cloud.png';
-const ICON_YELLOW_CLOUD = 'img/icons/yellow_cloud.png';
-const ICON_RED_CLOUD = 'img/icons/red_cloud.png';
-const ICON_BLUE_HOME = 'img/icons/blue_home.png';
+const ICON_GREEN_CLOUD = 'img/icons/cloud-1-green.svg';
+const ICON_YELLOW_CLOUD = 'img/icons/cloud-1-yellow.svg';
+const ICON_RED_CLOUD = 'img/icons/cloud-1-red.svg';
+
+const ICON_BLUE_HOME = 'img/icons/hq-3.svg';
 
 const mapOptions = {
   // mapTypeControl: Map / Satellite toggle

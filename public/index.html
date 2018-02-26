@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title> Dashboard </title>
     <!-- *CSS* -->
+    <link href="https://fonts.googleapis.com/css?family=PT+Sans" rel="stylesheet">
+    <link href="https://www.fontify.me/wf/28ea2e32b70da0a2480848ba03cd6146" rel="stylesheet" type="text/css">
     <link rel="stylesheet" type="text/css" href="css/normalize.css">
     <link rel="stylesheet" type="text/css" href="css/default.css">
     <link rel="stylesheet" type="text/css" href="css/main.css">
@@ -13,7 +15,7 @@
     <div class="navbar" >
       <div class="navbar__left">
         <div class="navbar__item navbar__logo" >
-          <img src="http://via.placeholder.com/50x50" alt="" />
+          <div class="navbar__logo" ></div>
         </div>
         <div class="navbar__item navbar__title">Megh Networks</div>
       </div>
@@ -21,34 +23,45 @@
       <div class="navbar__right">
         <div class="navbar__item navbar__menuItem">WestNet</div>
         <div class="navbar__item navbar__menuItem">John Miller</div>
-        <div class="navbar__item navbar__menuItem">Alarms</div>
+        <div class="navbar__item navbar__menuItem">
+          Alarms
+          <div class="navbar__alarmsIcon" >
+            <div class="navbar__alarmsIconText" >3</div>
+          </div>
+        </div>
         <div class="navbar__item navbar__menuItem">Help</div>
       </div>
     </div>
     <div class="subnav" >
-      <div class="navbar__item navbar__logo" >
-        <img src="http://via.placeholder.com/25x25" alt="" />
+      <div class="navbar__item subnav__logo" >
+        <img width="25" src="img/icons/dashboard-icon@2x.png">
       </div>
-      <div class="navbar__item navbar__title">Dashboard</div>
+      <div class="navbar__item subnav__title">Dashboard</div>
     </div>
     <div class="sidebar" >
       <div class="sidebar__top" >
-        <img src="http://via.placeholder.com/45x45" alt="" />
+        <img class="sidebar__itemImage" width="35" src="img/icons/dashboard-icon_2@2x.png" alt="" />
+        <div class="sidebar__itemText" > Dashboard </div>
       </div>
       <div class="sidebar__item" >
-        <img src="http://via.placeholder.com/45x45" alt="" />
+        <img class="sidebar__itemImage" width="35" src="img/icons/monitor-icon@2x.png" alt="" />
+        <div class="sidebar__itemText" > Monitor </div>
       </div>
       <div class="sidebar__item" >
-        <img src="http://via.placeholder.com/45x45" alt="" />
+        <img class="sidebar__itemImage" width="35" src="img/icons/analytics-icon@2x.png" alt="" />
+        <div class="sidebar__itemText" > Analytics </div>
       </div>
       <div class="sidebar__item" >
-        <img src="http://via.placeholder.com/45x45" alt="" />
+        <img class="sidebar__itemImage" width="35" src="img/icons/config-icon@2x.png" alt="" />
+        <div class="sidebar__itemText" > Config </div>
       </div>
       <div class="sidebar__item" >
-        <img src="http://via.placeholder.com/45x45" alt="" />
+        <img class="sidebar__itemImage" width="35" src="img/icons/admin-icon@2x.png" alt="" />
+        <div class="sidebar__itemText" > Admin </div>
       </div>
       <div class="sidebar__item" >
-        <img src="http://via.placeholder.com/45x45" alt="" />
+        <img class="sidebar__itemImage" width="35" src="img/icons/tools-icon@2x.png" alt="" />
+        <div class="sidebar__itemText" > Tools </div>
       </div>
     </div>
     <div class="content" id="mapRegion" >
