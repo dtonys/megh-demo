@@ -33,6 +33,8 @@ const mapOptions = {
   },
   // fullscreenControl: allow full screen
   fullscreenControl: false,
+  // Show point of interest tooltips
+  clickableIcons: false,
 };
 
 /**
