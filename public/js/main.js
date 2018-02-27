@@ -81,7 +81,7 @@ const ibOptions = {
   infoBoxClearance: new google.maps.Size(1, 1),
   isHidden: false,
   pane: 'floatPane',
-  enableEventPropagation: false
+  enableEventPropagation: false,
 };
 
 let points = null;
@@ -90,7 +90,7 @@ let HQ_point = null;
 const mockData = {
   location: 'Turlock',
   ip_address: '195.168.103',
-  num_client: 7,
+  num_clients: 7,
 };
 function mockLoadData() {
   return new Promise(( resolve ) => {
@@ -185,43 +185,80 @@ function mockLoadData() {
  * map rendering functions
  */
 function createGoogleMap() {
-  window.googleMap = new google.maps.Map(mapRegionDOM, {
+  const options = Object.assign({
     center: {
       lat: 37.46787055967662,
       lng: -122.04780556144539,
     },
     zoom: 11,
     mapTypeId: google.maps.MapTypeId.ROADMAP,
-    ...mapOptions,
-  });
+  }, mapOptions);
+  window.googleMap = new google.maps.Map(mapRegionDOM, options);
 }
 
-const toolTipTemplate = _.template(`
+const CNG_TooltipTemplate = _.template(`
   <div class="tooltip" >
-    <div class="tooltip__content" >
-      <div class="tooltip__head" > Branch Name </div>
-      <div class="tooltip__row" >
-        <div class="tooltip__col" > Location </div>
-        <div class="tooltip__col" > <%= location %> </div>
-      </div>
-      <div class="tooltip__row" >
-        <div class="tooltip__col" > Status </div>
-        <div class="tooltip__col tooltip__status" > <%= status %> </div>
-      </div>
-      <div class="tooltip__row" >
-        <div class="tooltip__col" > IP Address </div>
-        <div class="tooltip__col" > <%= ip_address %> </div>
-      </div>
-      <div class="tooltip__row" >
-        <div class="tooltip__col" > Clients </div>
-        <div class="tooltip__col" > <%= num_client %> </div>
-      </div>
-    </div>
     <a href="node-summary.html?ip=<%= ip_address %>" >
-      <div class="tooltip__cta" > View Details </div>
+      <div class="tooltip__head--cloud" >
+        <img class="tooltip__headIcon--cloud" src="http://via.placeholder.com/32x20" />
+        [Cloud Name]
+      </div>
+      <div class="tooltip__row--dark" >
+        <div class="tooltip__col" > Status </div>
+        <div class="tooltip__col" >
+          <div class="statusDot--<%= nodeStatusClass %>"></div>
+          <%= status %>
+        </div>
+      </div>
+      <% _.each([
+        ['Location', location],
+        ['IP Address', ip_address],
+        ['Clients', num_clients],
+        ['Field4', 'Field4'],
+        ['Field5', 'Field5']
+      ], function( item, index ) { %>
+        <div class="tooltip__row--<%= index % 2 ? 'dark' : 'light' %>" >
+          <div class="tooltip__col" > <%= item[0] %> </div>
+          <div class="tooltip__col" > <%= item[1] %> </div>
+        </div>
+      <% }) %>
     </a>
   </div>
 `);
+
+const CCW_TooltipTemplate = _.template(`
+  <div class="tooltip" >
+    <a href="node-summary.html?ip=<%= ip_address %>" >
+      <div class="tooltip__head--branch" >
+        <img class="tooltip__headIcon--branch" src="http://via.placeholder.com/21x25" />
+        [Branch Name]
+      </div>
+      <div class="tooltip__row--dark" >
+        <div class="tooltip__col" > Status </div>
+        <div class="tooltip__col" >
+          <div class="statusDot--<%= nodeStatusClass %>"></div>
+          <%= status %>
+        </div>
+      </div>
+      <% _.each([
+        ['Location', location],
+        ['IP Address', ip_address],
+        ['Clients', num_clients],
+        ['Field4', 'Field4'],
+        ['Field5', 'Field5'],
+        ['Field6', 'Field6'],
+        ['Field7', 'Field7']
+      ], function( item, index ) { %>
+        <div class="tooltip__row--<%= index % 2 ? 'dark' : 'light' %>" >
+          <div class="tooltip__col" > <%= item[0] %> </div>
+          <div class="tooltip__col" > <%= item[1] %> </div>
+        </div>
+      <% }) %>
+    </a>
+  </div>
+`);
+
+const toolTipTemplate = CNG_TooltipTemplate;
 
 const MOUSEOVER_DISABLED_MS = 50;
 let mouseWithinTooltip = false;
@@ -236,12 +273,20 @@ function hideToolTip() {
 }
 
 function showToolTip( node ) {
-  // Render box content
-  const toolTipHtml = toolTipTemplate({
-    location: node.location,
-    ip_address: node.ip_address,
-    num_client: node.num_clients,
-  });
+  const toolTipTemplate = ( node.type === NODE_TYPE_CNG
+    ? CNG_TooltipTemplate
+    : node.type === NODE_TYPE_CCW
+      ? CCW_TooltipTemplate
+      : null
+  );
+  // Get classname from status
+  // TODO: Replace with real APi values
+  if ( node.status === 'green' ) node.nodeStatusClass = 'green';
+  if ( node.status === 'yellow' ) node.nodeStatusClass = 'yellow';
+  if ( node.status === 'red' ) node.nodeStatusClass = 'red';
+
+  const toolTipHtml = toolTipTemplate( node );
+
   const boxText = document.createElement('div');
   boxText.style.cssText = "margin-top: 0px; background: #fff; padding: 0px;";
   boxText.innerHTML = toolTipHtml;
@@ -294,6 +339,7 @@ function addNode( node, index ) {
     },
   });
   node.marker = marker;
+  marker.node = node;
   // don't show tooltip for HQ
   if ( node.type === NODE_TYPE_HQ ) return marker;
 
@@ -306,7 +352,6 @@ function addNode( node, index ) {
     toggleToolTip( node );
   });
   marker.addListener('mouseover', () => {
-    console.log('marker mouseover');
     mouseWithinMarker = true;
     showToolTip( node );
   });
@@ -327,8 +372,14 @@ function addNodes() {
   const markers = nodes.map(( node, index ) => {
     return addNode(node, index);
   });
+
+  // filter to remove CNG nodes from clustering
+  const nonCNGMarkers = markers.filter(( marker ) => {
+    return ( marker.node.type !== NODE_TYPE_CNG );
+  });
+
   // setup cluster
-  const markerCluster = new MarkerClusterer(window.googleMap, markers);
+  const markerCluster = new MarkerClusterer(window.googleMap, nonCNGMarkers);
 }
 
 function setupEvents() {
