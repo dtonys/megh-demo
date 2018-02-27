@@ -11,7 +11,29 @@ const ICON_GREEN_CLOUD = 'img/icons/cloud-1-green.svg';
 const ICON_YELLOW_CLOUD = 'img/icons/cloud-1-yellow.svg';
 const ICON_RED_CLOUD = 'img/icons/cloud-1-red.svg';
 
-const ICON_BLUE_HOME = 'img/icons/hq-3.svg';
+const ICON_HQ = 'img/icons/hq-3.svg';
+
+const NODE_TYPE_HQ = 'NODE_TYPE_HQ';
+const NODE_TYPE_CNG = 'NODE_TYPE_CNG';
+const NODE_TYPE_CCW = 'NODE_TYPE_CCW';
+
+const mapNodeToIcon = ( nodeType, nodeStatus ) => {
+  if ( !nodeStatus || nodeStatus === 'green' ) {
+    if ( nodeType === NODE_TYPE_HQ ) return ICON_HQ;
+    if ( nodeType === NODE_TYPE_CNG ) return ICON_GREEN_CLOUD;
+    if ( nodeType === NODE_TYPE_CCW ) return ICON_GREEN_BRANCH;
+  }
+  if ( nodeStatus === 'yellow' ) {
+    if ( nodeType === NODE_TYPE_HQ ) return ICON_HQ;
+    if ( nodeType === NODE_TYPE_CNG ) return ICON_YELLOW_CLOUD;
+    if ( nodeType === NODE_TYPE_CCW ) return ICON_YELLOW_BRANCH;
+  }
+  if ( nodeStatus === 'red' ) {
+    if ( nodeType === NODE_TYPE_HQ ) return ICON_HQ;
+    if ( nodeType === NODE_TYPE_CNG ) return ICON_RED_CLOUD;
+    if ( nodeType === NODE_TYPE_CCW ) return ICON_RED_BRANCH;
+  }
+}
 
 const mapOptions = {
   // mapTypeControl: Map / Satellite toggle
@@ -48,7 +70,7 @@ let infoBox = null;
 const ibOptions = {
   disableAutoPan: false,
   maxWidth: 0,
-  pixelOffset: new google.maps.Size(-100, 29),
+  pixelOffset: new google.maps.Size(0, 0),
   zIndex: null,
   boxStyle: {
     padding: '0px 0px 0px 0px',
@@ -63,32 +85,97 @@ const ibOptions = {
 };
 
 let points = null;
+let nodes = null;
 let HQ_point = null;
+const mockData = {
+  location: 'Turlock',
+  ip_address: '195.168.103',
+  num_client: 7,
+};
 function mockLoadData() {
   return new Promise(( resolve ) => {
     setTimeout(() => {
-      HQ_point = {
-        lat: 37.3691261,
-        lng: -121.919605
-      };
-
-      points = [
-        { lat: 37.47360064083576, lng: -122.25839401562502 },
-        { lat: 37.45288986053689, lng: -122.17736984570314 },
-        { lat: 37.5084689856724, lng: -122.19522262890627 },
-        { lat: 37.51173705842232, lng: -121.97137619335939 },
-        { lat: 37.56944941254819, lng: -121.92605758984377 },
-        { lat: 37.72031641754861, lng: -122.43285251296783 },
-        { lat: 37.76266931206604, lng: -122.43422580398345 },
-        { lat: 37.75289771812296, lng: -122.49053073562408 },
-        { lat: 37.66598239336537, lng: -122.51113010085845 },
-        { lat: 37.6627210859622, lng: -122.44658542312408 },
-        { lat: 37.68989426898018, lng: -122.36693454421783 },
-        { lat: 37.47253816730712, lng: -122.19906650971052 },
-        { lat: 37.47771503954888, lng: -122.14997135590193 },
-        { lat: 37.43492696738677, lng: -122.22344242523786 }
-        // { lat: '', lng: '' }
+      nodes = [
+        {
+          type: NODE_TYPE_HQ,
+          coords: { lat: 37.3691261, lng: -121.919605 },
+          status: 'green',
+        },
+        {
+          type: NODE_TYPE_CNG,
+          coords: { lat: 37.47360064083576, lng: -122.25839401562502 },
+          status: 'green',
+        },
+        {
+          type: NODE_TYPE_CCW,
+          coords: { lat: 37.45288986053689, lng: -122.17736984570314 },
+          status: 'yellow',
+        },
+        {
+          type: NODE_TYPE_CCW,
+          coords: { lat: 37.5084689856724, lng: -122.19522262890627 },
+          status: 'green',
+        },
+        {
+          type: NODE_TYPE_CCW,
+          coords: { lat: 37.51173705842232, lng: -121.97137619335939 },
+          status: 'green',
+        },
+        {
+          type: NODE_TYPE_CNG,
+          coords: { lat: 37.56944941254819, lng: -121.92605758984377 },
+          status: 'red',
+        },
+        {
+          type: NODE_TYPE_CCW,
+          coords: { lat: 37.72031641754861, lng: -122.43285251296783 },
+          status: 'green',
+        },
+        {
+          type: NODE_TYPE_CCW,
+          coords: { lat: 37.76266931206604, lng: -122.43422580398345 },
+          status: 'green',
+        },
+        {
+          type: NODE_TYPE_CCW,
+          coords: { lat: 37.75289771812296, lng: -122.49053073562408 },
+          status: 'yellow',
+        },
+        {
+          type: NODE_TYPE_CNG,
+          coords: { lat: 37.66598239336537, lng: -122.51113010085845 },
+          status: 'green',
+        },
+        {
+          type: NODE_TYPE_CCW,
+          coords: { lat: 37.6627210859622, lng: -122.44658542312408 },
+          status: 'green',
+        },
+        {
+          type: NODE_TYPE_CCW,
+          coords: { lat: 37.68989426898018, lng: -122.36693454421783 },
+          status: 'red',
+        },
+        {
+          type: NODE_TYPE_CCW,
+          coords: { lat: 37.47253816730712, lng: -122.19906650971052 },
+          status: 'green',
+        },
+        {
+          type: NODE_TYPE_CNG,
+          coords: { lat: 37.47771503954888, lng: -122.14997135590193 },
+          status: 'green',
+        },
+        {
+          type: NODE_TYPE_CCW,
+          coords: { lat: 37.43492696738677, lng: -122.22344242523786 },
+          status: 'yellow',
+        },
       ];
+      // add default data
+      nodes.forEach(( node ) => {
+        Object.assign(node, mockData);
+      });
       resolve();
     }, 100)
   });
@@ -130,38 +217,36 @@ const toolTipTemplate = _.template(`
         <div class="tooltip__col" > <%= num_client %> </div>
       </div>
     </div>
-    <a href="#" >
+    <a href="node-summary.html?ip=<%= ip_address %>" >
       <div class="tooltip__cta" > View Details </div>
     </a>
   </div>
 `);
 
-const MOUSEOVER_DISABLED_MS = 200;
-let disableMouseOver = false;
+const MOUSEOVER_DISABLED_MS = 50;
+let mouseWithinTooltip = false;
+let mouseWithinMarker = false;
+const MOUSEOUT_TIMER_MS = 50;
 
 function hideToolTip() {
-  disableMouseOver = true;
-  setTimeout(() => {
-    disableMouseOver = false;
-  }, MOUSEOVER_DISABLED_MS);
   if ( infoBox ) {
     infoBox.close();
     infoBox = null;
   }
 }
 
-function showToolTip( marker ) {
+function showToolTip( node ) {
   // Render box content
   const toolTipHtml = toolTipTemplate({
-    location: 'Turlock',
-    status: 'Up',
-    ip_address: '195.168.103',
-    num_client: 7,
+    location: node.location,
+    ip_address: node.ip_address,
+    num_client: node.num_clients,
   });
   const boxText = document.createElement('div');
   boxText.style.cssText = "margin-top: 0px; background: #fff; padding: 0px;";
   boxText.innerHTML = toolTipHtml;
   ibOptions.content = boxText;
+  const tooltipDOM = boxText.querySelector('.tooltip');
 
   // close existing tooltip
   if ( infoBox ) {
@@ -169,52 +254,78 @@ function showToolTip( marker ) {
   }
   // create and show new tooltip
   infoBox = new InfoBox(ibOptions);
-  infoBox.open(window.googleMap, marker);
-  google.maps.event.addDomListener( boxText, 'click', () => {
-    hideToolTip(infoBox);
+  infoBox.open(window.googleMap, node.marker);
+
+  tooltipDOM.addEventListener('mouseover', () => {
+    mouseWithinTooltip = true;
+  });
+  tooltipDOM.addEventListener('mouseleave', function( event ) {
+    mouseWithinTooltip = false;
+    setTimeout(() => {
+      if ( mouseWithinMarker ) {
+        return;
+      }
+      hideToolTip();
+    }, MOUSEOUT_TIMER_MS);
   });
 }
 
-function toggleToolTip( marker ) {
-  infoBox ? hideToolTip() : showToolTip( marker );
+function toggleToolTip( node ) {
+  infoBox ? hideToolTip() : showToolTip( node );
 }
 
-function addPoint( point, index, isHQ ) {
+function addNode( node, index ) {
+  const coords = node.coords;
   // create marker
   const marker = new google.maps.Marker({
     position: {
-      lat: point.lat,
-      lng: point.lng,
+      lat: coords.lat,
+      lng: coords.lng,
     },
     map: window.googleMap,
     icon: {
-      url: isHQ ? ICON_BLUE_HOME : ICON_GREEN_CLOUD,
-      // This marker is 20 pixels wide by 32 pixels high.
+      url: mapNodeToIcon( node.type, node.status ),
+      // ( width, height )
       scaledSize: new google.maps.Size(40, 40),
-      // The origin for this image is (0, 0).
+      // ( originX, originY )
       origin: new google.maps.Point(0, 0),
-      // The anchor for this image is the base of the flagpole at (0, 32).
+      // Image anchor
       anchor: new google.maps.Point(20, 20)
     },
   });
+  node.marker = marker;
   // don't show tooltip for HQ
-  if ( isHQ ) return marker;
+  if ( node.type === NODE_TYPE_HQ ) return marker;
 
   // add tooltip event listeners
   marker.addListener('click', () => {
-    toggleToolTip( marker );
+    if ( mouseWithinMarker ) {
+      window.location.href = `node-summary.html?ip=${node.ip_address}`;
+      return;
+    }
+    toggleToolTip( node );
   });
   marker.addListener('mouseover', () => {
-    if ( disableMouseOver ) return;
-    showToolTip( marker );
+    console.log('marker mouseover');
+    mouseWithinMarker = true;
+    showToolTip( node );
+  });
+  marker.addListener('mouseout', () => {
+    mouseWithinMarker = false;
+    setTimeout(() => {
+      if ( mouseWithinTooltip ) {
+        mouseWithinTooltip = false;
+        return;
+      }
+      hideToolTip();
+    }, MOUSEOUT_TIMER_MS);
   });
   return marker;
 }
 
-function addPoints() {
-  addPoint( HQ_point, null, true );
-  const markers = points.map(( point, index ) => {
-    return addPoint(point, index);
+function addNodes() {
+  const markers = nodes.map(( node, index ) => {
+    return addNode(node, index);
   });
   // setup cluster
   const markerCluster = new MarkerClusterer(window.googleMap, markers);
@@ -235,4 +346,4 @@ function setupEvents() {
 const loadDataPromise = mockLoadData();
 createGoogleMap();
 setupEvents();
-loadDataPromise.then(addPoints);
+loadDataPromise.then(addNodes);
