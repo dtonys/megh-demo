@@ -474,16 +474,8 @@ function addNodes() {
     }]
   });
 
-  // TODO: Figure out why click event not working.
   google.maps.event.addListener(markerCluster, 'click', function (cluster) {
     hideToolTip();
-    // alert('markerCluster click');
-    // const firstNode = cluster.getMarkers()[0].node;
-    // if ( mouseWithinMarker ) {
-    //   window.location.href = `node-summary.html?ip=${firstNode.ip_address}`;
-    //   return;
-    // }
-    // showClusterToolTip(cluster);
   })
 
   google.maps.event.addListener(markerCluster, 'mouseover', function (cluster) {
@@ -500,17 +492,8 @@ function addNodes() {
       hideToolTip();
     }, MOUSEOUT_TIMER_MS);
   });
-
 }
 
-function setupEvents() {
-  // this.googleMap.addListener('click', (event) => {
-  //   const clickedLat = event.latLng.lat();
-  //   const clickedLng = event.latLng.lng();
-  //   console.log(`clicked map at ${clickedLat} ${clickedLng} `);
-  //   hideToolTip();
-  // });
-}
 
 /**
  * entry point
@@ -520,6 +503,6 @@ const domLoadedPromise = new Promise( (resolve, reject) => {
 });
 
 const loadDataPromise = mockLoadData();
-setupEvents();
+
 Promise.all([ loadDataPromise, domLoadedPromise ])
   .then(addNodes);
