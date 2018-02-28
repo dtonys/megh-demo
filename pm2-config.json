@@ -1,0 +1,14 @@
+{
+  "apps" : [
+    {
+      "name": "web-server",
+      "script": "app.js",
+      "env": {
+        "NODE_ENV": "production",
+        "APIPORT": 8080
+      },
+      "exec_mode" : "cluster",
+      "instances": "max"
+    },
+  ]
+}

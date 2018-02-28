@@ -199,7 +199,7 @@ function createGoogleMap() {
 
 const CNG_TooltipTemplate = _.template(`
   <div class="tooltip" >
-    <a href="node-summary.html?ip=<%= ip_address %>" >
+    <a href="node-summary?ip=<%= ip_address %>" >
       <div class="tooltip__head--cloud" >
         <img class="tooltip__headIcon--cloud" src="http://via.placeholder.com/32x20" />
         [Cloud Name]
@@ -230,7 +230,7 @@ const CNG_TooltipTemplate = _.template(`
 
 const CCW_TooltipTemplate = _.template(`
   <div class="tooltip" >
-    <a href="node-summary.html?ip=<%= ip_address %>" >
+    <a href="node-summary?ip=<%= ip_address %>" >
       <div class="tooltip__head--branch" >
         <img class="tooltip__headIcon--branch" src="http://via.placeholder.com/21x25" />
         [Branch Name]
@@ -263,7 +263,7 @@ const CCW_TooltipTemplate = _.template(`
 
 const clusterToolTipTemplate = _.template(`
   <div class="clusterTooltip" >
-    <a href="node-summary.html?ip=<%= nodes[0].ip_address %>" >
+    <a href="node-summary?ip=<%= nodes[0].ip_address %>" >
       <div class="tooltip__head--branch" >
         <img class="tooltip__headIcon--branch" src="http://via.placeholder.com/21x25" />
         <%= nodes.length %> Branches
@@ -439,7 +439,7 @@ function addNode( node, index ) {
   // add tooltip event listeners
   marker.addListener('click', () => {
     if ( mouseWithinMarker ) {
-      window.location.href = `node-summary.html?ip=${node.ip_address}`;
+      window.location.href = `node-summary?ip=${node.ip_address}`;
       return;
     }
     toggleToolTip( node );

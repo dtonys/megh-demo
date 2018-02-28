@@ -1,0 +1,27 @@
+<html>
+  <head>
+    <!-- *META* -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel='shortcut icon' type='image/x-icon' href='favicon.ico' />
+    <title> <%= title %> </title>
+    <!-- *CSS* -->
+    <%- include('../partials/css-common') %>
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+  </head>
+  <body>
+    <%- include('../partials/navbar') %>
+    <div class="subnav" >
+      <div class="navbar__item subnav__logo" >
+        <img width="25" src="img/icons/dashboard-icon@2x.png">
+      </div>
+      <div class="navbar__item subnav__title">Node Summary</div>
+    </div>
+    <%- include('../partials/sidebar') %>
+    <div class="content" id="mapRegion" >
+      Node Summary
+    </div>
+    <!-- *JS* -->
+    <%- include('../partials/js-common') %>
+  </body>
+</html>
