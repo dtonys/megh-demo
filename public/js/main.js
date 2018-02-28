@@ -203,6 +203,7 @@ const CNG_TooltipTemplate = _.template(`
       <div class="tooltip__head--cloud" >
         <img class="tooltip__headIcon--cloud" src="http://via.placeholder.com/32x20" />
         [Cloud Name]
+        <img class="tooltip__X" src="img/icons/close-popup-icon.svg" />
       </div>
       <div class="tooltip__row--dark" >
         <div class="tooltip__col" > Status </div>
@@ -233,6 +234,7 @@ const CCW_TooltipTemplate = _.template(`
       <div class="tooltip__head--branch" >
         <img class="tooltip__headIcon--branch" src="http://via.placeholder.com/21x25" />
         [Branch Name]
+        <img class="tooltip__X" src="img/icons/close-popup-icon.svg" />
       </div>
       <div class="tooltip__row--dark" >
         <div class="tooltip__col" > Status </div>
@@ -384,6 +386,14 @@ function showMarkerToolTip( node ) {
   infoBox.open(window.googleMap, node.marker);
 
   const tooltipDOM = boxText.querySelector('.tooltip');
+  const tooltipX = boxText.querySelector('.tooltip__X');
+
+  tooltipX.addEventListener('click', (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    hideToolTip();
+  });
+
   tooltipDOM.addEventListener('mouseover', () => {
     mouseWithinTooltip = true;
   });
