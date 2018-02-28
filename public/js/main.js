@@ -11,6 +11,7 @@ const ICON_GREEN_CLOUD = 'img/icons/cloud-1-green.svg';
 const ICON_YELLOW_CLOUD = 'img/icons/cloud-1-yellow.svg';
 const ICON_RED_CLOUD = 'img/icons/cloud-1-red.svg';
 
+const GROUP_CIRCLE = 'img/icons/group-circle.svg';
 const ICON_HQ = 'img/icons/hq-3.svg';
 
 const NODE_TYPE_HQ = 'NODE_TYPE_HQ';
@@ -258,6 +259,38 @@ const CCW_TooltipTemplate = _.template(`
   </div>
 `);
 
+const clusterToolTipTemplate = _.template(`
+  <div class="clusterTooltip" >
+    <a href="node-summary.html?ip=<%= nodes[0].ip_address %>" >
+      <div class="tooltip__head--branch" >
+        <img class="tooltip__headIcon--branch" src="http://via.placeholder.com/21x25" />
+        <%= nodes.length %> Branches
+      </div>
+      <div class="clusterTooltip__tableHead" >
+        <div class="clusterTooltip__tableRow--darker" >
+          <div class="clusterTooltip__tableColumn--1" > Name </div>
+          <div class="clusterTooltip__tableColumn--2" > Alarm Status </div>
+          <div class="clusterTooltip__tableColumn--3" > Number of Links Connected </div>
+          <div class="clusterTooltip__tableColumn--4" > Total Line Utilization </div>
+        </div>
+      </div>
+      <div class="tooltip__tableContent" >
+        <% _.each(nodes, function(node, index){ %>
+          <div class="clusterTooltip__tableRow--<%= index % 2 ? 'dark' : 'light' %>" >
+            <div class="clusterTooltip__tableColumn--1" > <%= node.location %> </div>
+            <div class="clusterTooltip__tableColumn--2" >
+              <div class="statusDot--<%= node.nodeStatusClass %>"></div>
+              <%= node.status %>
+            </div>
+            <div class="clusterTooltip__tableColumn--3" > 13 </div>
+            <div class="clusterTooltip__tableColumn--4" > 27 </div>
+          </div>
+        <% }) %>
+      </div>
+    </a>
+  </div>
+`);
+
 const toolTipTemplate = CNG_TooltipTemplate;
 
 const MOUSEOVER_DISABLED_MS = 50;
@@ -266,13 +299,63 @@ let mouseWithinMarker = false;
 const MOUSEOUT_TIMER_MS = 50;
 
 function hideToolTip() {
+  // debugger;
   if ( infoBox ) {
     infoBox.close();
     infoBox = null;
   }
 }
 
-function showToolTip( node ) {
+function showClusterToolTip( cluster ) {
+  const nodes = cluster.getMarkers().map(( marker ) => marker.node);
+
+  nodes.forEach((node) => {
+    if ( node.status === 'green' ) node.nodeStatusClass = 'green';
+    if ( node.status === 'yellow' ) node.nodeStatusClass = 'yellow';
+    if ( node.status === 'red' ) node.nodeStatusClass = 'red';
+  });
+
+  // close existing tooltip
+  if ( infoBox ) {
+    infoBox.close();
+  }
+  const toolTipHtml = clusterToolTipTemplate({
+    nodes: nodes,
+  })
+  const boxText = document.createElement('div');
+  boxText.style.cssText = "margin-top: 0px; background: #fff; padding: 0px;";
+  boxText.innerHTML = toolTipHtml;
+  ibOptions.content = boxText;
+
+
+  // close existing tooltip
+  if ( infoBox ) {
+    infoBox.close();
+  }
+  // create and show new tooltip
+  infoBox = new InfoBox(ibOptions);
+  infoBox.setPosition(
+    new google.maps.LatLng(nodes[0].coords.lat, nodes[0].coords.lng)
+  );
+  infoBox.open(window.googleMap);
+
+  const tooltipDOM = boxText.querySelector('.clusterTooltip');
+  tooltipDOM.addEventListener('mouseover', () => {
+    mouseWithinTooltip = true;
+  });
+  tooltipDOM.addEventListener('mouseleave', function( event ) {
+    mouseWithinTooltip = false;
+    setTimeout(() => {
+      if ( mouseWithinMarker ) {
+        return;
+      }
+      hideToolTip();
+    }, MOUSEOUT_TIMER_MS);
+  });
+  return true;
+}
+
+function showMarkerToolTip( node ) {
   const toolTipTemplate = ( node.type === NODE_TYPE_CNG
     ? CNG_TooltipTemplate
     : node.type === NODE_TYPE_CCW
@@ -291,7 +374,6 @@ function showToolTip( node ) {
   boxText.style.cssText = "margin-top: 0px; background: #fff; padding: 0px;";
   boxText.innerHTML = toolTipHtml;
   ibOptions.content = boxText;
-  const tooltipDOM = boxText.querySelector('.tooltip');
 
   // close existing tooltip
   if ( infoBox ) {
@@ -301,6 +383,7 @@ function showToolTip( node ) {
   infoBox = new InfoBox(ibOptions);
   infoBox.open(window.googleMap, node.marker);
 
+  const tooltipDOM = boxText.querySelector('.tooltip');
   tooltipDOM.addEventListener('mouseover', () => {
     mouseWithinTooltip = true;
   });
@@ -316,7 +399,7 @@ function showToolTip( node ) {
 }
 
 function toggleToolTip( node ) {
-  infoBox ? hideToolTip() : showToolTip( node );
+  infoBox ? hideToolTip() : showMarkerToolTip( node );
 }
 
 function addNode( node, index ) {
@@ -353,12 +436,12 @@ function addNode( node, index ) {
   });
   marker.addListener('mouseover', () => {
     mouseWithinMarker = true;
-    showToolTip( node );
+    showMarkerToolTip( node );
   });
   marker.addListener('mouseout', () => {
     mouseWithinMarker = false;
     setTimeout(() => {
-      if ( mouseWithinTooltip ) {
+      if ( mouseWithinTooltip || mouseWithinMarker ) {
         mouseWithinTooltip = false;
         return;
       }
@@ -369,32 +452,73 @@ function addNode( node, index ) {
 }
 
 function addNodes() {
+  createGoogleMap();
   const markers = nodes.map(( node, index ) => {
     return addNode(node, index);
   });
 
-  // filter to remove CNG nodes from clustering
-  const nonCNGMarkers = markers.filter(( marker ) => {
-    return ( marker.node.type !== NODE_TYPE_CNG );
+  // Only cluster CCW nodes
+  const CCWMarkers = markers.filter(( marker ) => {
+    return ( marker.node.type === NODE_TYPE_CCW );
   });
 
   // setup cluster
-  const markerCluster = new MarkerClusterer(window.googleMap, nonCNGMarkers);
+  const markerCluster = new MarkerClusterer(window.googleMap, markers, {
+    clusterClass: 'markerCluster',
+    styles: [{
+      url: GROUP_CIRCLE,
+      width: 60,
+      height: 60,
+      textColor: '#515151',
+      textSize: 30
+    }]
+  });
+
+  // TODO: Figure out why click event not working.
+  google.maps.event.addListener(markerCluster, 'click', function (cluster) {
+    alert('markerCluster click');
+    // const firstNode = cluster.getMarkers()[0].node;
+    // if ( mouseWithinMarker ) {
+    //   window.location.href = `node-summary.html?ip=${firstNode.ip_address}`;
+    //   return;
+    // }
+    // showClusterToolTip(cluster);
+  })
+
+  google.maps.event.addListener(markerCluster, 'mouseover', function (cluster) {
+    mouseWithinMarker = true;
+    showClusterToolTip(cluster);
+  });
+  google.maps.event.addListener(markerCluster, 'mouseout', function () {
+    mouseWithinMarker = false;
+    setTimeout(() => {
+      if ( mouseWithinTooltip || mouseWithinMarker ) {
+        mouseWithinTooltip = false;
+        return;
+      }
+      hideToolTip();
+    }, MOUSEOUT_TIMER_MS);
+  });
+
 }
 
 function setupEvents() {
-  this.googleMap.addListener('click', (event) => {
-    const clickedLat = event.latLng.lat();
-    const clickedLng = event.latLng.lng();
-    console.log(`clicked map at ${clickedLat} ${clickedLng} `);
-    hideToolTip();
-  });
+  // this.googleMap.addListener('click', (event) => {
+  //   const clickedLat = event.latLng.lat();
+  //   const clickedLng = event.latLng.lng();
+  //   console.log(`clicked map at ${clickedLat} ${clickedLng} `);
+  //   hideToolTip();
+  // });
 }
 
 /**
  * entry point
  */
+const domLoadedPromise = new Promise( (resolve, reject) => {
+  google.maps.event.addDomListener(window, 'load', resolve);
+});
+
 const loadDataPromise = mockLoadData();
-createGoogleMap();
 setupEvents();
-loadDataPromise.then(addNodes);
+Promise.all([ loadDataPromise, domLoadedPromise ])
+  .then(addNodes);

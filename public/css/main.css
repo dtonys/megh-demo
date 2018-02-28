@@ -121,14 +121,61 @@
   margin-bottom: 15px;
   background: #2c5013;
 }
-.tooltip {
+.tooltip,
+.clusterTooltip {
   border: solid #CCC 1px;
   -webkit-box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.2);
   -moz-box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.2);
   box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.2);
   cursor: pointer;
-  width: 402px;
   background: #fff;
+}
+.clusterTooltip__tableHead {
+  display: flex;
+}
+.clusterTooltip__tableRow--darker,
+.clusterTooltip__tableRow--light,
+.clusterTooltip__tableRow--dark {
+  font-size: 13px;
+  padding: 0 20px;
+  display: flex;
+  width: 100%;
+}
+.clusterTooltip__tableRow--darker {
+  background: #e5e5e5;
+}
+.clusterTooltip__tableRow--light {
+  background: #ffffff;
+}
+.clusterTooltip__tableRow--dark {
+  background: #f5f5f5;
+}
+
+.clusterTooltip__tableColumn--1 {
+  padding: 8px 0;
+  width: 10%;
+  border-right: solid #d1d1d1 1px;
+}
+.clusterTooltip__tableColumn--2 {
+  padding: 8px 0 8px 10px;
+  width: 20%;
+  border-right: solid #d1d1d1 1px;
+}
+.clusterTooltip__tableColumn--3 {
+  padding: 8px 0 8px 10px;
+  width: 40%;
+  border-right: solid #d1d1d1 1px;
+}
+.clusterTooltip__tableColumn--4 {
+  padding: 8px 0 8px 10px;
+  width: 30%;
+}
+
+.tooltip {
+  width: 402px;
+}
+.clusterTooltip {
+  width: 550px;
 }
 .tooltip__cta {
   color: white;
@@ -140,12 +187,12 @@
   padding: 10px 15px;
   min-width: 200px;
 }
-.tooltip__row,
 .tooltip__row--light,
 .tooltip__row--dark {
   font-size: 13px;
   padding: 8px 20px;
   display: flex;
+  width: 100%;
 }
 .tooltip__row--light {
   background: #ffffff;
