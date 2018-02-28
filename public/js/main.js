@@ -476,7 +476,8 @@ function addNodes() {
 
   // TODO: Figure out why click event not working.
   google.maps.event.addListener(markerCluster, 'click', function (cluster) {
-    alert('markerCluster click');
+    hideToolTip();
+    // alert('markerCluster click');
     // const firstNode = cluster.getMarkers()[0].node;
     // if ( mouseWithinMarker ) {
     //   window.location.href = `node-summary.html?ip=${firstNode.ip_address}`;
