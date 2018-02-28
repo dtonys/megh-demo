@@ -463,7 +463,7 @@ function addNodes() {
   });
 
   // setup cluster
-  const markerCluster = new MarkerClusterer(window.googleMap, markers, {
+  const markerCluster = new MarkerClusterer(window.googleMap, CCWMarkers, {
     clusterClass: 'markerCluster',
     styles: [{
       url: GROUP_CIRCLE,
