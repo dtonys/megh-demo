@@ -1,8 +1,6 @@
 /**
  * config, constants
  */
-const GOOGLE_MAPS_API_KEY = 'AIzaSyCuQdzHfDq_NrjkpiUk7mXGFJ3NxDLretY';
-
 const ICON_GREEN_BRANCH = 'img/icons/branch-green.svg';
 const ICON_YELLOW_BRANCH = 'img/icons/branch-yellow.svg';
 const ICON_RED_BRANCH = 'img/icons/branch-red.svg';
@@ -34,32 +32,34 @@ const mapNodeToIcon = ( nodeType, nodeStatus ) => {
     if ( nodeType === NODE_TYPE_CNG ) return ICON_RED_CLOUD;
     if ( nodeType === NODE_TYPE_CCW ) return ICON_RED_BRANCH;
   }
-}
+  return ICON_GREEN_BRANCH;
+};
 
 const mapOptions = {
   // mapTypeControl: Map / Satellite toggle
   mapTypeControl: false,
   mapTypeControlOptions: {
-    style: google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
-    position: google.maps.ControlPosition.TOP_CENTER,
+    style: window.google.maps.MapTypeControlStyle.HORIZONTAL_BAR,
+    position: window.google.maps.ControlPosition.TOP_CENTER,
   },
   // zoomControl: + / - toggle
   zoomControl: true,
   zoomControlOptions: {
-    position: google.maps.ControlPosition.LEFT_BOTTOM,
+    position: window.google.maps.ControlPosition.LEFT_BOTTOM,
   },
   // scaleControl: 2KM distance in legend
   scaleControl: false,
   // streetViewControl: enables pegman
   streetViewControl: false,
   streetViewControlOptions: {
-    position: google.maps.ControlPosition.LEFT_TOP,
+    position: window.google.maps.ControlPosition.LEFT_TOP,
   },
   // fullscreenControl: allow full screen
   fullscreenControl: false,
   // Show point of interest tooltips
   clickableIcons: false,
 };
+
 
 /**
  * global variables
@@ -71,30 +71,28 @@ let infoBox = null;
 const ibOptions = {
   disableAutoPan: false,
   maxWidth: 0,
-  pixelOffset: new google.maps.Size(0, 0),
+  pixelOffset: new window.google.maps.Size(0, 0),
   zIndex: null,
   boxStyle: {
     padding: '0px 0px 0px 0px',
     width: '200px',
     height: '40px'
   },
-  closeBoxURL : '',
-  infoBoxClearance: new google.maps.Size(1, 1),
+  closeBoxURL: '',
+  infoBoxClearance: new window.google.maps.Size(1, 1),
   isHidden: false,
   pane: 'floatPane',
   enableEventPropagation: false,
 };
 
-let points = null;
 let nodes = null;
-let HQ_point = null;
 const mockData = {
   location: 'Turlock',
   ip_address: '195.168.103',
   num_clients: 7,
 };
 function mockLoadData() {
-  return new Promise(( resolve ) => {
+  return new window.Promise(( resolve ) => {
     setTimeout(() => {
       nodes = [
         {
@@ -178,13 +176,18 @@ function mockLoadData() {
         Object.assign(node, mockData);
       });
       resolve();
-    }, 100)
+    }, 100);
   });
 }
+
 
 /**
  * map rendering functions
  */
+let mouseWithinTooltip = false;
+let mouseWithinMarker = false;
+const MOUSEOUT_TIMER_DELAY_MS = 50;
+
 function createGoogleMap() {
   const options = Object.assign({
     center: {
@@ -192,9 +195,9 @@ function createGoogleMap() {
       lng: -122.04780556144539,
     },
     zoom: 11,
-    mapTypeId: google.maps.MapTypeId.ROADMAP,
+    mapTypeId: window.google.maps.MapTypeId.ROADMAP,
   }, mapOptions);
-  window.googleMap = new google.maps.Map(mapRegionDOM, options);
+  window.googleMap = new window.google.maps.Map(mapRegionDOM, options);
 }
 
 const CNG_TooltipTemplate = _.template(`
@@ -293,13 +296,6 @@ const clusterToolTipTemplate = _.template(`
   </div>
 `);
 
-const toolTipTemplate = CNG_TooltipTemplate;
-
-const MOUSEOVER_DISABLED_MS = 50;
-let mouseWithinTooltip = false;
-let mouseWithinMarker = false;
-const MOUSEOUT_TIMER_MS = 50;
-
 function hideToolTip() {
   // debugger;
   if ( infoBox ) {
@@ -309,7 +305,7 @@ function hideToolTip() {
 }
 
 function showClusterToolTip( cluster ) {
-  const nodes = cluster.getMarkers().map(( marker ) => marker.node);
+  nodes = cluster.getMarkers().map(( marker ) => marker.node);
 
   nodes.forEach((node) => {
     if ( node.status === 'green' ) node.nodeStatusClass = 'green';
@@ -323,9 +319,9 @@ function showClusterToolTip( cluster ) {
   }
   const toolTipHtml = clusterToolTipTemplate({
     nodes: nodes,
-  })
+  });
   const boxText = document.createElement('div');
-  boxText.style.cssText = "margin-top: 0px; background: #fff; padding: 0px;";
+  boxText.style.cssText = 'margin-top: 0px; background: #fff; padding: 0px;';
   boxText.innerHTML = toolTipHtml;
   ibOptions.content = boxText;
 
@@ -335,9 +331,9 @@ function showClusterToolTip( cluster ) {
     infoBox.close();
   }
   // create and show new tooltip
-  infoBox = new InfoBox(ibOptions);
+  infoBox = new window.InfoBox(ibOptions);
   infoBox.setPosition(
-    new google.maps.LatLng(nodes[0].coords.lat, nodes[0].coords.lng)
+    new window.google.maps.LatLng(nodes[0].coords.lat, nodes[0].coords.lng)
   );
   infoBox.open(window.googleMap);
 
@@ -345,14 +341,14 @@ function showClusterToolTip( cluster ) {
   tooltipDOM.addEventListener('mouseover', () => {
     mouseWithinTooltip = true;
   });
-  tooltipDOM.addEventListener('mouseleave', function( event ) {
+  tooltipDOM.addEventListener('mouseleave', function () {
     mouseWithinTooltip = false;
     setTimeout(() => {
       if ( mouseWithinMarker ) {
         return;
       }
       hideToolTip();
-    }, MOUSEOUT_TIMER_MS);
+    }, MOUSEOUT_TIMER_DELAY_MS);
   });
   return true;
 }
@@ -373,7 +369,7 @@ function showMarkerToolTip( node ) {
   const toolTipHtml = toolTipTemplate( node );
 
   const boxText = document.createElement('div');
-  boxText.style.cssText = "margin-top: 0px; background: #fff; padding: 0px;";
+  boxText.style.cssText = 'margin-top: 0px; background: #fff; padding: 0px;';
   boxText.innerHTML = toolTipHtml;
   ibOptions.content = boxText;
 
@@ -382,7 +378,7 @@ function showMarkerToolTip( node ) {
     infoBox.close();
   }
   // create and show new tooltip
-  infoBox = new InfoBox(ibOptions);
+  infoBox = new window.InfoBox(ibOptions);
   infoBox.open(window.googleMap, node.marker);
 
   const tooltipDOM = boxText.querySelector('.tooltip');
@@ -397,14 +393,14 @@ function showMarkerToolTip( node ) {
   tooltipDOM.addEventListener('mouseover', () => {
     mouseWithinTooltip = true;
   });
-  tooltipDOM.addEventListener('mouseleave', function( event ) {
+  tooltipDOM.addEventListener('mouseleave', function () {
     mouseWithinTooltip = false;
     setTimeout(() => {
       if ( mouseWithinMarker ) {
         return;
       }
       hideToolTip();
-    }, MOUSEOUT_TIMER_MS);
+    }, MOUSEOUT_TIMER_DELAY_MS);
   });
 }
 
@@ -412,10 +408,10 @@ function toggleToolTip( node ) {
   infoBox ? hideToolTip() : showMarkerToolTip( node );
 }
 
-function addNode( node, index ) {
+function addNode( node ) {
   const coords = node.coords;
   // create marker
-  const marker = new google.maps.Marker({
+  const marker = new window.google.maps.Marker({
     position: {
       lat: coords.lat,
       lng: coords.lng,
@@ -424,11 +420,11 @@ function addNode( node, index ) {
     icon: {
       url: mapNodeToIcon( node.type, node.status ),
       // ( width, height )
-      scaledSize: new google.maps.Size(40, 40),
+      scaledSize: new window.google.maps.Size(40, 40),
       // ( originX, originY )
-      origin: new google.maps.Point(0, 0),
+      origin: new window.google.maps.Point(0, 0),
       // Image anchor
-      anchor: new google.maps.Point(20, 20)
+      anchor: new window.google.maps.Point(20, 20)
     },
   });
   node.marker = marker;
@@ -456,7 +452,7 @@ function addNode( node, index ) {
         return;
       }
       hideToolTip();
-    }, MOUSEOUT_TIMER_MS);
+    }, MOUSEOUT_TIMER_DELAY_MS);
   });
   return marker;
 }
@@ -473,26 +469,25 @@ function addNodes() {
   });
 
   // setup cluster
-  const markerCluster = new MarkerClusterer(window.googleMap, CCWMarkers, {
+  const markerCluster = new window.MarkerClusterer(window.googleMap, CCWMarkers, {
     clusterClass: 'markerCluster',
-    styles: [{
+    styles: [ {
       url: GROUP_CIRCLE,
       width: 60,
       height: 60,
       textColor: '#515151',
       textSize: 30
-    }]
+    } ]
   });
 
-  google.maps.event.addListener(markerCluster, 'click', function (cluster) {
+  window.google.maps.event.addListener(markerCluster, 'click', function () {
     hideToolTip();
-  })
-
-  google.maps.event.addListener(markerCluster, 'mouseover', function (cluster) {
+  });
+  window.google.maps.event.addListener(markerCluster, 'mouseover', function (cluster) {
     mouseWithinMarker = true;
     showClusterToolTip(cluster);
   });
-  google.maps.event.addListener(markerCluster, 'mouseout', function () {
+  window.google.maps.event.addListener(markerCluster, 'mouseout', function () {
     mouseWithinMarker = false;
     setTimeout(() => {
       if ( mouseWithinTooltip || mouseWithinMarker ) {
@@ -500,7 +495,7 @@ function addNodes() {
         return;
       }
       hideToolTip();
-    }, MOUSEOUT_TIMER_MS);
+    }, MOUSEOUT_TIMER_DELAY_MS);
   });
 }
 
@@ -508,11 +503,11 @@ function addNodes() {
 /**
  * entry point
  */
-const domLoadedPromise = new Promise( (resolve, reject) => {
-  google.maps.event.addDomListener(window, 'load', resolve);
+const domLoadedPromise = new window.Promise( (resolve) => {
+  window.google.maps.event.addDomListener(window, 'load', resolve);
 });
 
 const loadDataPromise = mockLoadData();
 
-Promise.all([ loadDataPromise, domLoadedPromise ])
+window.Promise.all([ loadDataPromise, domLoadedPromise ])
   .then(addNodes);

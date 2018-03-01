@@ -1,5 +1,5 @@
 window.Util = {};
-Util.appendScriptToHead = function ( src, loadedCallback ) {
+window.Util.appendScriptToHead = function ( src, loadedCallback ) {
   const head = document.getElementsByTagName('head')[0];
   const script = document.createElement('script');
   script.type = 'text/javascript';
@@ -15,4 +15,4 @@ Util.appendScriptToHead = function ( src, loadedCallback ) {
   }
   script.src = src;
   head.appendChild(script);
-}
+};

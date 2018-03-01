@@ -38,7 +38,7 @@ module.exports = {
     "no-multiple-empty-lines": [ "warn", { "max": 2, "maxEOF": 1 } ],
     "eol-last": [ "error", "unix" ],
     "id-length": [ "warn", { "min": 2, "exceptions": [ "_", "$", "i", "j", "k", "x", "y", "e" ] } ],
-    "camelcase": "warn",
+    "camelcase": "off",
     "func-names": "off",
     "keyword-spacing": "warn",
     "space-before-blocks": "warn",
@@ -72,5 +72,6 @@ module.exports = {
   },
   "globals": {
     "$": true,
+    "_": true,
   }
 };
