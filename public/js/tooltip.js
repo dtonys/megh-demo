@@ -118,46 +118,46 @@
     const mouseState = options.mouseState;
     const mouseConfig = options.mouseConfig;
 
-    this.infoBox = null;
+    this.toolTip = null;
     const _this = this;
 
     this.toggleMarker = function ( node ) {
-      this.infoBox ? this.close() : this.openOnMarker( node );
+      this.toolTip ? this.close() : this.openOnMarker( node );
     };
 
     this.openOnCluster = function ( cluster ) {
       const clusterNodes = cluster.getMarkers().map(( marker ) => marker.node);
 
       // close existing tooltip
-      if ( this.infoBox ) {
-        this.infoBox.close();
+      if ( this.toolTip ) {
+        this.toolTip.close();
       }
       const toolTipHtml = clusterToolTipTemplate({
         nodes: clusterNodes,
       });
-      const boxText = document.createElement('div');
-      boxText.style.cssText = 'margin-top: 0px; background: #fff; padding: 0px;';
-      boxText.innerHTML = toolTipHtml;
-      infoBoxOptions.content = boxText;
+      const toolTipWrap = document.createElement('div');
+      toolTipWrap.style.cssText = 'margin-top: 0px; background: #fff; padding: 0px;';
+      toolTipWrap.innerHTML = toolTipHtml;
+      infoBoxOptions.content = toolTipWrap;
 
 
       // close existing tooltip
       this.close();
 
       // create and show new tooltip
-      this.infoBox = new window.InfoBox(infoBoxOptions);
+      this.toolTip = new window.InfoBox(infoBoxOptions);
       // spawn the tooltip on the first node in the cluster's position
-      this.infoBox.setPosition(
+      this.toolTip.setPosition(
         new window.google.maps.LatLng(clusterNodes[0].coords.lat, clusterNodes[0].coords.lng)
       );
-      this.infoBox.open(window.googleMap);
+      this.toolTip.open(window.googleMap);
 
       // Setup tooltip events
-      const tooltipDOM = boxText.querySelector('.clusterTooltip');
-      tooltipDOM.addEventListener('mouseover', () => {
+      const tooltipContainer = toolTipWrap.querySelector('.clusterTooltip');
+      tooltipContainer.addEventListener('mouseover', () => {
         mouseState.mouseWithinTooltip = true;
       });
-      tooltipDOM.addEventListener('mouseleave', function () {
+      tooltipContainer.addEventListener('mouseleave', function () {
         mouseState.mouseWithinTooltip = false;
         setTimeout(() => {
           if ( mouseState.mouseWithinMarker ) {
@@ -179,20 +179,20 @@
 
       const toolTipHtml = toolTipTemplate( node );
 
-      const boxText = document.createElement('div');
-      boxText.style.cssText = 'margin-top: 0px; background: #fff; padding: 0px;';
-      boxText.innerHTML = toolTipHtml;
-      infoBoxOptions.content = boxText;
+      const toolTipWrap = document.createElement('div');
+      toolTipWrap.style.cssText = 'margin-top: 0px; background: #fff; padding: 0px;';
+      toolTipWrap.innerHTML = toolTipHtml;
+      infoBoxOptions.content = toolTipWrap;
 
       // close existing tooltip
       this.close();
 
       // create and show new tooltip
-      this.infoBox = new window.InfoBox(infoBoxOptions);
-      this.infoBox.open(window.googleMap, node.marker);
+      this.toolTip = new window.InfoBox(infoBoxOptions);
+      this.toolTip.open(window.googleMap, node.marker);
 
-      const tooltipDOM = boxText.querySelector('.tooltip');
-      const tooltipX = boxText.querySelector('.tooltip__X');
+      const tooltipContainer = toolTipWrap.querySelector('.tooltip');
+      const tooltipX = toolTipWrap.querySelector('.tooltip__X');
 
       // Setup tooltip events
       tooltipX.addEventListener('click', (event) => {
@@ -201,10 +201,10 @@
         _this.close();
       });
 
-      tooltipDOM.addEventListener('mouseover', () => {
+      tooltipContainer.addEventListener('mouseover', () => {
         mouseState.mouseWithinTooltip = true;
       });
-      tooltipDOM.addEventListener('mouseleave', function () {
+      tooltipContainer.addEventListener('mouseleave', function () {
         mouseState.mouseWithinTooltip = false;
         setTimeout(() => {
           if ( mouseState.mouseWithinMarker ) {
@@ -216,9 +216,9 @@
     };
 
     this.close = function () {
-      if ( this.infoBox ) {
-        this.infoBox.close();
-        this.infoBox = null;
+      if ( this.toolTip ) {
+        this.toolTip.close();
+        this.toolTip = null;
       }
     };
   };
