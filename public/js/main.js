@@ -160,6 +160,14 @@
         nodes.forEach(( node ) => {
           Object.assign(node, mockData);
         });
+
+        // add some derived data / mappings
+        nodes.forEach((node) => {
+          if ( node.status === 'green' ) node.nodeStatusClass = 'green';
+          if ( node.status === 'yellow' ) node.nodeStatusClass = 'yellow';
+          if ( node.status === 'red' ) node.nodeStatusClass = 'red';
+        });
+
         resolve();
       }, 100);
     });
@@ -277,12 +285,6 @@
 
   function initialize() {
     createGoogleMap();
-
-    nodes.forEach((node) => {
-      if ( node.status === 'green' ) node.nodeStatusClass = 'green';
-      if ( node.status === 'yellow' ) node.nodeStatusClass = 'yellow';
-      if ( node.status === 'red' ) node.nodeStatusClass = 'red';
-    });
 
     const mapToolTip = new window.MapToolTip({
       nodeTypes: nodeTypes,
