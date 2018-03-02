@@ -6,7 +6,9 @@
   "author": "dtonys@gmail.com <dtonys@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "babel-core": "^6.26.0",
     "babel-eslint": "^8.2.2",
+    "babel-preset-env": "^1.6.1",
     "basic-auth": "^2.0.0",
     "cross-env": "^5.1.3",
     "ejs": "^2.5.7",
@@ -14,13 +16,27 @@
     "eslint-config-airbnb-es5": "^1.2.0",
     "eslint-plugin-react": "^7.7.0",
     "express": "^4.16.2",
+    "gulp": "4.0.0",
+    "gulp-autoprefixer": "^5.0.0",
+    "gulp-babel": "^7.0.1",
+    "gulp-concat": "^2.6.1",
+    "gulp-cssnano": "^2.1.2",
+    "gulp-if": "^2.0.2",
+    "gulp-load-plugins": "^1.5.0",
+    "gulp-size": "^3.0.0",
+    "gulp-sourcemaps": "^2.6.4",
+    "gulp-uglify": "^3.0.0",
+    "gulp-useref": "^3.1.4",
     "nodemon": "^1.17.1",
-    "pm2": "^2.10.1"
+    "pm2": "^2.10.1",
+    "run-sequence": "^2.2.1"
   },
   "scripts": {
     "dev": "cross-env NODE_ENV=development APIPORT=8080 nodemon --delay 2 --watch app.js app.js",
+    "build": "cross-env NODE_ENV=production gulp",
     "start": "pm2 start pm2-config.json",
     "stop": "pm2 delete pm2-config.json",
-    "lint-js": "eslint -c .eslintrc.js ./public/js"
-  }
+    "lint-js": "eslint -c .eslintrc.js ./public/js gulpfile.js app.js"
+  },
+  "devDependencies": {}
 }

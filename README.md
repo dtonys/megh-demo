@@ -4,6 +4,10 @@
 
 ##### Run the server in dev mode
 `npm run dev`
+##### Run eslint
+`npm run js-lint`
+##### Build assets
+`npm run build`
 ##### Run production pm2 servers
 `npm run start`
 ##### Stop production pm2 servers
@@ -18,4 +22,6 @@ See http://pm2.keymetrics.io/docs/usage/log-management/ for more options
 
 ### Run as a service ( start on login )
 http://pm2.keymetrics.io/docs/usage/startup/
+
+
 

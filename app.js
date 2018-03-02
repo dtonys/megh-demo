@@ -1,12 +1,17 @@
-const auth = require('basic-auth')
+const path = require('path');
+const auth = require('basic-auth');
 const express = require('express');
 
 const app = express();
 
-app.set('views', 'views');
+const viewPath = process.env.NODE_ENV === 'production'
+  ? path.join(__dirname, 'views/build')
+  : path.join(__dirname, 'views');
+
+app.set('views', viewPath);
 app.set('view engine', 'ejs');
 
-app.use(express.static(__dirname + '/public'));
+app.use(express.static(path.join(__dirname, '/public')));
 
 const basicAuthMiddleware = (req, res, next) => {
   const credentials = auth(req);
@@ -17,7 +22,7 @@ const basicAuthMiddleware = (req, res, next) => {
     return;
   }
   next();
-}
+};
 
 app.use( basicAuthMiddleware );
 
@@ -33,6 +38,6 @@ app.get('/node-summary', (req, res) => {
   });
 });
 
-app.listen( process.env.APIPORT, function() {
+app.listen( process.env.APIPORT, function () {
   console.log('Web server is listening on port ' + process.env.APIPORT);
 });

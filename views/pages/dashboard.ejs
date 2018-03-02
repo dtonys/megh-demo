@@ -7,7 +7,9 @@
     <title> <%= title %> </title>
     <!-- *CSS* -->
     <%- include('../partials/css-common') %>
+    <!-- build:css build/main.min.css -->
     <link rel="stylesheet" type="text/css" href="css/main.css">
+    <!-- endbuild -->
   </head>
   <body>
     <%- include('../partials/navbar') %>
@@ -22,6 +24,8 @@
     </div>
     <!-- *JS* -->
     <%- include('../partials/js-common') %>
-    <script src="js/main.js" ></script>
+    <!-- build:js build/dashboard.min.js -->
+    <script src="js/dashboard.js" ></script>
+    <!-- endbuild -->
   </body>
 </html>
