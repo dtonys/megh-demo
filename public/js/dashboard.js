@@ -3,35 +3,35 @@
    * config, constants
    */
   const nodeTypes = {
-    HQ: 'NODE_TYPE_HQ',
+    DATACENTER: 'NODE_TYPE_DATACENTER',
     CNG: 'NODE_TYPE_CNG',
     CCW: 'NODE_TYPE_CCW'
   };
 
-  const ICON_GREEN_BRANCH = 'img/icons/branch-green.svg';
-  const ICON_YELLOW_BRANCH = 'img/icons/branch-yellow.svg';
-  const ICON_RED_BRANCH = 'img/icons/branch-red.svg';
+  const ICON_GREEN_BRANCH = 'img/icons/ccw-green.svg';
+  const ICON_YELLOW_BRANCH = 'img/icons/ccw-yellow.svg';
+  const ICON_RED_BRANCH = 'img/icons/ccw-red.svg';
 
-  const ICON_GREEN_CLOUD = 'img/icons/cloud-1-green.svg';
-  const ICON_YELLOW_CLOUD = 'img/icons/cloud-1-yellow.svg';
-  const ICON_RED_CLOUD = 'img/icons/cloud-1-red.svg';
+  const ICON_GREEN_CLOUD = 'img/icons/cng-green.svg';
+  const ICON_YELLOW_CLOUD = 'img/icons/cng-yellow.svg';
+  const ICON_RED_CLOUD = 'img/icons/cng-red.svg';
 
-  const GROUP_CIRCLE = 'img/icons/group-circle.svg';
-  const ICON_HQ = 'img/icons/hq-3.svg';
+  const ICON_GROUP_CIRCLE = 'img/icons/group-circle.svg';
+  const ICON_DATA_CENTER = 'img/icons/dc.svg';
 
   const mapNodeToIcon = ( nodeType, nodeStatus ) => {
     if ( !nodeStatus || nodeStatus === 'green' ) {
-      if ( nodeType === nodeTypes.HQ ) return ICON_HQ;
+      if ( nodeType === nodeTypes.DATACENTER ) return ICON_DATA_CENTER;
       if ( nodeType === nodeTypes.CNG ) return ICON_GREEN_CLOUD;
       if ( nodeType === nodeTypes.CCW ) return ICON_GREEN_BRANCH;
     }
     if ( nodeStatus === 'yellow' ) {
-      if ( nodeType === nodeTypes.HQ ) return ICON_HQ;
+      if ( nodeType === nodeTypes.DATACENTER ) return ICON_DATA_CENTER;
       if ( nodeType === nodeTypes.CNG ) return ICON_YELLOW_CLOUD;
       if ( nodeType === nodeTypes.CCW ) return ICON_YELLOW_BRANCH;
     }
     if ( nodeStatus === 'red' ) {
-      if ( nodeType === nodeTypes.HQ ) return ICON_HQ;
+      if ( nodeType === nodeTypes.DATACENTER ) return ICON_DATA_CENTER;
       if ( nodeType === nodeTypes.CNG ) return ICON_RED_CLOUD;
       if ( nodeType === nodeTypes.CCW ) return ICON_RED_BRANCH;
     }
@@ -81,7 +81,7 @@
       setTimeout(() => {
         nodes = [
           {
-            type: nodeTypes.HQ,
+            type: nodeTypes.DATACENTER,
             coords: { lat: 37.3691261, lng: -121.919605 },
             status: 'green',
           },
@@ -218,7 +218,7 @@
     node.marker = marker;
     marker.node = node;
     // don't show tooltip for HQ
-    if ( node.type === nodeTypes.HQ ) return marker;
+    if ( node.type === nodeTypes.DATACENTER ) return marker;
 
     // Setup events, for tooltip
     marker.addListener('click', () => {
@@ -255,7 +255,7 @@
     const markerClusters = new window.MarkerClusterer(window.googleMap, CCWMarkers, {
       clusterClass: 'markerCluster',
       styles: [ {
-        url: GROUP_CIRCLE,
+        url: ICON_GROUP_CIRCLE,
         width: 60,
         height: 60,
         textColor: '#515151',
@@ -286,6 +286,12 @@
   function initialize() {
     createGoogleMap();
 
+    const alarmDropDown = new window.AlarmDropDown({
+      $trigger: document.querySelector('.navbar__alarmsTrigger'),
+      $container: document.querySelector('.navbar__alarms .alarmDropdown')
+    });
+    alarmDropDown.initialize();
+
     const mapToolTip = new window.MapToolTip({
       nodeTypes: nodeTypes,
       mouseState: mouseState,
@@ -296,7 +302,6 @@
     });
     addClusterer(markers, mapToolTip);
   }
-
 
   /**
    * entry point

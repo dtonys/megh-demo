@@ -1,4 +1,8 @@
 (function () {
+  const ICON_BLACK_BRANCH = 'img/icons/ccw-black.svg';
+  const ICON_BLACK_CLOUD = 'img/icons/cng-icon-black.svg';
+  // const ALERT = <i class="fas fa-camera-retro"></i>
+
   const infoBoxOptions = {
     disableAutoPan: false,
     maxWidth: 0,
@@ -20,7 +24,7 @@
     <div class="tooltip" >
       <a href="node-summary?ip=<%= ip_address %>" >
         <div class="tooltip__head--cloud" >
-          <img class="tooltip__headIcon--cloud" src="http://via.placeholder.com/32x20" />
+          <img class="tooltip__headIcon--cloud" src="${ICON_BLACK_CLOUD}" />
           [Cloud Name]
           <img class="tooltip__X" src="img/icons/close-popup-icon.svg" />
         </div>
@@ -51,7 +55,7 @@
     <div class="tooltip" >
       <a href="node-summary?ip=<%= ip_address %>" >
         <div class="tooltip__head--branch" >
-          <img class="tooltip__headIcon--branch" src="http://via.placeholder.com/21x25" />
+          <img class="tooltip__headIcon--branch" src="${ICON_BLACK_BRANCH}" />
           [Branch Name]
           <img class="tooltip__X" src="img/icons/close-popup-icon.svg" />
         </div>
@@ -84,7 +88,7 @@
     <div class="clusterTooltip" >
       <a href="node-summary?ip=<%= nodes[0].ip_address %>" >
         <div class="tooltip__head--branch" >
-          <img class="tooltip__headIcon--branch" src="http://via.placeholder.com/21x25" />
+          <img class="tooltip__headIcon--branch" src="${ICON_BLACK_BRANCH}" />
           <%= nodes.length %> Branches
         </div>
         <div class="clusterTooltip__tableHead" >

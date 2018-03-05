@@ -16,8 +16,6 @@
   border: none;
   z-index: 1;
   box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.3);
-  -webkit-box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.3);
-  -moz-box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.3);
 }
 .subnav {
   top: 80px;
@@ -125,8 +123,6 @@
 .tooltip,
 .clusterTooltip {
   border: solid #CCC 1px;
-  -webkit-box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.2);
-  -moz-box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.2);
   box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.2);
   cursor: pointer;
   background: #fff;
@@ -254,5 +250,23 @@
 }
 .statusDot--green {
   background: #29ca1e;
+}
+
+.navbar__alarms {
+  position: relative;
+}
+.navbar__alarmsTrigger {
+  cursor: pointer;
+}
+
+.alarmDropdown {
+  position: absolute;
+  top: 25px;
+  right: 0;
+  border: solid black 1px;
+  background: white;
+  height: 100px;
+  width: 600px;
+  box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.2);
 }
 

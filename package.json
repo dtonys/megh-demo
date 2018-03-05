@@ -32,8 +32,9 @@
     "run-sequence": "^2.2.1"
   },
   "scripts": {
-    "dev": "cross-env NODE_ENV=development APIPORT=8080 nodemon --delay 2 --watch app.js app.js",
+    "dev": "cross-env NODE_ENV=development PORT=8080 nodemon --delay 2 --watch app.js app.js",
     "build": "cross-env NODE_ENV=production gulp",
+    "clean": "gulp clean",
     "start": "pm2 start pm2-config.json",
     "stop": "pm2 delete pm2-config.json",
     "lint-js": "eslint -c .eslintrc.js ./public/js gulpfile.js app.js"

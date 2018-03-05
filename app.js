@@ -38,6 +38,6 @@ app.get('/node-summary', (req, res) => {
   });
 });
 
-app.listen( process.env.APIPORT, function () {
-  console.log('Web server is listening on port ' + process.env.APIPORT);
+app.listen( process.env.PORT, () => {
+  console.log('HTTP server is listening on port ' + process.env.PORT);
 });
