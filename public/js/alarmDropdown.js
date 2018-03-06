@@ -3,8 +3,10 @@
   window.AlarmDropDown = function ( options ) {
     this.$trigger = options.$trigger;
     this.$container = options.$container;
+
     this.state = {
-      alarms: []
+      alarmHistory: [],
+      num_alarms: 0,
     };
 
     this.initialize = function () {
@@ -33,47 +35,65 @@
       this.$container.innerHTML = '';
     };
 
+    this.updateAlarmData = function ( alarmData ) {
+      this.state.alarmHistory = alarmData.alarms[0].alarm_history;
+      this.state.num_alarms = alarmData.alarms[0].num_alarms;
+    };
+
+    this.updateAlarmCount = function () {
+      const $alarmRedDotIcon = this.$trigger.querySelector('.navbar__alarmsIcon');
+      const $alarmCountText = this.$trigger.querySelector('.navbar__alarmsIconText');
+      // Update alarms num
+      if ( this.state.num_alarms > 0 ) {
+        $alarmRedDotIcon.style.display = '';
+        $alarmCountText.innerHTML = this.state.num_alarms;
+      }
+      else {
+        $alarmRedDotIcon.style.display = 'none';
+      }
+    };
+
     this.render = function () {
-      const mockNodes = [
-        {
-          location: 'Loc 1',
-          status: 'red',
-        },
-        {
-          location: 'Loc 2',
-          status: 'yellow',
-        },
-        {
-          location: 'Loc 3',
-          status: 'green',
-        },
-      ];
+      // Update alarms dropdown view
       this.$container.innerHTML = window.templates.tableList({
-        nodes: mockNodes,
+        nodes: this.state.alarmHistory,
         type: 'alarms',
         columns: [
           {
             name: 'Name',
-            width: 25,
             type: 'text',
-            getValue: ( node ) => ( node.location ),
+            width: 16,
+            getValue: ( alarm ) => ( alarm.node_id ),
           },
           {
-            name: 'Alarm Status',
-            width: 25,
+            name: 'Type',
+            type: 'text',
+            width: 16,
+            getValue: ( alarm ) => ( alarm.type ),
+          },
+          {
+            name: 'Instance',
+            type: 'text',
+            width: 17,
+            getValue: ( alarm ) => ( alarm.instance ),
+          },
+          {
+            name: 'Severity',
             type: 'alarmStatus',
+            width: 17,
+            getValue: ( alarm ) => ( alarm.severity ),
           },
           {
-            name: 'Number of Links Connected',
-            width: 25,
+            name: 'Description',
             type: 'text',
-            getValue: () => ( 13 ),
+            width: 17,
+            getValue: ( alarm ) => ( alarm.description ),
           },
           {
-            name: 'Total Line Utilization',
-            width: 25,
+            name: 'Time(UTC)',
             type: 'text',
-            getValue: () => ( 27 ),
+            width: 17,
+            getValue: ( alarm ) => ( alarm.occurrence_date ),
           },
         ]
       });

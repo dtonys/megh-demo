@@ -30,8 +30,8 @@ window.templates.tableList = _.template(`
                 <%= config.getValue(node) %>
               <% } %>
               <% if( config.type === 'alarmStatus' ) { %>
-                <div class="statusDot--<%= node.status %>"></div>
-                <%= node.status %>
+                <div class="statusDot--<%= node.severity %>"></div>
+                <%= node.severity %>
               <% } %>
             </div>
           <% })%>

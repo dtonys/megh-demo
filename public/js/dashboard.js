@@ -8,6 +8,7 @@
     CCW: 'NODE_TYPE_CCW'
   };
 
+  const BASIC_AUTH_SECRET = 'Basic TWVnaE5ldHdvcmtzOm5qZTk3NnhzdzQ1Mw==';
   const ICON_GREEN_BRANCH = 'img/icons/ccw-green.svg';
   const ICON_YELLOW_BRANCH = 'img/icons/ccw-yellow.svg';
   const ICON_RED_BRANCH = 'img/icons/ccw-red.svg';
@@ -198,7 +199,7 @@
       },
       map: window.googleMap,
       icon: {
-        url: mapNodeToIcon( node.type, node.status ),
+        url: mapNodeToIcon( node.type, node.status ), // node.severity
         // ( width, height )
         scaledSize: new window.google.maps.Size(40, 40),
         // ( originX, originY )
@@ -275,6 +276,25 @@
     });
   }
 
+  function pollAlarms() {
+    // set timeout
+    // fetch alarms
+    // diff alarms
+    // apply updates
+  }
+
+  function loadAlarms() {
+    return window.unfetch('/megh/api/v1.0/alarms', {
+      credentials: 'include',
+      headers: {
+        'Authorization': BASIC_AUTH_SECRET
+      }
+    })
+      .then(function( response ) {
+        return response.json();
+      });
+  }
+
   function initialize() {
     createGoogleMap();
 
@@ -284,6 +304,13 @@
       template: window.templates.tableList,
     });
     alarmDropDown.initialize();
+
+    // populate alarms
+    loadAlarms().then(( alarmData ) => {
+      alarmDropDown.updateAlarmData( alarmData );
+      alarmDropDown.updateAlarmCount();
+    });
+
     const mapToolTip = new window.MapToolTip({
       nodeTypes: nodeTypes,
       mouseState: mouseState,
