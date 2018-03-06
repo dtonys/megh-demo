@@ -1,8 +1,4 @@
 (function () {
-  const ICON_BLACK_BRANCH = 'img/icons/ccw-black.svg';
-  const ICON_BLACK_CLOUD = 'img/icons/cng-icon-black.svg';
-  // const ALERT = <i class="fas fa-camera-retro"></i>
-
   const infoBoxOptions = {
     disableAutoPan: false,
     maxWidth: 0,
@@ -19,102 +15,6 @@
     pane: 'floatPane',
     enableEventPropagation: false,
   };
-
-  const CNG_TooltipTemplate = _.template(`
-    <div class="tooltip" >
-      <a href="node-summary?ip=<%= ip_address %>" >
-        <div class="tooltip__head--cloud" >
-          <img class="tooltip__headIcon--cloud" src="${ICON_BLACK_CLOUD}" />
-          [Cloud Name]
-          <img class="tooltip__X" src="img/icons/close-popup-icon.svg" />
-        </div>
-        <div class="tooltip__row--dark" >
-          <div class="tooltip__col" > Status </div>
-          <div class="tooltip__col" >
-            <div class="statusDot--<%= nodeStatusClass %>"></div>
-            <%= status %>
-          </div>
-        </div>
-        <% _.each([
-          ['Location', location],
-          ['IP Address', ip_address],
-          ['Clients', num_clients],
-          ['Field4', 'Field4'],
-          ['Field5', 'Field5']
-        ], function( item, index ) { %>
-          <div class="tooltip__row--<%= index % 2 ? 'dark' : 'light' %>" >
-            <div class="tooltip__col" > <%= item[0] %> </div>
-            <div class="tooltip__col" > <%= item[1] %> </div>
-          </div>
-        <% }) %>
-      </a>
-    </div>
-  `);
-
-  const CCW_TooltipTemplate = _.template(`
-    <div class="tooltip" >
-      <a href="node-summary?ip=<%= ip_address %>" >
-        <div class="tooltip__head--branch" >
-          <img class="tooltip__headIcon--branch" src="${ICON_BLACK_BRANCH}" />
-          [Branch Name]
-          <img class="tooltip__X" src="img/icons/close-popup-icon.svg" />
-        </div>
-        <div class="tooltip__row--dark" >
-          <div class="tooltip__col" > Status </div>
-          <div class="tooltip__col" >
-            <div class="statusDot--<%= nodeStatusClass %>"></div>
-            <%= status %>
-          </div>
-        </div>
-        <% _.each([
-          ['Location', location],
-          ['IP Address', ip_address],
-          ['Clients', num_clients],
-          ['Field4', 'Field4'],
-          ['Field5', 'Field5'],
-          ['Field6', 'Field6'],
-          ['Field7', 'Field7']
-        ], function( item, index ) { %>
-          <div class="tooltip__row--<%= index % 2 ? 'dark' : 'light' %>" >
-            <div class="tooltip__col" > <%= item[0] %> </div>
-            <div class="tooltip__col" > <%= item[1] %> </div>
-          </div>
-        <% }) %>
-      </a>
-    </div>
-  `);
-
-  const clusterToolTipTemplate = _.template(`
-    <div class="clusterTooltip" >
-      <a href="node-summary?ip=<%= nodes[0].ip_address %>" >
-        <div class="tooltip__head--branch" >
-          <img class="tooltip__headIcon--branch" src="${ICON_BLACK_BRANCH}" />
-          <%= nodes.length %> Branches
-        </div>
-        <div class="clusterTooltip__tableHead" >
-          <div class="clusterTooltip__tableRow--darker" >
-            <div class="clusterTooltip__tableColumn--1" > Name </div>
-            <div class="clusterTooltip__tableColumn--2" > Alarm Status </div>
-            <div class="clusterTooltip__tableColumn--3" > Number of Links Connected </div>
-            <div class="clusterTooltip__tableColumn--4" > Total Line Utilization </div>
-          </div>
-        </div>
-        <div class="tooltip__tableContent" >
-          <% _.each(nodes, function(node, index){ %>
-            <div class="clusterTooltip__tableRow--<%= index % 2 ? 'dark' : 'light' %>" >
-              <div class="clusterTooltip__tableColumn--1" > <%= node.location %> </div>
-              <div class="clusterTooltip__tableColumn--2" >
-                <div class="statusDot--<%= node.nodeStatusClass %>"></div>
-                <%= node.status %>
-              </div>
-              <div class="clusterTooltip__tableColumn--3" > 13 </div>
-              <div class="clusterTooltip__tableColumn--4" > 27 </div>
-            </div>
-          <% }) %>
-        </div>
-      </a>
-    </div>
-  `);
 
   // Expose tooltip constructor for single instance of tooltip
   window.MapToolTip = function ( options ) {
@@ -136,8 +36,34 @@
       if ( this.toolTip ) {
         this.toolTip.close();
       }
-      const toolTipHtml = clusterToolTipTemplate({
+      const toolTipHtml = window.templates.tableList({
         nodes: clusterNodes,
+        type: 'cluster',
+        columns: [
+          {
+            name: 'Name',
+            width: 25,
+            type: 'text',
+            getValue: ( node ) => ( node.location ),
+          },
+          {
+            name: 'Alarm Status',
+            width: 25,
+            type: 'alarmStatus',
+          },
+          {
+            name: 'Number of Links Connected',
+            width: 25,
+            type: 'text',
+            getValue: () => ( 13 ),
+          },
+          {
+            name: 'Total Line Utilization',
+            width: 25,
+            type: 'text',
+            getValue: () => ( 27 ),
+          },
+        ]
       });
       const toolTipWrap = document.createElement('div');
       toolTipWrap.style.cssText = 'margin-top: 0px; background: #fff; padding: 0px;';
@@ -157,7 +83,7 @@
       this.toolTip.open(window.googleMap);
 
       // Setup tooltip events
-      const tooltipContainer = toolTipWrap.querySelector('.clusterTooltip');
+      const tooltipContainer = toolTipWrap.querySelector('.tableList');
       tooltipContainer.addEventListener('mouseover', () => {
         mouseState.mouseWithinTooltip = true;
       });
@@ -167,7 +93,7 @@
           if ( mouseState.mouseWithinMarker ) {
             return;
           }
-          _this.close();
+          // _this.close();
         }, mouseConfig.MOUSEOUT_TIMER_DELAY_MS);
       });
       return true;
@@ -175,9 +101,9 @@
 
     this.openOnMarker = function ( node ) {
       const toolTipTemplate = ( node.type === nodeTypes.CNG
-        ? CNG_TooltipTemplate
+        ? window.templates.CNGToolTip
         : node.type === nodeTypes.CCW
-          ? CCW_TooltipTemplate
+          ? window.templates.CCWToolTip
           : null
       );
 

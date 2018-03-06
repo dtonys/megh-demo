@@ -63,7 +63,6 @@
     clickableIcons: false,
   };
 
-
   /**
    * global variables
    */
@@ -159,13 +158,6 @@
         // add default data
         nodes.forEach(( node ) => {
           Object.assign(node, mockData);
-        });
-
-        // add some derived data / mappings
-        nodes.forEach((node) => {
-          if ( node.status === 'green' ) node.nodeStatusClass = 'green';
-          if ( node.status === 'yellow' ) node.nodeStatusClass = 'yellow';
-          if ( node.status === 'red' ) node.nodeStatusClass = 'red';
         });
 
         resolve();
@@ -288,10 +280,10 @@
 
     const alarmDropDown = new window.AlarmDropDown({
       $trigger: document.querySelector('.navbar__alarmsTrigger'),
-      $container: document.querySelector('.navbar__alarms .alarmDropdown')
+      $container: document.querySelector('.navbar__alarms .alarmDropdown'),
+      template: window.templates.tableList,
     });
     alarmDropDown.initialize();
-
     const mapToolTip = new window.MapToolTip({
       nodeTypes: nodeTypes,
       mouseState: mouseState,

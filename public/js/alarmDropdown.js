@@ -34,11 +34,49 @@
     };
 
     this.render = function () {
-      this.$container.innerHTML = this.template( this.state );
+      const mockNodes = [
+        {
+          location: 'Loc 1',
+          status: 'red',
+        },
+        {
+          location: 'Loc 2',
+          status: 'yellow',
+        },
+        {
+          location: 'Loc 3',
+          status: 'green',
+        },
+      ];
+      this.$container.innerHTML = window.templates.tableList({
+        nodes: mockNodes,
+        type: 'alarms',
+        columns: [
+          {
+            name: 'Name',
+            width: 25,
+            type: 'text',
+            getValue: ( node ) => ( node.location ),
+          },
+          {
+            name: 'Alarm Status',
+            width: 25,
+            type: 'alarmStatus',
+          },
+          {
+            name: 'Number of Links Connected',
+            width: 25,
+            type: 'text',
+            getValue: () => ( 13 ),
+          },
+          {
+            name: 'Total Line Utilization',
+            width: 25,
+            type: 'text',
+            getValue: () => ( 27 ),
+          },
+        ]
+      });
     };
-
-    this.template = _.template(`
-      <div> AlarmDropDownTemplate </div>
-    `);
   };
 })();
