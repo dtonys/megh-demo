@@ -316,18 +316,18 @@
   function initialize() {
     createGoogleMap();
 
-    // const alarmDropDown = new window.AlarmDropDown({
-    //   $trigger: document.querySelector('.navbar__alarmsTrigger'),
-    //   $container: document.querySelector('.navbar__alarms .alarmDropdown'),
-    //   template: window.templates.tableList,
-    // });
-    // alarmDropDown.initialize();
+    const alarmDropDown = new window.AlarmDropDown({
+      $trigger: document.querySelector('.navbar__alarmsTrigger'),
+      $container: document.querySelector('.navbar__alarms .alarmDropdown'),
+      template: window.templates.tableList,
+    });
+    alarmDropDown.initialize();
 
-    // // populate alarms
-    // loadAlarms().then(( alarmData ) => {
-    //   alarmDropDown.updateAlarmData( alarmData );
-    //   alarmDropDown.updateAlarmCount();
-    // });
+    // populate alarms
+    loadAlarms().then(( alarmData ) => {
+      alarmDropDown.updateAlarmData( alarmData );
+      alarmDropDown.updateAlarmCount();
+    });
 
     const mapToolTip = new window.MapToolTip({
       nodeTypes: nodeTypes,
