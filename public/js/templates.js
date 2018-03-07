@@ -52,8 +52,8 @@ window.templates.CNGToolTip = _.template(`
       <div class="tooltip__row--dark" >
         <div class="tooltip__col" > Status </div>
         <div class="tooltip__col" >
-          <div class="statusDot--<%= status %>"></div>
-          <%= status %>
+          <div class="statusDot--<%= severity %>"></div>
+          <%= severity %>
         </div>
       </div>
       <% _.each([
@@ -83,8 +83,8 @@ window.templates.CCWToolTip = _.template(`
       <div class="tooltip__row--dark" >
         <div class="tooltip__col" > Status </div>
         <div class="tooltip__col" >
-          <div class="statusDot--<%= status %>"></div>
-          <%= status %>
+          <div class="statusDot--<%= severity %>"></div>
+          <%= severity %>
         </div>
       </div>
       <% _.each([

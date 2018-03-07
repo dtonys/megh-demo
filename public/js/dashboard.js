@@ -21,17 +21,17 @@
   const ICON_DATA_CENTER = 'img/icons/dc.svg';
 
   const mapNodeToIcon = ( nodeType, nodeStatus ) => {
-    if ( !nodeStatus || nodeStatus === 'green' ) {
+    if ( !nodeStatus || nodeStatus === 'Clear' ) {
       if ( nodeType === nodeTypes.DATACENTER ) return ICON_DATA_CENTER;
       if ( nodeType === nodeTypes.CNG ) return ICON_GREEN_CLOUD;
       if ( nodeType === nodeTypes.CCW ) return ICON_GREEN_BRANCH;
     }
-    if ( nodeStatus === 'yellow' ) {
+    if ( nodeStatus === 'Minor' ) {
       if ( nodeType === nodeTypes.DATACENTER ) return ICON_DATA_CENTER;
       if ( nodeType === nodeTypes.CNG ) return ICON_YELLOW_CLOUD;
       if ( nodeType === nodeTypes.CCW ) return ICON_YELLOW_BRANCH;
     }
-    if ( nodeStatus === 'red' ) {
+    if ( nodeStatus === 'Major' ) {
       if ( nodeType === nodeTypes.DATACENTER ) return ICON_DATA_CENTER;
       if ( nodeType === nodeTypes.CNG ) return ICON_RED_CLOUD;
       if ( nodeType === nodeTypes.CCW ) return ICON_RED_BRANCH;
@@ -83,77 +83,77 @@
           {
             type: nodeTypes.DATACENTER,
             coords: { lat: 37.3691261, lng: -121.919605 },
-            status: 'green',
+            severity: 'Clear',
           },
           {
             type: nodeTypes.CNG,
             coords: { lat: 37.47360064083576, lng: -122.25839401562502 },
-            status: 'green',
+            severity: 'Clear',
           },
           {
             type: nodeTypes.CCW,
             coords: { lat: 37.45288986053689, lng: -122.17736984570314 },
-            status: 'yellow',
+            severity: 'Minor',
           },
           {
             type: nodeTypes.CCW,
             coords: { lat: 37.5084689856724, lng: -122.19522262890627 },
-            status: 'green',
+            severity: 'Clear',
           },
           {
             type: nodeTypes.CCW,
             coords: { lat: 37.51173705842232, lng: -121.97137619335939 },
-            status: 'green',
+            severity: 'Clear',
           },
           {
             type: nodeTypes.CNG,
             coords: { lat: 37.56944941254819, lng: -121.92605758984377 },
-            status: 'red',
+            severity: 'Major',
           },
           {
             type: nodeTypes.CCW,
             coords: { lat: 37.72031641754861, lng: -122.43285251296783 },
-            status: 'green',
+            severity: 'Clear',
           },
           {
             type: nodeTypes.CCW,
             coords: { lat: 37.76266931206604, lng: -122.43422580398345 },
-            status: 'green',
+            severity: 'Clear',
           },
           {
             type: nodeTypes.CCW,
             coords: { lat: 37.75289771812296, lng: -122.49053073562408 },
-            status: 'yellow',
+            severity: 'Minor',
           },
           {
             type: nodeTypes.CNG,
             coords: { lat: 37.66598239336537, lng: -122.51113010085845 },
-            status: 'green',
+            severity: 'Clear',
           },
           {
             type: nodeTypes.CCW,
             coords: { lat: 37.6627210859622, lng: -122.44658542312408 },
-            status: 'green',
+            severity: 'Clear',
           },
           {
             type: nodeTypes.CCW,
             coords: { lat: 37.68989426898018, lng: -122.36693454421783 },
-            status: 'red',
+            severity: 'Major',
           },
           {
             type: nodeTypes.CCW,
             coords: { lat: 37.47253816730712, lng: -122.19906650971052 },
-            status: 'green',
+            severity: 'Clear',
           },
           {
             type: nodeTypes.CNG,
             coords: { lat: 37.47771503954888, lng: -122.14997135590193 },
-            status: 'green',
+            severity: 'Clear',
           },
           {
             type: nodeTypes.CCW,
             coords: { lat: 37.43492696738677, lng: -122.22344242523786 },
-            status: 'yellow',
+            severity: 'Minor',
           },
         ];
         // add default data
@@ -199,7 +199,7 @@
       },
       map: window.googleMap,
       icon: {
-        url: mapNodeToIcon( node.type, node.status ), // node.severity
+        url: mapNodeToIcon( node.type, node.severity ), // node.severity
         // ( width, height )
         scaledSize: new window.google.maps.Size(40, 40),
         // ( originX, originY )
@@ -276,12 +276,12 @@
     });
   }
 
-  function pollAlarms() {
-    // set timeout
-    // fetch alarms
-    // diff alarms
-    // apply updates
-  }
+  // function pollAlarms () {
+  //   // set timeout
+  //   // fetch alarms
+  //   // diff alarms
+  //   // apply updates
+  // }
 
   function loadAlarms() {
     return window.unfetch('/megh/api/v1.0/alarms', {
@@ -290,7 +290,7 @@
         'Authorization': BASIC_AUTH_SECRET
       }
     })
-      .then(function( response ) {
+      .then(function ( response ) {
         return response.json();
       });
   }

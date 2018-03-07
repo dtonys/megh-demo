@@ -36,37 +36,33 @@
       if ( this.toolTip ) {
         this.toolTip.close();
       }
+
       const toolTipHtml = window.templates.tableList({
         nodes: clusterNodes,
         type: 'cluster',
         columns: [
           {
             name: 'Name',
-            width: 25,
             type: 'text',
+            width: 40,
             getValue: ( node ) => ( node.location ),
           },
           {
             name: 'Alarm Status',
-            width: 25,
             type: 'alarmStatus',
+            width: 40,
+            getValue: ( node ) => ( node.severity ),
           },
           {
-            name: 'Number of Links Connected',
-            width: 25,
+            name: 'Links',
             type: 'text',
-            getValue: () => ( 13 ),
-          },
-          {
-            name: 'Total Line Utilization',
-            width: 25,
-            type: 'text',
-            getValue: () => ( 27 ),
-          },
+            width: 20,
+            getValue: ( node ) => ( node.num_clients ),
+          }
         ]
       });
       const toolTipWrap = document.createElement('div');
-      toolTipWrap.style.cssText = 'margin-top: 0px; background: #fff; padding: 0px;';
+      toolTipWrap.style.cssText = 'margin-top: 0px; background: #fff; padding: 0px; width: 350px;';
       toolTipWrap.innerHTML = toolTipHtml;
       infoBoxOptions.content = toolTipWrap;
 
@@ -93,7 +89,7 @@
           if ( mouseState.mouseWithinMarker ) {
             return;
           }
-          // _this.close();
+          _this.close();
         }, mouseConfig.MOUSEOUT_TIMER_DELAY_MS);
       });
       return true;

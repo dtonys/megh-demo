@@ -32,7 +32,7 @@
   bottom: 0;
   left: 0;
   width: 80px;
-  background: #548135;;
+  background: #548135;
   text-align: center;
 }
 .content {
@@ -230,7 +230,7 @@
 
 .statusDot--Major,
 .statusDot--Minor,
-.statusDot--green {
+.statusDot--Clear {
   display: inline-block;
   vertical-align: top;
   margin-top: 2px;
@@ -247,7 +247,8 @@
 .statusDot--Minor {
   background: #f5e932;
 }
-.statusDot--green {
+/*.statusDot--green {*/
+.statusDot--Clear {
   background: #29ca1e;
 }
 
@@ -270,7 +271,6 @@
 .tableList {
   border: solid #CCC 1px;
   box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.2);
-  cursor: pointer;
   background: #fff;
 }
 .tableList__header--alarms,
@@ -300,7 +300,7 @@
 .tableList__row--dark,
 .tableList__row--darker {
   font-size: 13px;
-  padding: 0 20px;
+  padding: 0;
   display: flex;
   width: 100%;
   background: #ffffff;
