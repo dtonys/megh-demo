@@ -176,6 +176,7 @@
   const mouseState = {
     mouseWithinTooltip: false,
     mouseWithinMarker: false,
+    mouseWithinCluster: false,
   };
   function createGoogleMap() {
     const options = Object.assign({
@@ -222,13 +223,22 @@
       mapToolTip.toggleMarker( node );
     });
     marker.addListener('mouseover', () => {
-      mouseState.mouseWithinMarker = true;
+      // console.log('marker::mouseover');
+      mouseState.mouseWithinMarker = node;
+      if ( mouseState.mouseWithinCluster ) { // mouse in while inside cluster, ignore event
+        return;
+      }
       mapToolTip.openOnMarker( node );
     });
     marker.addListener('mouseout', () => {
+      // console.log('marker::mouseout');
       mouseState.mouseWithinMarker = false;
       setTimeout(() => {
-        if ( mouseState.mouseWithinTooltip || mouseState.mouseWithinMarker ) {
+        if (
+          mouseState.mouseWithinTooltip || // mouse out from marker to tooltip
+          mouseState.mouseWithinMarker || // mouse out from marker to marker
+          mouseState.mouseWithinCluster // mouse out while inside cluster
+        ) {
           mouseState.mouseWithinTooltip = false;
           return;
         }
@@ -258,20 +268,26 @@
 
     // Setup events, for tooltip
     window.google.maps.event.addListener(markerClusters, 'click', function () {
+      // console.log('clusterMarker::click');
       mapToolTip.close();
     });
     window.google.maps.event.addListener(markerClusters, 'mouseover', function (cluster) {
-      mouseState.mouseWithinMarker = true;
+      // console.log('clusterMarker::mouseover');
+      mouseState.mouseWithinCluster = cluster;
       mapToolTip.openOnCluster(cluster);
     });
     window.google.maps.event.addListener(markerClusters, 'mouseout', function () {
-      mouseState.mouseWithinMarker = false;
+      // console.log('clusterMarker::mouseout');
+      mouseState.mouseWithinCluster = false;
       setTimeout(() => {
-        if ( mouseState.mouseWithinTooltip || mouseState.mouseWithinMarker ) {
+        if ( mouseState.mouseWithinTooltip ) {
           mouseState.mouseWithinTooltip = false;
           return;
         }
         mapToolTip.close();
+        if ( mouseState.mouseWithinMarker ) {
+          mapToolTip.openOnMarker( mouseState.mouseWithinMarker );
+        }
       }, mouseConfig.MOUSEOUT_TIMER_DELAY_MS);
     });
   }
