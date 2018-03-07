@@ -1,19 +1,40 @@
 (function () {
+  const TOOLTIP_WIDTH = 400;
   const infoBoxOptions = {
     disableAutoPan: false,
     maxWidth: 0,
-    pixelOffset: new window.google.maps.Size(0, 0),
     zIndex: null,
-    boxStyle: {
-      padding: '0px 0px 0px 0px',
-      width: '200px',
-      height: '40px'
-    },
     closeBoxURL: '',
     infoBoxClearance: new window.google.maps.Size(1, 1),
     isHidden: false,
     pane: 'floatPane',
     enableEventPropagation: false,
+    alignBottom: false,
+  };
+
+  const CNGOptions = {
+    alignBottom: true,
+    pixelOffset: new window.google.maps.Size( (-1) * (TOOLTIP_WIDTH / 2), -18),
+    boxStyle: {
+      padding: '0px 0px 0px 0px',
+      width: `${TOOLTIP_WIDTH}px`,
+    }
+  };
+  const CCWOptions = {
+    alignBottom: true,
+    pixelOffset: new window.google.maps.Size( (-1) * (TOOLTIP_WIDTH / 2), -18),
+    boxStyle: {
+      padding: '0px 0px 0px 0px',
+      width: `${TOOLTIP_WIDTH}px`,
+    }
+  };
+  const clusterOptions = {
+    alignBottom: false,
+    pixelOffset: new window.google.maps.Size(0, 0),
+    boxStyle: {
+      padding: '0px 0px 0px 0px',
+      width: '200px',
+    }
   };
 
   // Expose tooltip constructor for single instance of tooltip
@@ -30,6 +51,7 @@
     };
 
     this.openOnCluster = function ( cluster ) {
+      console.log('openOnCluster');
       const clusterNodes = cluster.getMarkers().map(( marker ) => marker.node);
 
       // close existing tooltip
@@ -71,22 +93,29 @@
       this.close();
 
       // create and show new tooltip
-      this.toolTip = new window.InfoBox(infoBoxOptions);
+      this.toolTip = new window.InfoBox(
+        Object.assign({}, infoBoxOptions, clusterOptions)
+      );
       // spawn the tooltip on the first node in the cluster's position
       this.toolTip.setPosition(
-        new window.google.maps.LatLng(clusterNodes[0].coords.lat, clusterNodes[0].coords.lng)
+        new window.google.maps.LatLng(cluster.getCenter().lat(), cluster.getCenter().lng())
       );
       this.toolTip.open(window.googleMap);
 
       // Setup tooltip events
       const tooltipContainer = toolTipWrap.querySelector('.tableList');
-      tooltipContainer.addEventListener('mouseover', () => {
+      tooltipContainer.addEventListener('mouseenter', () => {
+        console.log('tooltip::mouseenter');
         mouseState.mouseWithinTooltip = true;
       });
       tooltipContainer.addEventListener('mouseleave', function () {
+        console.log('tooltip::mouseleave');
         mouseState.mouseWithinTooltip = false;
         setTimeout(() => {
-          if ( mouseState.mouseWithinMarker ) {
+          if (
+            mouseState.mouseWithinMarker || // mouse from tooltip to marker
+            mouseState.mouseWithinCluster // mouse from tooltip to marker
+          ) {
             return;
           }
           _this.close();
@@ -96,12 +125,17 @@
     };
 
     this.openOnMarker = function ( node ) {
-      const toolTipTemplate = ( node.type === nodeTypes.CNG
-        ? window.templates.CNGToolTip
-        : node.type === nodeTypes.CCW
-          ? window.templates.CCWToolTip
-          : null
-      );
+      console.log('openOnMarker');
+      let toolTipTemplate = null;
+      let toolTipOptions = null;
+      if ( node.type === nodeTypes.CNG ) {
+        toolTipTemplate = window.templates.CNGToolTip;
+        toolTipOptions = CNGOptions;
+      }
+      if ( node.type === nodeTypes.CCW ) {
+        toolTipTemplate = window.templates.CCWToolTip;
+        toolTipOptions = CCWOptions;
+      }
 
       const toolTipHtml = toolTipTemplate( node );
 
@@ -114,7 +148,9 @@
       this.close();
 
       // create and show new tooltip
-      this.toolTip = new window.InfoBox(infoBoxOptions);
+      this.toolTip = new window.InfoBox(
+        Object.assign({}, infoBoxOptions, toolTipOptions),
+      );
       this.toolTip.open(window.googleMap, node.marker);
 
       const tooltipContainer = toolTipWrap.querySelector('.tooltip');
@@ -122,18 +158,26 @@
 
       // Setup tooltip events
       tooltipX.addEventListener('click', (event) => {
+        console.log('tooltip::click');
         event.preventDefault();
         event.stopPropagation();
         _this.close();
       });
 
       tooltipContainer.addEventListener('mouseover', () => {
+        console.log('tooltip::mouseover');
         mouseState.mouseWithinTooltip = true;
       });
       tooltipContainer.addEventListener('mouseleave', function () {
+        console.log('tooltip::mouseleave');
+
+        // mouseState.mouseWithinCluster
+
         mouseState.mouseWithinTooltip = false;
         setTimeout(() => {
-          if ( mouseState.mouseWithinMarker ) {
+          if (
+            mouseState.mouseWithinMarker // mouse from tooltip to marker
+          ) {
             return;
           }
           _this.close();

@@ -223,7 +223,7 @@
       mapToolTip.toggleMarker( node );
     });
     marker.addListener('mouseover', () => {
-      // console.log('marker::mouseover');
+      console.log('marker::mouseover');
       mouseState.mouseWithinMarker = node;
       if ( mouseState.mouseWithinCluster ) { // mouse in while inside cluster, ignore event
         return;
@@ -231,7 +231,7 @@
       mapToolTip.openOnMarker( node );
     });
     marker.addListener('mouseout', () => {
-      // console.log('marker::mouseout');
+      console.log('marker::mouseout');
       mouseState.mouseWithinMarker = false;
       setTimeout(() => {
         if (
@@ -268,16 +268,18 @@
 
     // Setup events, for tooltip
     window.google.maps.event.addListener(markerClusters, 'click', function () {
-      // console.log('clusterMarker::click');
+      console.log('clusterMarker::click');
       mapToolTip.close();
     });
     window.google.maps.event.addListener(markerClusters, 'mouseover', function (cluster) {
-      // console.log('clusterMarker::mouseover');
+      console.log('clusterMarker::mouseover');
       mouseState.mouseWithinCluster = cluster;
-      mapToolTip.openOnCluster(cluster);
+      if ( !mapToolTip.toolTip ) {
+        mapToolTip.openOnCluster(cluster);
+      }
     });
     window.google.maps.event.addListener(markerClusters, 'mouseout', function () {
-      // console.log('clusterMarker::mouseout');
+      console.log('clusterMarker::mouseout');
       mouseState.mouseWithinCluster = false;
       setTimeout(() => {
         if ( mouseState.mouseWithinTooltip ) {
@@ -314,18 +316,18 @@
   function initialize() {
     createGoogleMap();
 
-    const alarmDropDown = new window.AlarmDropDown({
-      $trigger: document.querySelector('.navbar__alarmsTrigger'),
-      $container: document.querySelector('.navbar__alarms .alarmDropdown'),
-      template: window.templates.tableList,
-    });
-    alarmDropDown.initialize();
+    // const alarmDropDown = new window.AlarmDropDown({
+    //   $trigger: document.querySelector('.navbar__alarmsTrigger'),
+    //   $container: document.querySelector('.navbar__alarms .alarmDropdown'),
+    //   template: window.templates.tableList,
+    // });
+    // alarmDropDown.initialize();
 
-    // populate alarms
-    loadAlarms().then(( alarmData ) => {
-      alarmDropDown.updateAlarmData( alarmData );
-      alarmDropDown.updateAlarmCount();
-    });
+    // // populate alarms
+    // loadAlarms().then(( alarmData ) => {
+    //   alarmDropDown.updateAlarmData( alarmData );
+    //   alarmDropDown.updateAlarmCount();
+    // });
 
     const mapToolTip = new window.MapToolTip({
       nodeTypes: nodeTypes,
