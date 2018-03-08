@@ -39,11 +39,7 @@
       }
     };
 
-    this.open = function () {
-      this.mouseWithinTrigger = true;
-      this.render();
-      this.$container.style.display = '';
-
+    this.setupDropdownEvents = function () {
       const $dropdown = this.$container.querySelector('.tableList');
       const $tooltipX = this.$container.querySelector('.tooltip__X');
 
@@ -61,6 +57,13 @@
           this.close();
         }, mouseConfig.MOUSEOUT_TIMER_DELAY_MS );
       });
+    };
+
+    this.open = function () {
+      this.mouseWithinTrigger = true;
+      this.renderDropDown();
+      this.setupDropdownEvents();
+      this.$container.style.display = '';
     };
 
     this.close = function () {
@@ -90,7 +93,8 @@
       else if ( !this.isOpen() ) {
         this.teardownEvents();
       }
-      this.render();
+      this.renderDropDown();
+      this.setupDropdownEvents();
     };
 
     this.updateAlarmCount = function () {
@@ -106,7 +110,7 @@
       }
     };
 
-    this.render = function () {
+    this.renderDropDown = function () {
       // Update alarms dropdown view
       this.$container.innerHTML = window.templates.tableList({
         nodes: this.state.alarmHistory,

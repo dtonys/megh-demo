@@ -330,13 +330,13 @@
       alarmDropDown.updateAlarmCount();
     });
     // Fire one one second intervals
-    // window.setInterval(() => {
-    //   // populate alarms
-    //   loadAlarms().then(( alarmData ) => {
-    //     alarmDropDown.updateAlarmData(alarmData);
-    //     alarmDropDown.updateAlarmCount();
-    //   });
-    // }, 1000);
+    window.setInterval(() => {
+      // populate alarms
+      loadAlarms().then(( alarmData ) => {
+        alarmDropDown.updateAlarmData(alarmData);
+        alarmDropDown.updateAlarmCount();
+      });
+    }, 1000);
 
     const mapToolTip = new window.MapToolTip({
       nodeTypes: nodeTypes,
