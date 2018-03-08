@@ -51,7 +51,6 @@
     };
 
     this.openOnCluster = function ( cluster ) {
-      // console.log('openOnCluster');
       const clusterNodes = cluster.getMarkers().map(( marker ) => marker.node);
 
       // close existing tooltip
@@ -102,9 +101,22 @@
       );
       this.toolTip.open(window.googleMap);
 
+
       // Setup tooltip events
       const tooltipContainer = toolTipWrap.querySelector('.tableList');
       const tooltipX = toolTipWrap.querySelector('.tooltip__X');
+      const tableListHead = toolTipWrap.querySelector('.tableList__head');
+      const tableListContent = toolTipWrap.querySelector('.tableList__content');
+
+      // Add a scrollbar if the # of items exceedes threshhold
+      if ( clusterNodes.length > 10 ) {
+        tableListHead.style.overflowY = 'scroll';
+        tableListContent.style.overflowY = 'scroll';
+      }
+      else {
+        tableListHead.style.overflowY = 'auto';
+        tableListContent.style.overflowY = 'auto';
+      }
 
       // Setup tooltip events
       tooltipX.addEventListener('click', (event) => {
@@ -179,8 +191,6 @@
       });
       tooltipContainer.addEventListener('mouseleave', function () {
         // console.log('tooltip::mouseleave');
-
-        // mouseState.mouseWithinCluster
 
         mouseState.mouseWithinTooltip = false;
         setTimeout(() => {

@@ -13,10 +13,6 @@
       num_alarms: 0,
     };
 
-    this.initialize = function () {
-      this.setupEvents();
-    };
-
     this.isOpen = function () {
       return this.$container.style.display === '';
     };

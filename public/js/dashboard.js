@@ -322,7 +322,6 @@
       template: window.templates.tableList,
       mouseConfig: mouseConfig,
     });
-    alarmDropDown.initialize();
 
     // Fire once on page load
     loadAlarms().then(( alarmData ) => {
