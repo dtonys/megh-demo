@@ -11,6 +11,7 @@ window.templates.tableList = _.template(`
         <i class="fas fa-exclamation-triangle"></i>
         Alarms
       <% } %>
+      <img class="tooltip__X" src="img/icons/close-popup-icon.svg" />
     </div>
     <div class="tableList__head" >
       <div class="tableList__row--darker" >

@@ -104,6 +104,15 @@
 
       // Setup tooltip events
       const tooltipContainer = toolTipWrap.querySelector('.tableList');
+      const tooltipX = toolTipWrap.querySelector('.tooltip__X');
+
+      // Setup tooltip events
+      tooltipX.addEventListener('click', (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        _this.close();
+      });
+
       tooltipContainer.addEventListener('mouseenter', () => {
         // console.log('tooltip::mouseenter');
         mouseState.mouseWithinTooltip = true;

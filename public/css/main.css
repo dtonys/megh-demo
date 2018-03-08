@@ -223,6 +223,7 @@
 .tooltip__X {
   float: right;
   margin-top: 5px;
+  cursor: pointer;
 }
 .tooltip__status {
   font-weight: 600;
@@ -257,6 +258,7 @@
 }
 .navbar__alarmsTrigger {
   cursor: pointer;
+  padding-bottom: 5px;
 }
 
 .alarmDropdown {

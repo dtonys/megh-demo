@@ -1,8 +1,12 @@
 (function () {
 
   window.AlarmDropDown = function ( options ) {
+    const mouseConfig = options.mouseConfig;
+
     this.$trigger = options.$trigger;
     this.$container = options.$container;
+
+    this.mouseWithinDropdown = false;
 
     this.state = {
       alarmHistory: [],
@@ -18,29 +22,61 @@
     };
 
     this.setupEvents = function () {
-      if ( !this.triggerListener ) {
-        this.triggerListener = this.toggle.bind(this);
-        this.$trigger.addEventListener('click', this.triggerListener );
+      if ( !this.boundOpen && !this.boundClose ) {
+        this.boundOpen = this.open.bind(this);
+        this.boundClose = this.closeWithDelay.bind(this);
+        this.$trigger.addEventListener('mouseenter', this.boundOpen );
+        this.$trigger.addEventListener('mouseleave', this.boundClose );
       }
     };
 
     this.teardownEvents = function () {
-      this.$trigger.removeEventListener('click', this.triggerListener);
-      this.triggerListener = null;
-    };
-
-    this.toggle = function () {
-      this.isOpen() ? this.close() : this.open();
+      if ( this.boundOpen && this.boundClose ) {
+        this.$trigger.removeEventListener('mouseenter', this.boundOpen );
+        this.$trigger.removeEventListener('mouseleave', this.boundClose );
+        this.boundOpen = null;
+        this.boundClose = null;
+      }
     };
 
     this.open = function () {
+      this.mouseWithinTrigger = true;
       this.render();
       this.$container.style.display = '';
+
+      const $dropdown = this.$container.querySelector('.tableList');
+      const $tooltipX = this.$container.querySelector('.tooltip__X');
+
+      $tooltipX.addEventListener( 'click', this.close.bind(this) );
+      $dropdown.addEventListener( 'mouseenter', () => {
+        this.mouseWithinDropdown = true;
+        // console.log('$dropdown::mouseenter');
+        // console.log(`this.mouseWithinDropdown:: ${this.mouseWithinDropdown}`);
+      });
+      $dropdown.addEventListener( 'mouseleave', () => {
+        this.mouseWithinDropdown = false;
+        // console.log('$dropdown::mouseleave');
+        window.setTimeout(() => {
+          if ( this.mouseWithinTrigger ) return;
+          this.close();
+        }, mouseConfig.MOUSEOUT_TIMER_DELAY_MS );
+      });
     };
 
     this.close = function () {
+      // close
       this.$container.style.display = 'none';
       this.$container.innerHTML = '';
+    };
+
+    this.closeWithDelay = function () {
+      this.mouseWithinTrigger = false;
+      window.setTimeout(() => {
+        // console.log('this.close');
+        // console.log(`this.mouseWithinDropdown:: ${this.mouseWithinDropdown}`);
+        if ( this.mouseWithinDropdown === true ) return;
+        this.close();
+      }, mouseConfig.MOUSEOUT_TIMER_DELAY_MS );
     };
 
     this.updateAlarmData = function ( alarmData ) {
