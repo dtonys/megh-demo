@@ -51,7 +51,7 @@
     };
 
     this.openOnCluster = function ( cluster ) {
-      console.log('openOnCluster');
+      // console.log('openOnCluster');
       const clusterNodes = cluster.getMarkers().map(( marker ) => marker.node);
 
       // close existing tooltip
@@ -105,11 +105,11 @@
       // Setup tooltip events
       const tooltipContainer = toolTipWrap.querySelector('.tableList');
       tooltipContainer.addEventListener('mouseenter', () => {
-        console.log('tooltip::mouseenter');
+        // console.log('tooltip::mouseenter');
         mouseState.mouseWithinTooltip = true;
       });
       tooltipContainer.addEventListener('mouseleave', function () {
-        console.log('tooltip::mouseleave');
+        // console.log('tooltip::mouseleave');
         mouseState.mouseWithinTooltip = false;
         setTimeout(() => {
           if (
@@ -125,7 +125,7 @@
     };
 
     this.openOnMarker = function ( node ) {
-      console.log('openOnMarker');
+      // console.log('openOnMarker');
       let toolTipTemplate = null;
       let toolTipOptions = null;
       if ( node.type === nodeTypes.CNG ) {
@@ -158,18 +158,18 @@
 
       // Setup tooltip events
       tooltipX.addEventListener('click', (event) => {
-        console.log('tooltip::click');
+        // console.log('tooltip::click');
         event.preventDefault();
         event.stopPropagation();
         _this.close();
       });
 
       tooltipContainer.addEventListener('mouseover', () => {
-        console.log('tooltip::mouseover');
+        // console.log('tooltip::mouseover');
         mouseState.mouseWithinTooltip = true;
       });
       tooltipContainer.addEventListener('mouseleave', function () {
-        console.log('tooltip::mouseleave');
+        // console.log('tooltip::mouseleave');
 
         // mouseState.mouseWithinCluster
 

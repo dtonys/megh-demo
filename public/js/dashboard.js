@@ -5,7 +5,7 @@
   const nodeTypes = {
     DATACENTER: 'NODE_TYPE_DATACENTER',
     CNG: 'NODE_TYPE_CNG',
-      CCW: 'NODE_TYPE_CCW'
+    CCW: 'NODE_TYPE_CCW'
   };
 
   const BASIC_AUTH_SECRET = 'Basic TWVnaE5ldHdvcmtzOm5qZTk3NnhzdzQ1Mw==';
@@ -223,7 +223,7 @@
       mapToolTip.toggleMarker( node );
     });
     marker.addListener('mouseover', () => {
-      console.log('marker::mouseover');
+      // console.log('marker::mouseover');
       mouseState.mouseWithinMarker = node;
       if ( mouseState.mouseWithinCluster ) { // mouse in while inside cluster, ignore event
         return;
@@ -231,7 +231,7 @@
       mapToolTip.openOnMarker( node );
     });
     marker.addListener('mouseout', () => {
-      console.log('marker::mouseout');
+      // console.log('marker::mouseout');
       mouseState.mouseWithinMarker = false;
       setTimeout(() => {
         if (
@@ -268,18 +268,18 @@
 
     // Setup events, for tooltip
     window.google.maps.event.addListener(markerClusters, 'click', function () {
-      console.log('clusterMarker::click');
+      // console.log('clusterMarker::click');
       mapToolTip.close();
     });
     window.google.maps.event.addListener(markerClusters, 'mouseover', function (cluster) {
-      console.log('clusterMarker::mouseover');
+      // console.log('clusterMarker::mouseover');
       mouseState.mouseWithinCluster = cluster;
       if ( !mapToolTip.toolTip ) {
         mapToolTip.openOnCluster(cluster);
       }
     });
     window.google.maps.event.addListener(markerClusters, 'mouseout', function () {
-      console.log('clusterMarker::mouseout');
+      // console.log('clusterMarker::mouseout');
       mouseState.mouseWithinCluster = false;
       setTimeout(() => {
         if ( mouseState.mouseWithinTooltip ) {
@@ -323,12 +323,20 @@
     });
     alarmDropDown.initialize();
 
-    // populate alarms
+    // Fire once on page load
     loadAlarms().then(( alarmData ) => {
       alarmDropDown.updateAlarmData( alarmData );
       alarmDropDown.updateAlarmCount();
     });
- 
+    // Fire one one second intervals
+    window.setInterval(() => {
+      // populate alarms
+      loadAlarms().then(( alarmData ) => {
+        alarmDropDown.updateAlarmData(alarmData);
+        alarmDropDown.updateAlarmCount();
+      });
+    }, 1000);
+
     const mapToolTip = new window.MapToolTip({
       nodeTypes: nodeTypes,
       mouseState: mouseState,

@@ -18,7 +18,15 @@
     };
 
     this.setupEvents = function () {
-      this.$trigger.addEventListener('click', this.toggle.bind(this));
+      if ( !this.triggerListener ) {
+        this.triggerListener = this.toggle.bind(this);
+        this.$trigger.addEventListener('click', this.triggerListener );
+      }
+    };
+
+    this.teardownEvents = function () {
+      this.$trigger.removeEventListener('click', this.triggerListener);
+      this.triggerListener = null;
     };
 
     this.toggle = function () {
@@ -38,6 +46,15 @@
     this.updateAlarmData = function ( alarmData ) {
       this.state.alarmHistory = alarmData.alarms[0].alarm_history;
       this.state.num_alarms = alarmData.alarms[0].num_alarms;
+
+      // update events
+      if ( this.state.num_alarms > 0 ) {
+        this.setupEvents();
+      }
+      else if ( !this.isOpen() ) {
+        this.teardownEvents();
+      }
+      this.render();
     };
 
     this.updateAlarmCount = function () {
