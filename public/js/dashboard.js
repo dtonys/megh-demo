@@ -5,7 +5,7 @@
   const nodeTypes = {
     DATACENTER: 'NODE_TYPE_DATACENTER',
     CNG: 'NODE_TYPE_CNG',
-    CCW: 'NODE_TYPE_CCW'
+      CCW: 'NODE_TYPE_CCW'
   };
 
   const BASIC_AUTH_SECRET = 'Basic TWVnaE5ldHdvcmtzOm5qZTk3NnhzdzQ1Mw==';
@@ -328,7 +328,7 @@
       alarmDropDown.updateAlarmData( alarmData );
       alarmDropDown.updateAlarmCount();
     });
-
+ 
     const mapToolTip = new window.MapToolTip({
       nodeTypes: nodeTypes,
       mouseState: mouseState,

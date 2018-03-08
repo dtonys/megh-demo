@@ -5,7 +5,7 @@
       "script": "app.js",
       "env": {
         "NODE_ENV": "production",
-        "PORT": 80
+        "PORT": 8080
       },
       "exec_mode" : "cluster",
       "instances": "max"
