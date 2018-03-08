@@ -323,19 +323,24 @@
       mouseConfig: mouseConfig,
     });
 
+    // Load alarms once per second, waiting for the prev request to finish
+    function pollAlarms() {
+      window.setTimeout(() => {
+        // populate alarms
+        loadAlarms().then(( alarmData ) => {
+          alarmDropDown.updateAlarmData(alarmData);
+          alarmDropDown.updateAlarmCount();
+          pollAlarms();
+        });
+      }, 1000);
+    }
+
     // Fire once on page load
     loadAlarms().then(( alarmData ) => {
       alarmDropDown.updateAlarmData( alarmData );
       alarmDropDown.updateAlarmCount();
+      pollAlarms();
     });
-    // Fire one one second intervals
-    window.setInterval(() => {
-      // populate alarms
-      loadAlarms().then(( alarmData ) => {
-        alarmDropDown.updateAlarmData(alarmData);
-        alarmDropDown.updateAlarmCount();
-      });
-    }, 1000);
 
     const mapToolTip = new window.MapToolTip({
       nodeTypes: nodeTypes,
