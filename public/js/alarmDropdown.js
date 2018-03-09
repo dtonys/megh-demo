@@ -79,7 +79,7 @@
     };
 
     this.updateAlarmData = function ( alarmData ) {
-      this.state.alarmHistory = alarmData.alarms[0].alarm_history;
+      this.state.alarmHistory = alarmData.alarms[0].alarm_history || [];
       this.state.num_alarms = alarmData.alarms[0].num_alarms;
 
       // update events
