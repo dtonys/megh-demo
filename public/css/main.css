@@ -119,6 +119,87 @@
   margin-bottom: 15px;
   background: #2c5013;
 }
+.tooltipV2 {
+  width: 500px;
+  height: 308px;
+  background: white;
+  box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.2);
+  display: flex;
+}
+.tooltipV2__left {
+  width: 28%;
+  background: #f5f5f5;
+  padding: 15px;
+  box-shadow: 1px 0 2px 0 rgba(0, 0, 0, 0.2);
+}
+.tooltipV2__right {
+  width: 72%;
+  background: #ffffff;
+  padding: 15px;
+}
+.tooltipV2__title {
+  font-size: 16px;
+  padding-left: 25px;
+  padding-bottom: 15px;
+  font-family: SFSemibold;
+}
+.tooltipV2__headIcon--branch {
+  position: absolute;
+  top: 14px;
+  left: 16px;
+  width: 17px;
+}
+.tooltipV2__itemLabel {
+  font-family: SFSemibold;
+  white-space: nowrap;
+}
+.tooltipV2__itemContent,
+.tooltipV2__listItemContent {
+  font-size: 13px;
+}
+.tooltipV2__itemWrap {
+  padding-bottom: 10px;
+}
+.tooltipV2__flexWrap {
+  display: flex;
+}
+.tooltipV2__chartTitle {
+  font-size: 14px;
+}
+
+.linkIcon--black,
+.linkIcon--blue {
+  position: relative;
+  top: 2px;
+  margin-right: 20px;
+}
+.linkIcon__circle {
+  width: 8px;
+  height: 8px;
+  border-radius: 8px;
+  background: black;
+}
+.linkIcon__line {
+  position: absolute;
+  top: 3px;
+  left: -3px;
+  width: 14px;
+  border-top: solid black 2px;
+}
+.linkIcon--blue .linkIcon__circle {
+  background: #1bc2e2;
+}
+.linkIcon--blue .linkIcon__line {
+  border-top: solid #1bc2e2 2px;
+}
+.linkIcon--black .linkIcon__circle {
+  background: #000;
+}
+.linkIcon--black .linkIcon__line {
+  border-top: solid #000 2px;
+}
+
+
 .tooltip,
 .clusterTooltip {
   border: solid #CCC 1px;
@@ -253,12 +334,20 @@
   background: #29ca1e;
 }
 
+.statusDot--small {
+  width: 12px;
+  height: 12px;
+  position: relative;
+  top: 1px;
+}
+
 .navbar__alarms {
   position: relative;
 }
 .navbar__alarmsTrigger {
   cursor: pointer;
   padding-bottom: 5px;
+  font-size: 18px;
 }
 
 .alarmDropdown {

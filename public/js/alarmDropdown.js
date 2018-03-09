@@ -42,12 +42,9 @@
       $tooltipX.addEventListener( 'click', this.close.bind(this) );
       $dropdown.addEventListener( 'mouseenter', () => {
         this.mouseWithinDropdown = true;
-        // console.log('$dropdown::mouseenter');
-        // console.log(`this.mouseWithinDropdown:: ${this.mouseWithinDropdown}`);
       });
       $dropdown.addEventListener( 'mouseleave', () => {
         this.mouseWithinDropdown = false;
-        // console.log('$dropdown::mouseleave');
         window.setTimeout(() => {
           if ( this.mouseWithinTrigger ) return;
           this.close();
@@ -71,8 +68,6 @@
     this.closeWithDelay = function () {
       this.mouseWithinTrigger = false;
       window.setTimeout(() => {
-        // console.log('this.close');
-        // console.log(`this.mouseWithinDropdown:: ${this.mouseWithinDropdown}`);
         if ( this.mouseWithinDropdown === true ) return;
         this.close();
       }, mouseConfig.MOUSEOUT_TIMER_DELAY_MS );

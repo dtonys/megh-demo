@@ -73,6 +73,90 @@ window.templates.CNGToolTip = _.template(`
   </div>
 `);
 
+window.templates.tooltipV2 = _.template(`
+  <div class="tooltipV2" >
+    <div class="tooltipV2__left" >
+      <div class="tooltipV2__title" >
+        <img class="tooltipV2__headIcon--branch" src="img/icons/ccw-black.svg" />
+        CCW
+      </div>
+      <% [
+          { name: 'Name', value: 'Starbucks', type: 'text' },
+          { name: 'Region', value: 'San Jose', type: 'text' },
+          { name: 'Alarm Status', value: 'Major', type: 'alarmStatus' },
+          { name: 'Branches Connected', value: '99', type: 'text' },
+          {
+            name: 'Bandwidth Utilization',
+            value: ['Netflix', 'iTunes', 'Apple.com', 'YouTube', 'Facebook'],
+            type: 'list'
+          },
+        ].forEach(function(item){ %>
+          <div class="tooltipV2__itemWrap" >
+            <div class="tooltipV2__itemLabel" > <%= item.name %> </div>
+            <div class="tooltipV2__itemContent" >
+            <% if ( item.type === 'text' ) { %>
+               <%= item.value %>
+            <% } %>
+            <% if ( item.type === 'alarmStatus' ) { %>
+              <div style="width: 9px; height: 9px;" class="statusDot--<%= item.value %> statusDot--small"></div>
+              <%= item.value %>
+            <% } %>
+            <% if ( item.type === 'list' ) { %>
+              <% item.value.forEach(function( listItem ) { %>
+                <div class="tooltipV2__listItemContent" ><%= listItem %></div>
+              <% }) %>
+            <% } %>
+            </div>
+          </div>
+      <% }) %>
+    </div>
+    <div class="tooltipV2__right">
+      <div class="tooltipV2__flexWrap" >
+        <div class="linkIcon--blue" >
+          <div class="linkIcon__circle" ></div>
+          <div class="linkIcon__line" ></div>
+        </div>
+        <div> Up Link Throughput </div>
+        <div style="margin-right: 20px;" ></div>
+        <div class="linkIcon--black" >
+          <div class="linkIcon__circle" ></div>
+          <div class="linkIcon__line" ></div>
+        </div>
+        <div> Down Link Throughput </div>
+      </div>
+      <div style="margin-bottom: 10px;" ></div>
+      <div class="tooltipV2__chart" >
+        <div class="tooltipV2__flexWrap" >
+          <div class="tooltipV2__chartTitle"> Link1 </div>
+          <div style="margin-right: 20px;" ></div>
+          <div class="tooltipV2__chartStatus">
+            <div style="width: 9px; height: 9px;" class="statusDot--Clear statusDot--small"></div>
+            Clear
+          </div>
+        </div>
+        <div class="tooltipV2__chartBody" >
+          <img src="http://via.placeholder.com/320x48" />
+        </div>
+      </div>
+      <div style="margin-bottom: 10px;" ></div>
+      <div class="tooltipV2__chart" >
+        <div class="tooltipV2__flexWrap" >
+          <div class="tooltipV2__chartTitle"> Link1 </div>
+          <div style="margin-right: 20px;" ></div>
+          <div class="tooltipV2__chartStatus">
+            <div style="width: 9px; height: 9px;" class="statusDot--Clear statusDot--small"></div>
+            Clear
+          </div>
+        </div>
+        <div class="tooltipV2__chartBody" >
+          <img src="http://via.placeholder.com/320x48" />
+        </div>
+      </div>
+    </div>
+  </div>
+`);
+
+
 window.templates.CCWToolTip = _.template(`
   <div class="tooltip" >
     <a href="node-summary?ip=<%= ip_address %>" >

@@ -190,7 +190,7 @@
     window.googleMap = new window.google.maps.Map(mapRegionDOM, options);
   }
 
-  function addMarker( node, mapToolTip ) {
+  function addMarker( node, mapToolTip, index ) {
     const coords = node.coords;
     // create marker
     const marker = new window.google.maps.Marker({
@@ -214,6 +214,8 @@
     // don't show tooltip for HQ
     if ( node.type === nodeTypes.DATACENTER ) return marker;
 
+    if ( index === 3 ) mapToolTip.openOnMarker( node );
+
     // Setup events, for tooltip
     marker.addListener('click', () => {
       if ( mouseState.mouseWithinMarker ) {
@@ -223,7 +225,6 @@
       mapToolTip.toggleMarker( node );
     });
     marker.addListener('mouseover', () => {
-      // console.log('marker::mouseover');
       mouseState.mouseWithinMarker = node;
       if ( mouseState.mouseWithinCluster ) { // mouse in while inside cluster, ignore event
         return;
@@ -231,7 +232,6 @@
       mapToolTip.openOnMarker( node );
     });
     marker.addListener('mouseout', () => {
-      // console.log('marker::mouseout');
       mouseState.mouseWithinMarker = false;
       setTimeout(() => {
         if (
@@ -268,18 +268,15 @@
 
     // Setup events, for tooltip
     window.google.maps.event.addListener(markerClusters, 'click', function () {
-      // console.log('clusterMarker::click');
       mapToolTip.close();
     });
     window.google.maps.event.addListener(markerClusters, 'mouseover', function (cluster) {
-      // console.log('clusterMarker::mouseover');
       mouseState.mouseWithinCluster = cluster;
       if ( !mapToolTip.toolTip ) {
         mapToolTip.openOnCluster(cluster);
       }
     });
     window.google.maps.event.addListener(markerClusters, 'mouseout', function () {
-      // console.log('clusterMarker::mouseout');
       mouseState.mouseWithinCluster = false;
       setTimeout(() => {
         if ( mouseState.mouseWithinTooltip ) {
@@ -325,14 +322,14 @@
 
     // Load alarms once per second, waiting for the prev request to finish
     function pollAlarms() {
-      window.setTimeout(() => {
-        // populate alarms
-        loadAlarms().then(( alarmData ) => {
-          alarmDropDown.updateAlarmData(alarmData);
-          alarmDropDown.updateAlarmCount();
-          pollAlarms();
-        });
-      }, 1000);
+      // window.setTimeout(() => {
+      //   // populate alarms
+      //   loadAlarms().then(( alarmData ) => {
+      //     alarmDropDown.updateAlarmData(alarmData);
+      //     alarmDropDown.updateAlarmCount();
+      //     pollAlarms();
+      //   });
+      // }, 1000);
     }
 
     // Fire once on page load
@@ -347,8 +344,8 @@
       mouseState: mouseState,
       mouseConfig: mouseConfig,
     });
-    const markers = nodes.map(( node ) => {
-      return addMarker(node, mapToolTip);
+    const markers = nodes.map(( node, index ) => {
+      return addMarker(node, mapToolTip, index);
     });
     addClusterer(markers, mapToolTip);
   }

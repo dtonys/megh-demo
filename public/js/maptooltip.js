@@ -1,5 +1,5 @@
 (function () {
-  const TOOLTIP_WIDTH = 400;
+  const TOOLTIP_WIDTH = 500;
   const infoBoxOptions = {
     disableAutoPan: false,
     maxWidth: 0,
@@ -28,6 +28,16 @@
       width: `${TOOLTIP_WIDTH}px`,
     }
   };
+
+  const tooltipV2 = {
+    alignBottom: true,
+    pixelOffset: new window.google.maps.Size( (-1) * (TOOLTIP_WIDTH / 2), -18),
+    boxStyle: {
+      padding: '0px 0px 0px 0px',
+      width: '500px',
+    }
+  };
+
   const clusterOptions = {
     alignBottom: false,
     pixelOffset: new window.google.maps.Size(0, 0),
@@ -147,16 +157,19 @@
 
     this.openOnMarker = function ( node ) {
       // console.log('openOnMarker');
-      let toolTipTemplate = null;
-      let toolTipOptions = null;
-      if ( node.type === nodeTypes.CNG ) {
-        toolTipTemplate = window.templates.CNGToolTip;
-        toolTipOptions = CNGOptions;
-      }
-      if ( node.type === nodeTypes.CCW ) {
-        toolTipTemplate = window.templates.CCWToolTip;
-        toolTipOptions = CCWOptions;
-      }
+      // let toolTipTemplate = null;
+      // let toolTipOptions = null;
+      // if ( node.type === nodeTypes.CNG ) {
+      //   toolTipTemplate = window.templates.CNGToolTip;
+      //   toolTipOptions = CNGOptions;
+      // }
+      // if ( node.type === nodeTypes.CCW ) {
+      //   toolTipTemplate = window.templates.CCWToolTip;
+      //   toolTipOptions = CCWOptions;
+      // }
+
+      const toolTipTemplate = window.templates.tooltipV2;
+      const toolTipOptions = tooltipV2;
 
       const toolTipHtml = toolTipTemplate( node );
 
@@ -174,40 +187,41 @@
       );
       this.toolTip.open(window.googleMap, node.marker);
 
-      const tooltipContainer = toolTipWrap.querySelector('.tooltip');
-      const tooltipX = toolTipWrap.querySelector('.tooltip__X');
+      // const tooltipContainer = toolTipWrap.querySelector('.tooltip');
+      // const tooltipX = toolTipWrap.querySelector('.tooltip__X');
 
-      // Setup tooltip events
-      tooltipX.addEventListener('click', (event) => {
-        // console.log('tooltip::click');
-        event.preventDefault();
-        event.stopPropagation();
-        _this.close();
-      });
+      // // Setup tooltip events
+      // tooltipX.addEventListener('click', (event) => {
+      //   // console.log('tooltip::click');
+      //   event.preventDefault();
+      //   event.stopPropagation();
+      //   _this.close();
+      // });
 
-      tooltipContainer.addEventListener('mouseover', () => {
-        // console.log('tooltip::mouseover');
-        mouseState.mouseWithinTooltip = true;
-      });
-      tooltipContainer.addEventListener('mouseleave', function () {
-        // console.log('tooltip::mouseleave');
+      // tooltipContainer.addEventListener('mouseover', () => {
+      //   // console.log('tooltip::mouseover');
+      //   mouseState.mouseWithinTooltip = true;
+      // });
+      // tooltipContainer.addEventListener('mouseleave', function () {
+      //   // console.log('tooltip::mouseleave');
 
-        mouseState.mouseWithinTooltip = false;
-        setTimeout(() => {
-          if (
-            mouseState.mouseWithinMarker // mouse from tooltip to marker
-          ) {
-            return;
-          }
-          _this.close();
-        }, mouseConfig.MOUSEOUT_TIMER_DELAY_MS);
-      });
+      //   mouseState.mouseWithinTooltip = false;
+      //   setTimeout(() => {
+      //     if (
+      //       mouseState.mouseWithinMarker // mouse from tooltip to marker
+      //     ) {
+      //       return;
+      //     }
+      //     _this.close();
+      //   }, mouseConfig.MOUSEOUT_TIMER_DELAY_MS);
+      // });
+
     };
 
     this.close = function () {
       if ( this.toolTip ) {
-        this.toolTip.close();
-        this.toolTip = null;
+        // this.toolTip.close();
+        // this.toolTip = null;
       }
     };
   };
