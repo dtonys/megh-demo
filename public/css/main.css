@@ -75,6 +75,9 @@
   display: inline-block;
   vertical-align: top;
   text-align: center;
+  position: relative;
+  bottom: 2px;
+  left: 2px;
 }
 .navbar__alarmsIconText {
   color: white;
