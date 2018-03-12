@@ -1687,6 +1687,10 @@ detect-newline@2.X:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/detect-newline/-/detect-newline-2.1.0.tgz#f41f1c10be4b00e87b5f13da680759f2c5bfd3e2"
 
+diff-match-patch@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/diff-match-patch/-/diff-match-patch-1.0.0.tgz#1cc3c83a490d67f95d91e39f6ad1f2e086b63048"
+
 doctrine@^2.0.2, doctrine@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/doctrine/-/doctrine-2.1.0.tgz#5cd01fc101621b42c4cd7f5d1a66243716d3f39d"
@@ -3308,6 +3312,13 @@ json-stringify-safe@^5.0, json-stringify-safe@~5.0.1:
 json5@^0.5.1:
   version "0.5.1"
   resolved "https://registry.yarnpkg.com/json5/-/json5-0.5.1.tgz#1eade7acc012034ad84e2396767ead9fa5495821"
+
+jsondiffpatch@^0.3.7:
+  version "0.3.7"
+  resolved "https://registry.yarnpkg.com/jsondiffpatch/-/jsondiffpatch-0.3.7.tgz#cd0f7917a5394fdddd6e90ca8d45ec68e0fe9868"
+  dependencies:
+    chalk "^2.3.0"
+    diff-match-patch "^1.0.0"
 
 jsonify@~0.0.0:
   version "0.0.0"

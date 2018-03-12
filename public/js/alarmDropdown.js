@@ -23,6 +23,7 @@
         this.boundClose = this.closeWithDelay.bind(this);
         this.$trigger.addEventListener('mouseenter', this.boundOpen );
         this.$trigger.addEventListener('mouseleave', this.boundClose );
+        this.$trigger.style.cursor = 'pointer';
       }
     };
 
@@ -30,6 +31,7 @@
       if ( this.boundOpen && this.boundClose ) {
         this.$trigger.removeEventListener('mouseenter', this.boundOpen );
         this.$trigger.removeEventListener('mouseleave', this.boundClose );
+        this.$trigger.style.cursor = 'default';
         this.boundOpen = null;
         this.boundClose = null;
       }
@@ -78,6 +80,7 @@
       this.state.num_alarms = alarmData.alarms[0].num_alarms;
 
       // update events
+
       if ( this.state.num_alarms > 0 ) {
         this.setupEvents();
       }

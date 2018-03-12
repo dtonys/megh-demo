@@ -50,8 +50,11 @@
   // Expose tooltip constructor for single instance of tooltip
   window.MapToolTip = function ( options ) {
     const nodeTypes = options.nodeTypes;
+    const mapNodeStatusToCode = options.mapNodeStatusToCode;
     const mouseState = options.mouseState;
     const mouseConfig = options.mouseConfig;
+
+    const mapCodeToNodeStatus = _.invert(mapNodeStatusToCode);
 
     this.toolTip = null;
     const _this = this;
@@ -76,19 +79,19 @@
             name: 'Name',
             type: 'text',
             width: 40,
-            getValue: ( node ) => ( node.location ),
+            getValue: ( node ) => ( node.name ),
           },
           {
             name: 'Alarm Status',
             type: 'alarmStatus',
             width: 40,
-            getValue: ( node ) => ( node.severity ),
+            getValue: ( node ) => ( mapCodeToNodeStatus[node.alarm_status] ),
           },
           {
             name: 'Links',
             type: 'text',
             width: 20,
-            getValue: ( node ) => ( node.num_clients ),
+            getValue: ( node ) => ( node.num_clients || 3 ),
           }
         ]
       });
@@ -156,18 +159,6 @@
     };
 
     this.openOnMarker = function ( node ) {
-      // console.log('openOnMarker');
-      // let toolTipTemplate = null;
-      // let toolTipOptions = null;
-      // if ( node.type === nodeTypes.CNG ) {
-      //   toolTipTemplate = window.templates.CNGToolTip;
-      //   toolTipOptions = CNGOptions;
-      // }
-      // if ( node.type === nodeTypes.CCW ) {
-      //   toolTipTemplate = window.templates.CCWToolTip;
-      //   toolTipOptions = CCWOptions;
-      // }
-
       const toolTipTemplate = window.templates.tooltipV2;
       const toolTipOptions = tooltipV2;
 
@@ -187,6 +178,7 @@
       );
       this.toolTip.open(window.googleMap, node.marker);
 
+      // TODO: Uncomment this section
       // const tooltipContainer = toolTipWrap.querySelector('.tooltip');
       // const tooltipX = toolTipWrap.querySelector('.tooltip__X');
 
@@ -220,8 +212,8 @@
 
     this.close = function () {
       if ( this.toolTip ) {
-        // this.toolTip.close();
-        // this.toolTip = null;
+        this.toolTip.close();
+        this.toolTip = null;
       }
     };
   };

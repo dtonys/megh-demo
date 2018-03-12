@@ -2,11 +2,15 @@
   /**
    * config, constants
    */
+  const differ = window.jsondiffpatch.create();
   const nodeTypes = {
-    DATACENTER: 'NODE_TYPE_DATACENTER',
-    CNG: 'NODE_TYPE_CNG',
-    CCW: 'NODE_TYPE_CCW'
+    DATACENTER: 'DataCenter',
+    CNG: 'CNG',
+    CCW: 'CCW'
   };
+
+
+  // const ALARM_STATUS_NA = 'n/a';
 
   const BASIC_AUTH_SECRET = 'Basic TWVnaE5ldHdvcmtzOm5qZTk3NnhzdzQ1Mw==';
   const ICON_GREEN_BRANCH = 'img/icons/ccw-green.svg';
@@ -20,19 +24,25 @@
   const ICON_GROUP_CIRCLE = 'img/icons/group-circle.svg';
   const ICON_DATA_CENTER = 'img/icons/dc.svg';
 
+  const ALARM_STATUS_CLEAR = 0;
+  const ALARM_STATUS_MINOR = 1;
+  const ALARM_STATUS_MAJOR = 2;
+  const mapNodeStatusToCode = {
+    Clear: ALARM_STATUS_CLEAR,
+    Minor: ALARM_STATUS_MINOR,
+    Major: ALARM_STATUS_MAJOR,
+  };
   const mapNodeToIcon = ( nodeType, nodeStatus ) => {
-    if ( !nodeStatus || nodeStatus === 'Clear' ) {
-      if ( nodeType === nodeTypes.DATACENTER ) return ICON_DATA_CENTER;
+    if ( nodeType === nodeTypes.DATACENTER ) return ICON_DATA_CENTER;
+    if ( nodeStatus === ALARM_STATUS_CLEAR ) {
       if ( nodeType === nodeTypes.CNG ) return ICON_GREEN_CLOUD;
       if ( nodeType === nodeTypes.CCW ) return ICON_GREEN_BRANCH;
     }
-    if ( nodeStatus === 'Minor' ) {
-      if ( nodeType === nodeTypes.DATACENTER ) return ICON_DATA_CENTER;
+    if ( nodeStatus === ALARM_STATUS_MINOR ) {
       if ( nodeType === nodeTypes.CNG ) return ICON_YELLOW_CLOUD;
       if ( nodeType === nodeTypes.CCW ) return ICON_YELLOW_BRANCH;
     }
-    if ( nodeStatus === 'Major' ) {
-      if ( nodeType === nodeTypes.DATACENTER ) return ICON_DATA_CENTER;
+    if ( nodeStatus === ALARM_STATUS_MAJOR ) {
       if ( nodeType === nodeTypes.CNG ) return ICON_RED_CLOUD;
       if ( nodeType === nodeTypes.CCW ) return ICON_RED_BRANCH;
     }
@@ -71,101 +81,29 @@
   const mapRegionDOM = document.querySelector('#mapRegion');
 
   let nodes = null;
-  const mockData = {
-    location: 'Turlock',
-    ip_address: '195.168.103',
-    num_clients: 7,
-  };
-  function mockLoadData() {
-    return new window.Promise(( resolve ) => {
-      setTimeout(() => {
-        nodes = [
-          {
-            type: nodeTypes.DATACENTER,
-            coords: { lat: 37.3691261, lng: -121.919605 },
-            severity: 'Clear',
-          },
-          {
-            type: nodeTypes.CNG,
-            coords: { lat: 37.47360064083576, lng: -122.25839401562502 },
-            severity: 'Clear',
-          },
-          {
-            type: nodeTypes.CCW,
-            coords: { lat: 37.45288986053689, lng: -122.17736984570314 },
-            severity: 'Minor',
-          },
-          {
-            type: nodeTypes.CCW,
-            coords: { lat: 37.5084689856724, lng: -122.19522262890627 },
-            severity: 'Clear',
-          },
-          {
-            type: nodeTypes.CCW,
-            coords: { lat: 37.51173705842232, lng: -121.97137619335939 },
-            severity: 'Clear',
-          },
-          {
-            type: nodeTypes.CNG,
-            coords: { lat: 37.56944941254819, lng: -121.92605758984377 },
-            severity: 'Major',
-          },
-          {
-            type: nodeTypes.CCW,
-            coords: { lat: 37.72031641754861, lng: -122.43285251296783 },
-            severity: 'Clear',
-          },
-          {
-            type: nodeTypes.CCW,
-            coords: { lat: 37.76266931206604, lng: -122.43422580398345 },
-            severity: 'Clear',
-          },
-          {
-            type: nodeTypes.CCW,
-            coords: { lat: 37.75289771812296, lng: -122.49053073562408 },
-            severity: 'Minor',
-          },
-          {
-            type: nodeTypes.CNG,
-            coords: { lat: 37.66598239336537, lng: -122.51113010085845 },
-            severity: 'Clear',
-          },
-          {
-            type: nodeTypes.CCW,
-            coords: { lat: 37.6627210859622, lng: -122.44658542312408 },
-            severity: 'Clear',
-          },
-          {
-            type: nodeTypes.CCW,
-            coords: { lat: 37.68989426898018, lng: -122.36693454421783 },
-            severity: 'Major',
-          },
-          {
-            type: nodeTypes.CCW,
-            coords: { lat: 37.47253816730712, lng: -122.19906650971052 },
-            severity: 'Clear',
-          },
-          {
-            type: nodeTypes.CNG,
-            coords: { lat: 37.47771503954888, lng: -122.14997135590193 },
-            severity: 'Clear',
-          },
-          {
-            type: nodeTypes.CCW,
-            coords: { lat: 37.43492696738677, lng: -122.22344242523786 },
-            severity: 'Minor',
-          },
-        ];
-        // add default data
+  let nodeMap = {};
+
+  function loadNodeList() {
+    return window.unfetch('/megh/api/v1.0/nodes', {
+      credentials: 'include',
+      headers: {
+        'Authorization': BASIC_AUTH_SECRET
+      }
+    })
+      .then(( response ) => {
+        return response.json();
+      })
+      .then(( data ) => {
+        nodes = data.nodes;
         nodes.forEach(( node ) => {
-          Object.assign(node, mockData);
+          // convert to number
+          node.coords.lat = parseFloat(node.coords.lat);
+          node.coords.lng = parseFloat(node.coords.lng);
+          // populate nodeMap,
+          nodeMap[node.node_id] = node;
         });
-
-        resolve();
-      }, 100);
-    });
+      });
   }
-
 
   /**
    * map rendering functions
@@ -181,13 +119,25 @@
   function createGoogleMap() {
     const options = Object.assign({
       center: {
-        lat: 37.46787055967662,
-        lng: -122.04780556144539,
+        lat: 37.628989,
+        lng: -122.230603,
       },
-      zoom: 11,
+      zoom: 10,
       mapTypeId: window.google.maps.MapTypeId.ROADMAP,
     }, mapOptions);
     window.googleMap = new window.google.maps.Map(mapRegionDOM, options);
+  }
+
+  function updateNodeIcon( node ) {
+    node.marker.setIcon({
+      url: mapNodeToIcon( node.type, node.alarm_status ),
+      // ( width, height )
+      scaledSize: new window.google.maps.Size(40, 40),
+      // ( originX, originY )
+      origin: new window.google.maps.Point(0, 0),
+      // Image anchor
+      anchor: new window.google.maps.Point(20, 20)
+    });
   }
 
   function addMarker( node, mapToolTip, index ) {
@@ -200,7 +150,7 @@
       },
       map: window.googleMap,
       icon: {
-        url: mapNodeToIcon( node.type, node.severity ), // node.severity
+        url: mapNodeToIcon( node.type, node.alarm_status ),
         // ( width, height )
         scaledSize: new window.google.maps.Size(40, 40),
         // ( originX, originY )
@@ -208,18 +158,19 @@
         // Image anchor
         anchor: new window.google.maps.Point(20, 20)
       },
+      // label: node.node_id.toString(),
     });
     node.marker = marker;
     marker.node = node;
     // don't show tooltip for HQ
     if ( node.type === nodeTypes.DATACENTER ) return marker;
 
-    if ( index === 3 ) mapToolTip.openOnMarker( node );
+    // if ( index === 3 ) mapToolTip.openOnMarker( node );
 
     // Setup events, for tooltip
     marker.addListener('click', () => {
       if ( mouseState.mouseWithinMarker ) {
-        window.location.href = `node-summary?ip=${node.ip_address}`;
+        window.location.href = `node-summary?ip=${node.node_id}`;
         return;
       }
       mapToolTip.toggleMarker( node );
@@ -229,7 +180,8 @@
       if ( mouseState.mouseWithinCluster ) { // mouse in while inside cluster, ignore event
         return;
       }
-      mapToolTip.openOnMarker( node );
+      // TODO: Uncomment this section
+      // mapToolTip.openOnMarker( node );
     });
     marker.addListener('mouseout', () => {
       mouseState.mouseWithinMarker = false;
@@ -285,7 +237,8 @@
         }
         mapToolTip.close();
         if ( mouseState.mouseWithinMarker ) {
-          mapToolTip.openOnMarker( mouseState.mouseWithinMarker );
+          // TODO: Uncomment this section
+          // mapToolTip.openOnMarker( mouseState.mouseWithinMarker );
         }
       }, mouseConfig.MOUSEOUT_TIMER_DELAY_MS);
     });
@@ -310,7 +263,72 @@
       });
   }
 
+  function mapArrayToIdObject( array ) {
+    const obj = {};
+    array.forEach(( item ) => {
+      obj[item.node_id] = item;
+    });
+    return obj;
+  }
+
+  function syncNodesWithAlarmHistory(alarmHistory) {
+    // get all nodes in alarm state
+    const alarmNodesMap = {};
+    nodes
+      .filter(( node ) => (
+        node.alarm_status === ALARM_STATUS_MINOR || node.alarm_status === ALARM_STATUS_MAJOR
+      ))
+      .forEach(( node ) => {
+        alarmNodesMap[node.node_id] = node;
+      });
+
+    // update all alarm history nodes
+    alarmHistory.forEach(( alarm ) => {
+      nodeMap[alarm.node_id].alarm_status = mapNodeStatusToCode(alarm.severity);
+      updateNodeIcon(nodeMap[alarm.node_id]);
+      // remove node from map once it's updated
+      delete alarmNodesMap[alarm.node_id];
+    });
+    // any remaining nodes in alarmNodesMap are no longer in alarm state, set them to clear
+    Object.keys(alarmNodesMap).forEach(( nodeId ) => {
+      alarmNodesMap[nodeId].alarm_status = ALARM_STATUS_CLEAR;
+      updateNodeIcon(nodeMap[nodeId]);
+    });
+  }
+
+  function diffAlarmHistoryAndUpdateNodes(alarmHistoryArray, nextAlarmHistoryArray ) {
+    const currObj = mapArrayToIdObject(alarmHistoryArray);
+    const nextObj = mapArrayToIdObject(nextAlarmHistoryArray);
+    const diffResult = differ.diff(currObj, nextObj);
+
+    if ( !diffResult ) return;
+
+    Object.keys(diffResult).forEach(( nodeId ) => {
+      const diffItem = diffResult[nodeId];
+      // alarm is added or removed
+      if ( Array.isArray(diffItem) ) {
+        if ( diffItem[1] === 0 && diffItem[2] === 0 ) {
+          // alarm removed, set alarm_status to Clear
+          nodeMap[nodeId].alarm_status = mapNodeStatusToCode['Clear'];
+          updateNodeIcon(nodeMap[nodeId]);
+          return;
+        }
+        // alarm added, update alarm_status
+        nodeMap[nodeId].alarm_status = mapNodeStatusToCode[diffItem[0].severity];
+        updateNodeIcon(nodeMap[nodeId]);
+        return;
+      }
+      // alarm value changed, update alarm_status
+      if ( diffItem.severity ) {
+        nodeMap[nodeId].alarm_status = mapNodeStatusToCode[diffItem.severity[1]];
+        updateNodeIcon(nodeMap[nodeId]);
+        return;
+      }
+    });
+  }
+
   function initialize() {
+    let alarmHistory = null;
     createGoogleMap();
 
     const alarmDropDown = new window.AlarmDropDown({
@@ -320,27 +338,104 @@
       mouseConfig: mouseConfig,
     });
 
+    // function mockAlarmUpdate() {
+    //   // diff and update alarm
+    //   setTimeout(() => {
+    //     const mockAlarmHistory1 = [
+    //       {
+    //         alarm_id: '1',
+    //         description: 'Lan line is down',
+    //         instance: '1',
+    //         node_id: 'BR#1',
+    //         occurrence_date: '2018-03-01 19:43:13',
+    //         severity: 'Minor',
+    //         type: 'LINE_DOWN'
+    //       },
+    //       {
+    //         alarm_id: '2',
+    //         description: 'Lan line is down',
+    //         instance: '1',
+    //         node_id: 'BR#2',
+    //         occurrence_date: '2018-03-01 19:43:13',
+    //         severity: 'Major',
+    //         type: 'LINE_DOWN'
+    //       },
+    //       {
+    //         alarm_id: '3',
+    //         description: 'Lan line is down',
+    //         instance: '1',
+    //         node_id: 'BR#3',
+    //         occurrence_date: '2018-03-01 19:43:13',
+    //         severity: 'Major',
+    //         type: 'LINE_DOWN'
+    //       },
+    //     ];
+
+    //     const mockAlarmHistory2 = [
+    //       {
+    //         alarm_id: '1',
+    //         description: 'Lan line is down',
+    //         instance: '1',
+    //         node_id: 'BR#2',
+    //         occurrence_date: '2018-03-01 19:43:13',
+    //         severity: 'Minor',
+    //         type: 'LINE_DOWN'
+    //       },
+    //       {
+    //         alarm_id: '2',
+    //         description: 'Lan line is down',
+    //         instance: '1',
+    //         node_id: 'BR#3',
+    //         occurrence_date: '2018-03-01 19:43:13',
+    //         severity: 'Major',
+    //         type: 'LINE_DOWN'
+    //       },
+    //       {
+    //         alarm_id: '2',
+    //         description: 'Lan line is down',
+    //         instance: '1',
+    //         node_id: 'BR#4',
+    //         occurrence_date: '2018-03-01 19:43:13',
+    //         severity: 'Major',
+    //         type: 'LINE_DOWN'
+    //       }
+    //     ];
+    //     // diffAlarmHistoryAndUpdateNodes()
+    //     diffAlarmHistoryAndUpdateNodes( mockAlarmHistory1, mockAlarmHistory2 );
+    //     mockAlarmUpdate();
+    //   }, 2000);
+    // }
+    // mockAlarmUpdate();
+
     // Load alarms once per second, waiting for the prev request to finish
     function pollAlarms() {
-      // window.setTimeout(() => {
-      //   // populate alarms
-      //   loadAlarms().then(( alarmData ) => {
-      //     alarmDropDown.updateAlarmData(alarmData);
-      //     alarmDropDown.updateAlarmCount();
-      //     pollAlarms();
-      //   });
-      // }, 1000);
+      window.setTimeout(() => {
+        loadAlarms().then(( alarmData ) => {
+          // Render alarms in the alarm dropdown, as a list
+          alarmDropDown.updateAlarmData(alarmData);
+          alarmDropDown.updateAlarmCount();
+          diffAlarmHistoryAndUpdateNodes(alarmHistory, alarmData.alarms[0].alarm_history );
+          alarmHistory = alarmData.alarms[0].alarm_history;
+          pollAlarms();
+        });
+      }, 1000);
     }
 
     // Fire once on page load
     loadAlarms().then(( alarmData ) => {
+      // Render alarms in the alarm dropdown, as a list
       alarmDropDown.updateAlarmData( alarmData );
       alarmDropDown.updateAlarmCount();
-      pollAlarms();
+      alarmHistory = alarmData.alarms[0].alarm_history;
+      if ( alarmHistory ) {
+        syncNodesWithAlarmHistory(alarmHistory);
+      }
+      // pollAlarms();
     });
 
     const mapToolTip = new window.MapToolTip({
       nodeTypes: nodeTypes,
+      mapNodeStatusToCode: mapNodeStatusToCode,
       mouseState: mouseState,
       mouseConfig: mouseConfig,
     });
@@ -357,9 +452,10 @@
     window.google.maps.event.addDomListener(window, 'load', resolve);
   });
 
-  const loadDataPromise = mockLoadData();
-
-  window.Promise.all([ loadDataPromise, domLoadedPromise ])
+  window.Promise.all([
+    loadNodeList(),
+    domLoadedPromise
+  ])
     .then(initialize);
 
 })();

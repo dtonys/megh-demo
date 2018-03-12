@@ -31,8 +31,11 @@ window.templates.tableList = _.template(`
                 <%= config.getValue(node) %>
               <% } %>
               <% if( config.type === 'alarmStatus' ) { %>
-                <div class="statusDot--<%= node.severity %>"></div>
-                <%= node.severity %>
+                <div
+                  style="margin-top: 0px;"
+                  class="statusDot--<%= config.getValue(node) %>"
+                ></div>
+                <%= config.getValue(node) %>
               <% } %>
             </div>
           <% })%>

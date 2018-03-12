@@ -1,5 +1,4 @@
 .navbar,
-.subnav,
 .sidebar,
 .content {
   position: absolute;
@@ -9,7 +8,7 @@
   top: 0;
   left: 0;
   right: 0;
-  height: 80px;
+  height: 60px;
   background: #f3f3f3;
   display: flex;
   padding: 15px;
@@ -17,18 +16,8 @@
   z-index: 1;
   box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.3);
 }
-.subnav {
-  top: 80px;
-  left: 80px;
-  right: 0;
-  height: 60px;
-  background: #FFF;
-  display: flex;
-  padding-left: 20px;
-  border-bottom: solid #CCC 1px;
-}
 .sidebar {
-  top: 80px;
+  top: 60px;
   bottom: 0;
   left: 0;
   width: 80px;
@@ -38,7 +27,7 @@
 .content {
   background: #CCC;
   position: absolute;
-  top: 140px;
+  top: 60px;
   bottom: 0;
   left: 80px;
   right: 0;
@@ -74,7 +63,7 @@
 
 .navbar__menuItem {
   margin-right: 40px;
-  font-size: 18px;
+  font-size: 14px;
 }
 
 .navbar__alarmsIcon {
@@ -91,14 +80,6 @@
   color: white;
   font-size: 12px;
   font-family: 'PT Sans', sans-serif;
-}
-
-.subnav__logo {
-  margin-right: 15px;
-}
-
-.subnav__title {
-  font-size: 20px;
 }
 
 .sidebar__item {
@@ -345,9 +326,8 @@
   position: relative;
 }
 .navbar__alarmsTrigger {
-  cursor: pointer;
   padding-bottom: 5px;
-  font-size: 18px;
+  font-size: 14px;
 }
 
 .alarmDropdown {
