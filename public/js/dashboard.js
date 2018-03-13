@@ -119,8 +119,8 @@
   function createGoogleMap() {
     const options = Object.assign({
       center: {
-        lat: 37.628989,
-        lng: -122.230603,
+        lat: 37.437081,
+        lng: -122.077481,
       },
       zoom: 10,
       mapTypeId: window.google.maps.MapTypeId.ROADMAP,
@@ -158,14 +158,18 @@
         // Image anchor
         anchor: new window.google.maps.Point(20, 20)
       },
-      // label: node.node_id.toString(),
+      label: node.node_id.toString(),
     });
     node.marker = marker;
     marker.node = node;
     // don't show tooltip for HQ
     if ( node.type === nodeTypes.DATACENTER ) return marker;
 
-    // if ( index === 3 ) mapToolTip.openOnMarker( node );
+    if ( node.node_id === 'BR#3' ) {
+      setTimeout(() => {
+        mapToolTip.openOnMarker( node );
+      }, 2000);
+    }
 
     // Setup events, for tooltip
     marker.addListener('click', () => {
@@ -173,7 +177,7 @@
         window.location.href = `node-summary?ip=${node.node_id}`;
         return;
       }
-      mapToolTip.toggleMarker( node );
+      // mapToolTip.toggleMarker( node );
     });
     marker.addListener('mouseover', () => {
       mouseState.mouseWithinMarker = node;
@@ -194,7 +198,7 @@
           mouseState.mouseWithinTooltip = false;
           return;
         }
-        mapToolTip.close();
+        // mapToolTip.close();
       }, mouseConfig.MOUSEOUT_TIMER_DELAY_MS);
     });
     return marker;
@@ -220,12 +224,12 @@
 
     // Setup events, for tooltip
     window.google.maps.event.addListener(markerClusters, 'click', function () {
-      mapToolTip.close();
+      // mapToolTip.close();
     });
     window.google.maps.event.addListener(markerClusters, 'mouseover', function (cluster) {
       mouseState.mouseWithinCluster = cluster;
       if ( !mapToolTip.toolTip ) {
-        mapToolTip.openOnCluster(cluster);
+        // mapToolTip.openOnCluster(cluster);
       }
     });
     window.google.maps.event.addListener(markerClusters, 'mouseout', function () {
@@ -431,7 +435,7 @@
       if ( alarmHistory ) {
         syncNodesWithAlarmHistory(alarmHistory);
       }
-      pollAlarms();
+      // pollAlarms();
     });
 
     const mapToolTip = new window.MapToolTip({

@@ -31,11 +31,20 @@
 
   const tooltipV2 = {
     alignBottom: true,
-    pixelOffset: new window.google.maps.Size( (-1) * (TOOLTIP_WIDTH / 2), -18),
+    pixelOffset: new window.google.maps.Size( (-1) * (TOOLTIP_WIDTH / 2), -21),
     boxStyle: {
       padding: '0px 0px 0px 0px',
       width: '500px',
     }
+  };
+
+  const toolTipAboveMarker = {
+    alignBottom: true,
+    pixelOffset: new window.google.maps.Size( (-1) * (TOOLTIP_WIDTH / 2), -21),
+  };
+  const toolTipBelowMarker = {
+    alignBottom: false,
+    pixelOffset: new window.google.maps.Size( (-1) * (TOOLTIP_WIDTH / 2), 21),
   };
 
   const clusterOptions = {
@@ -46,6 +55,29 @@
       width: '200px',
     }
   };
+
+// window.googleMap
+
+
+  function getPixelPosition( marker ) {
+    const scale = Math.pow(2, window.googleMap.getZoom());
+    const nw = new window.google.maps.LatLng(
+      window.googleMap.getBounds().getNorthEast().lat(),
+      window.googleMap.getBounds().getSouthWest().lng()
+    );
+    console.log('nw');
+    console.log(nw);
+
+    const worldCoordinateNW = window.googleMap.getProjection().fromLatLngToPoint(nw);
+    const worldCoordinate = window.googleMap.getProjection().fromLatLngToPoint(marker.getPosition());
+    const pixelOffset = new window.google.maps.Point(
+      Math.floor((worldCoordinate.x - worldCoordinateNW.x) * scale),
+      Math.floor((worldCoordinate.y - worldCoordinateNW.y) * scale)
+    );
+    console.log('pixelOffset');
+    console.log(pixelOffset);
+    return pixelOffset;
+  }
 
   // Expose tooltip constructor for single instance of tooltip
   window.MapToolTip = function ( options ) {
@@ -159,11 +191,29 @@
     };
 
     this.openOnMarker = function ( node ) {
-      const toolTipTemplate = window.templates.tooltipV2;
+
       const toolTipOptions = tooltipV2;
+      let tooltipPositioning = null;
+      let toolTipTemplate = null;
+      if ( node.type === nodeTypes.CCW ) {
+        toolTipTemplate = window.templates.CCWToolTipV2;
+      }
+      if ( node.type === nodeTypes.CNG ) {
+        toolTipTemplate = window.templates.CCWToolTipV2;
+      }
+
+      // get below or above midpoint, dynamically set offset and position
+      const mapNode = document.querySelector('#mapRegion');
+      const midY = Math.floor( mapNode.offsetHeight / 2 );
+      const markerPosition = getPixelPosition( node.marker );
+      if ( markerPosition.y > midY ) {
+        tooltipPositioning = toolTipAboveMarker;
+      }
+      else {
+        tooltipPositioning = toolTipBelowMarker;
+      }
 
       const toolTipHtml = toolTipTemplate( node );
-
       const toolTipWrap = document.createElement('div');
       toolTipWrap.style.cssText = 'margin-top: 0px; background: #fff; padding: 0px;';
       toolTipWrap.innerHTML = toolTipHtml;
@@ -174,7 +224,7 @@
 
       // create and show new tooltip
       this.toolTip = new window.InfoBox(
-        Object.assign({}, infoBoxOptions, toolTipOptions),
+        Object.assign({}, infoBoxOptions, toolTipOptions, tooltipPositioning),
       );
       this.toolTip.open(window.googleMap, node.marker);
 

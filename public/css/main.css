@@ -148,13 +148,33 @@
   display: flex;
 }
 .tooltipV2__chartTitle {
-  font-size: 14px;
+  font-size: 12px;
+  font-family: SFSemibold;
+}
+.tooltipV2__chartTitleWrap {
+  display: flex;
+  margin-bottom: 10px;
+}
+.tooltipV2__linkText {
+  font-size: 8px;
+}
+.tooltipV2__chartStatus {
+  font-size: 10px;
+}
+.tooltipV2__linkSpeedText {
+  font-family: SFSemibold;
+  font-size: 10px;
+}
+.tooltipV2__linkSpeedStats {
+  font-size: 10px;
+  min-width: 65px;
 }
 
 .linkIcon--black,
 .linkIcon--blue {
   position: relative;
   top: 2px;
+  left: 4px;
   margin-right: 20px;
 }
 .linkIcon__circle {

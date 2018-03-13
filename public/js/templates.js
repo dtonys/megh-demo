@@ -76,7 +76,7 @@ window.templates.CNGToolTip = _.template(`
   </div>
 `);
 
-window.templates.tooltipV2 = _.template(`
+window.templates.CCWToolTipV2 = _.template(`
   <div class="tooltipV2" >
     <div class="tooltipV2__left" >
       <div class="tooltipV2__title" >
@@ -119,40 +119,48 @@ window.templates.tooltipV2 = _.template(`
           <div class="linkIcon__circle" ></div>
           <div class="linkIcon__line" ></div>
         </div>
-        <div> Up Link Throughput </div>
+        <div class="tooltipV2__linkText" > Up Link Throughput </div>
         <div style="margin-right: 20px;" ></div>
         <div class="linkIcon--black" >
           <div class="linkIcon__circle" ></div>
           <div class="linkIcon__line" ></div>
         </div>
-        <div> Down Link Throughput </div>
+        <div class="tooltipV2__linkText" > Down Link Throughput </div>
       </div>
-      <div style="margin-bottom: 10px;" ></div>
+      <div style="margin-bottom: 15px;" ></div>
       <div class="tooltipV2__chart" >
-        <div class="tooltipV2__flexWrap" >
+        <div class="tooltipV2__chartTitleWrap" >
           <div class="tooltipV2__chartTitle"> Link1 </div>
+          <div style="margin-right: 20px;" ></div>
+          <div class="tooltipV2__chartStatus">
+            <div style="width: 9px; height: 9px; top: 0;" class="statusDot--Clear statusDot--small"></div>
+            Clear
+          </div>
+          <div style="flex: 1;" ></div>
+          <div class="tooltipV2__linkSpeedText" > Up/Down Link Speed </div>
+          <div style="margin-right: 10px;" ></div>
+          <div class="tooltipV2__linkSpeedStats"> 10 MB/20 MB </div>
+        </div>
+        <div class="tooltipV2__chartBody" >
+          <img src="http://via.placeholder.com/330x70" />
+        </div>
+      </div>
+      <div style="margin-bottom: 20px;" ></div>
+      <div class="tooltipV2__chart" >
+        <div class="tooltipV2__chartTitleWrap" >
+          <div class="tooltipV2__chartTitle"> Link2 </div>
           <div style="margin-right: 20px;" ></div>
           <div class="tooltipV2__chartStatus">
             <div style="width: 9px; height: 9px;" class="statusDot--Clear statusDot--small"></div>
             Clear
           </div>
+          <div style="flex: 1;" ></div>
+          <div class="tooltipV2__linkSpeedText" > Up/Down Link Speed </div>
+          <div style="margin-right: 10px;" ></div>
+          <div class="tooltipV2__linkSpeedStats"> 5 MB/5 MB </div>
         </div>
         <div class="tooltipV2__chartBody" >
-          <img src="http://via.placeholder.com/320x48" />
-        </div>
-      </div>
-      <div style="margin-bottom: 10px;" ></div>
-      <div class="tooltipV2__chart" >
-        <div class="tooltipV2__flexWrap" >
-          <div class="tooltipV2__chartTitle"> Link1 </div>
-          <div style="margin-right: 20px;" ></div>
-          <div class="tooltipV2__chartStatus">
-            <div style="width: 9px; height: 9px;" class="statusDot--Clear statusDot--small"></div>
-            Clear
-          </div>
-        </div>
-        <div class="tooltipV2__chartBody" >
-          <img src="http://via.placeholder.com/320x48" />
+          <img src="http://via.placeholder.com/330x70" />
         </div>
       </div>
     </div>
