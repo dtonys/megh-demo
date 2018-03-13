@@ -201,6 +201,29 @@
       if ( node.type === nodeTypes.CNG ) {
         toolTipTemplate = window.templates.CCWToolTipV2;
       }
+      // {
+      //   "alarm_status": 0, //
+      //   "coords": {
+      //     "lat": 37.38559,
+      //     "lng": -122.031637
+      //   },
+      //   "name": "BR#3 name", //
+      //   "node_id": "BR#3",
+      //   "type": "CCW" //
+      // }
+
+      const toolTipHtml = toolTipTemplate({
+        alarm_status: mapCodeToNodeStatus[node.alarm_status],
+        name: node.name,
+        type: node.type,
+      });
+      const toolTipWrap = document.createElement('div');
+      toolTipWrap.style.cssText = 'margin-top: 0px; background: #fff; padding: 0px;';
+      toolTipWrap.innerHTML = toolTipHtml;
+      infoBoxOptions.content = toolTipWrap;
+
+      // close existing tooltip
+      this.close();
 
       // get below or above midpoint, dynamically set offset and position
       const mapNode = document.querySelector('#mapRegion');
@@ -212,15 +235,6 @@
       else {
         tooltipPositioning = toolTipBelowMarker;
       }
-
-      const toolTipHtml = toolTipTemplate( node );
-      const toolTipWrap = document.createElement('div');
-      toolTipWrap.style.cssText = 'margin-top: 0px; background: #fff; padding: 0px;';
-      toolTipWrap.innerHTML = toolTipHtml;
-      infoBoxOptions.content = toolTipWrap;
-
-      // close existing tooltip
-      this.close();
 
       // create and show new tooltip
       this.toolTip = new window.InfoBox(

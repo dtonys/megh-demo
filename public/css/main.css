@@ -104,12 +104,19 @@
   background: #2c5013;
 }
 .tooltipV2 {
-  width: 500px;
-  height: 308px;
   background: white;
   box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.2);
   display: flex;
 }
+.tooltipV2--CCW {
+  width: 500px;
+  height: 308px;
+}
+.tooltipV2--CNG {
+  width: 500px;
+  height: 348px;
+}
+
 .tooltipV2__left {
   width: 28%;
   background: #f5f5f5;
@@ -127,11 +134,20 @@
   padding-bottom: 15px;
   font-family: SFSemibold;
 }
+.tooltipV2--CNG .tooltipV2__title {
+  padding-left: 35px;
+}
 .tooltipV2__headIcon--branch {
   position: absolute;
   top: 14px;
   left: 16px;
   width: 17px;
+}
+.tooltipV2__headIcon--cloud {
+  position: absolute;
+  top: 14px;
+  left: 16px;
+  width: 27px;
 }
 .tooltipV2__itemLabel {
   font-family: SFSemibold;

@@ -11,7 +11,6 @@
 
 
   // const ALARM_STATUS_NA = 'n/a';
-
   const BASIC_AUTH_SECRET = 'Basic TWVnaE5ldHdvcmtzOm5qZTk3NnhzdzQ1Mw==';
   const ICON_GREEN_BRANCH = 'img/icons/ccw-green.svg';
   const ICON_YELLOW_BRANCH = 'img/icons/ccw-yellow.svg';
@@ -121,6 +120,8 @@
       center: {
         lat: 37.437081,
         lng: -122.077481,
+        // lat: 45.8696,
+        // lng: -119.688,
       },
       zoom: 10,
       mapTypeId: window.google.maps.MapTypeId.ROADMAP,
@@ -170,6 +171,12 @@
         mapToolTip.openOnMarker( node );
       }, 1000);
     }
+
+    // if ( node.node_id === 'CNG1' ) {
+    //   setTimeout(() => {
+    //     mapToolTip.openOnMarker( node );
+    //   }, 1000);
+    // }
 
     // Setup events, for tooltip
     marker.addListener('click', () => {

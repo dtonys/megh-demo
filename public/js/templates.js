@@ -76,17 +76,53 @@ window.templates.CNGToolTip = _.template(`
   </div>
 `);
 
+window.templates.SmallChart = _.template(`
+  <div style="margin-bottom: 20px;" ></div>
+  <div class="tooltipV2__chart" >
+    <div class="tooltipV2__chartTitleWrap" >
+      <div class="tooltipV2__chartTitle"> <%= title %> </div>
+      <div style="margin-right: 20px;" ></div>
+      <div class="tooltipV2__chartStatus">
+        <div style="width: 9px; height: 9px;" class="statusDot--Clear statusDot--small"></div>
+        Clear
+      </div>
+      <% if ( type === 'CCW' ) { %>
+        <div style="flex: 1;" ></div>
+        <div class="tooltipV2__linkSpeedText" > Up/Down Link Speed </div>
+        <div style="margin-right: 10px;" ></div>
+        <div class="tooltipV2__linkSpeedStats"> 5 MB/5 MB </div>
+      <% } %>
+    </div>
+    <div class="tooltipV2__chartBody" >
+      <div class="tooltipV2__chartYWrap" >
+        <div class="tooltipV2__chartYText" > 20 MB </div>
+        <div class="tooltipV2__chartYText" > 15 MB </div>
+        <div class="tooltipV2__chartYText" > 10 MB </div>
+        <div class="tooltipV2__chartYText" > 5 MB </div>
+        <div class="tooltipV2__chartYText" > 0 MB </div>
+      </div>
+      <img src="http://via.placeholder.com/300x50" />
+    </div>
+  </div>
+`);
+
 window.templates.CCWToolTipV2 = _.template(`
-  <div class="tooltipV2" >
+  <div class="tooltipV2 tooltipV2--<%= type %>" >
     <div class="tooltipV2__left" >
       <div class="tooltipV2__title" >
-        <img class="tooltipV2__headIcon--branch" src="img/icons/ccw-black.svg" />
-        CCW
+        <% if ( type === 'CCW' ) { %>
+          <img class="tooltipV2__headIcon--branch" src="img/icons/ccw-black.svg" />
+          CCW
+        <% } %>
+        <% if ( type === 'CNG' ) { %>
+          <img class="tooltipV2__headIcon--cloud" src="img/icons/cng-icon-black.svg" />
+          CNG
+        <% } %>
       </div>
       <% [
-          { name: 'Name', value: 'Starbucks', type: 'text' },
+          { name: 'Name', value: name, type: 'text' },
           { name: 'Region', value: 'San Jose', type: 'text' },
-          { name: 'Alarm Status', value: 'Major', type: 'alarmStatus' },
+          { name: 'Alarm Status', value: alarm_status, type: 'alarmStatus' },
           { name: 'Branches Connected', value: '99', type: 'text' },
           {
             name: 'Bandwidth Utilization',
@@ -128,55 +164,22 @@ window.templates.CCWToolTipV2 = _.template(`
         <div class="tooltipV2__linkText" > Down Link Throughput </div>
       </div>
       <div style="margin-bottom: 15px;" ></div>
-      <div class="tooltipV2__chart" >
-        <div class="tooltipV2__chartTitleWrap" >
-          <div class="tooltipV2__chartTitle"> Link1 </div>
-          <div style="margin-right: 20px;" ></div>
-          <div class="tooltipV2__chartStatus">
-            <div style="width: 9px; height: 9px; top: 0;" class="statusDot--Clear statusDot--small"></div>
-            Clear
-          </div>
-          <div style="flex: 1;" ></div>
-          <div class="tooltipV2__linkSpeedText" > Up/Down Link Speed </div>
-          <div style="margin-right: 10px;" ></div>
-          <div class="tooltipV2__linkSpeedStats"> 10 MB/20 MB </div>
-        </div>
-        <div class="tooltipV2__chartBody" >
-          <div class="tooltipV2__chartYWrap" >
-            <div class="tooltipV2__chartYText" > 20 MB </div>
-            <div class="tooltipV2__chartYText" > 15 MB </div>
-            <div class="tooltipV2__chartYText" > 10 MB </div>
-            <div class="tooltipV2__chartYText" > 5 MB </div>
-            <div class="tooltipV2__chartYText" > 0 MB </div>
-          </div>
-          <img src="http://via.placeholder.com/300x50" />
-        </div>
-      </div>
+      <%= window.templates.SmallChart({
+        title: 'CCW Link',
+        type: type,
+      }) %>
       <div style="margin-bottom: 20px;" ></div>
-      <div class="tooltipV2__chart" >
-        <div class="tooltipV2__chartTitleWrap" >
-          <div class="tooltipV2__chartTitle"> Link2 </div>
-          <div style="margin-right: 20px;" ></div>
-          <div class="tooltipV2__chartStatus">
-            <div style="width: 9px; height: 9px;" class="statusDot--Clear statusDot--small"></div>
-            Clear
-          </div>
-          <div style="flex: 1;" ></div>
-          <div class="tooltipV2__linkSpeedText" > Up/Down Link Speed </div>
-          <div style="margin-right: 10px;" ></div>
-          <div class="tooltipV2__linkSpeedStats"> 5 MB/5 MB </div>
-        </div>
-        <div class="tooltipV2__chartBody" >
-          <div class="tooltipV2__chartYWrap" >
-            <div class="tooltipV2__chartYText" > 20 MB </div>
-            <div class="tooltipV2__chartYText" > 15 MB </div>
-            <div class="tooltipV2__chartYText" > 10 MB </div>
-            <div class="tooltipV2__chartYText" > 5 MB </div>
-            <div class="tooltipV2__chartYText" > 0 MB </div>
-          </div>
-          <img src="http://via.placeholder.com/300x50" />
-        </div>
-      </div>
+      <%= window.templates.SmallChart({
+        title: 'Internet Link',
+        type: type,
+      }) %>
+      <% if ( type === 'CNG' ) { %>
+        <div style="margin-bottom: 20px;" ></div>
+        <%= window.templates.SmallChart({
+          title: 'Data Center Link',
+          type: type,
+        }) %>
+      <% } %>
     </div>
   </div>
 `);
