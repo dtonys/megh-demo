@@ -142,7 +142,14 @@ window.templates.CCWToolTipV2 = _.template(`
           <div class="tooltipV2__linkSpeedStats"> 10 MB/20 MB </div>
         </div>
         <div class="tooltipV2__chartBody" >
-          <img src="http://via.placeholder.com/330x70" />
+          <div class="tooltipV2__chartYWrap" >
+            <div class="tooltipV2__chartYText" > 20 MB </div>
+            <div class="tooltipV2__chartYText" > 15 MB </div>
+            <div class="tooltipV2__chartYText" > 10 MB </div>
+            <div class="tooltipV2__chartYText" > 5 MB </div>
+            <div class="tooltipV2__chartYText" > 0 MB </div>
+          </div>
+          <img src="http://via.placeholder.com/300x50" />
         </div>
       </div>
       <div style="margin-bottom: 20px;" ></div>
@@ -160,7 +167,14 @@ window.templates.CCWToolTipV2 = _.template(`
           <div class="tooltipV2__linkSpeedStats"> 5 MB/5 MB </div>
         </div>
         <div class="tooltipV2__chartBody" >
-          <img src="http://via.placeholder.com/330x70" />
+          <div class="tooltipV2__chartYWrap" >
+            <div class="tooltipV2__chartYText" > 20 MB </div>
+            <div class="tooltipV2__chartYText" > 15 MB </div>
+            <div class="tooltipV2__chartYText" > 10 MB </div>
+            <div class="tooltipV2__chartYText" > 5 MB </div>
+            <div class="tooltipV2__chartYText" > 0 MB </div>
+          </div>
+          <img src="http://via.placeholder.com/300x50" />
         </div>
       </div>
     </div>

@@ -168,7 +168,7 @@
     if ( node.node_id === 'BR#3' ) {
       setTimeout(() => {
         mapToolTip.openOnMarker( node );
-      }, 2000);
+      }, 1000);
     }
 
     // Setup events, for tooltip
