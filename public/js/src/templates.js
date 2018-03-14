@@ -79,17 +79,19 @@ window.templates.CNGToolTip = _.template(`
 window.templates.SmallChart = _.template(`
   <div class="tooltipV2__chart" >
     <div class="tooltipV2__chartTitleWrap" >
-      <div class="tooltipV2__chartTitle"> <%= title %> </div>
+      <div class="tooltipV2__chartTitle"> <%= interface.link_id %> </div>
       <div style="margin-right: 20px;" ></div>
       <div class="tooltipV2__chartStatus">
-        <div style="width: 9px; height: 9px;" class="statusDot--Clear statusDot--small"></div>
-        Clear
+        <div style="width: 9px; height: 9px;" class="statusDot--<%= interface.alarm_status %> statusDot--small"></div>
+        <%= interface.alarm_status %>
       </div>
       <% if ( type === 'CCW' ) { %>
         <div style="flex: 1;" ></div>
         <div class="tooltipV2__linkSpeedText" > Up/Down Link Speed </div>
         <div style="margin-right: 10px;" ></div>
-        <div class="tooltipV2__linkSpeedStats"> 5 MB/5 MB </div>
+        <div class="tooltipV2__linkSpeedStats">
+          <%= interface.provider.up_mb_per_second %> MB/<%= interface.provider._mb_per_second %> MB
+        </div>
       <% } %>
     </div>
     <div class="tooltipV2__chartBody" >
@@ -148,37 +150,29 @@ window.templates.CCWToolTipV2 = _.template(`
       <% }) %>
     </div>
     <div class="tooltipV2__right">
-      <div class="tooltipV2__flexWrap" >
-        <div class="linkIcon--blue" >
-          <div class="linkIcon__circle" ></div>
-          <div class="linkIcon__line" ></div>
+      <% if ( interfaces.length ) { %>
+        <div class="tooltipV2__flexWrap" >
+          <div class="linkIcon--blue" >
+            <div class="linkIcon__circle" ></div>
+            <div class="linkIcon__line" ></div>
+          </div>
+          <div class="tooltipV2__linkText" > Up Link Throughput </div>
+          <div style="margin-right: 20px;" ></div>
+          <div class="linkIcon--black" >
+            <div class="linkIcon__circle" ></div>
+            <div class="linkIcon__line" ></div>
+          </div>
+          <div class="tooltipV2__linkText" > Down Link Throughput </div>
         </div>
-        <div class="tooltipV2__linkText" > Up Link Throughput </div>
-        <div style="margin-right: 20px;" ></div>
-        <div class="linkIcon--black" >
-          <div class="linkIcon__circle" ></div>
-          <div class="linkIcon__line" ></div>
-        </div>
-        <div class="tooltipV2__linkText" > Down Link Throughput </div>
-      </div>
-      <div style="margin-bottom: 15px;" ></div>
-      <%= window.templates.SmallChart({
-        title: 'CCW Link',
-        type: type,
-        index: 1,
-      }) %>
-      <%= window.templates.SmallChart({
-        title: 'Internet Link',
-        type: type,
-        index: 2,
-      }) %>
-      <% if ( type === 'CNG' ) { %>
-        <%= window.templates.SmallChart({
-          title: 'Data Center Link',
-          type: type,
-          index: 3,
-        }) %>
+        <div style="margin-bottom: 15px;" ></div>
       <% } %>
+      <% interfaces.forEach(function( interface, index ) { %>
+        <%= window.templates.SmallChart({
+          interface: interface,
+          type: type,
+          index: index + 1,
+        }) %>
+      <% }) %>
     </div>
   </div>
 `);

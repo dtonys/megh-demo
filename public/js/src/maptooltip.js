@@ -13,23 +13,6 @@
     alignBottom: false,
   };
 
-  const CNGOptions = {
-    alignBottom: true,
-    pixelOffset: new window.google.maps.Size( (-1) * (TOOLTIP_WIDTH / 2), -18),
-    boxStyle: {
-      padding: '0px 0px 0px 0px',
-      width: `${TOOLTIP_WIDTH}px`,
-    }
-  };
-  const CCWOptions = {
-    alignBottom: true,
-    pixelOffset: new window.google.maps.Size( (-1) * (TOOLTIP_WIDTH / 2), -18),
-    boxStyle: {
-      padding: '0px 0px 0px 0px',
-      width: `${TOOLTIP_WIDTH}px`,
-    }
-  };
-
   const tooltipV2 = {
     alignBottom: true,
     pixelOffset: new window.google.maps.Size( (-1) * (TOOLTIP_WIDTH / 2), -21),
@@ -57,22 +40,8 @@
     }
   };
 
-  const chartData = {
-    // A labels array that can contain any sort of values
-    labels: [
-      '1:00AM', '', '',
-      '3:00AM', '', '',
-      '5:00AM', '', '',
-      '7:00AM', '', '',
-      '9:00AM', '', '',
-      '11:00AM', '', '',
-    ],
-    // Our series array that contains series objects or in this case series data arrays
-    series: [
-      [ 5, 15, 13, 17, 7, 10, 5, 15, 13, 17, 7, 10, 5, 15, 13, 17, 7, 10 ],
-      [ 15, 5, 3, 17, 17, 3, 15, 5, 3, 9, 17, 3, 15, 5, 13, 9, 17, 3 ],
-    ]
-  };
+  const labelsArr = [];
+  for ( let i = 0; i < 37; i++ ) labelsArr.push('');
   const chartOptions = {
     width: 350,
     height: 100,
@@ -299,14 +268,27 @@
       );
       this.toolTip.open(window.googleMap, node.marker);
 
-      function setupToolTip() {
+      function setupToolTip( interfaces ) {
         // initialize charts
         const $chart1 = $toolTipWrap.querySelector('.tooltipV2 .m-chart-1');
         const $chart2 = $toolTipWrap.querySelector('.tooltipV2 .m-chart-2');
-        const $chart3 = $toolTipWrap.querySelector('.tooltipV2 .m-chart-3');
-        if ( $chart1 ) new window.Chartist.Line($chart1, chartData, chartOptions); // eslint-disable-line
-        if ( $chart2 ) new window.Chartist.Line($chart2, chartData, chartOptions); // eslint-disable-line
-        if ( $chart3 ) new window.Chartist.Line($chart3, chartData, chartOptions); // eslint-disable-line
+        const chartData1 = {
+          labels: labelsArr,
+          series: [
+            interfaces[0].throughput.up_link,
+            interfaces[0].throughput.down_link,
+          ]
+        };
+        const chartData2 = {
+          labels: labelsArr,
+          series: [
+            interfaces[1].throughput.up_link,
+            interfaces[1].throughput.down_link,
+          ]
+        };
+
+        if ( $chart1 ) new window.Chartist.Line($chart1, chartData1, chartOptions); // eslint-disable-line
+        if ( $chart2 ) new window.Chartist.Line($chart2, chartData2, chartOptions); // eslint-disable-line
         const $tooltipContainer = $toolTipWrap.querySelector('.tooltipV2');
         // const $tooltipX = toolTipWrap.querySelector('.tooltipV2__X');
 
@@ -348,6 +330,11 @@
             : data.node[0].cng_info[0];
           const nodeBrief = data.node[0].node_brief;
 
+          // do the mapping
+          nodeDetail.interfaces.forEach((item) => {
+            item.alarm_status = mapCodeToNodeStatus[item.alarm_status];
+          });
+
           const toolTipHtml = toolTipTemplate({
             alarm_status: mapCodeToNodeStatus[nodeBrief.alarm_status],
             name: nodeBrief.name,
@@ -357,10 +344,11 @@
             bandwidth_utilization: nodeDetail.bandwidth_utilization,
             num_clients: nodeDetail.num_clients,
             region: nodeDetail.region,
+            interfaces: nodeDetail.interfaces,
           });
           // render data to view
           $toolTipWrap.innerHTML = toolTipHtml;
-          setupToolTip();
+          setupToolTip(nodeDetail.interfaces);
         });
 
     };
