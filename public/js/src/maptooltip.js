@@ -348,7 +348,9 @@
           });
           // render data to view
           $toolTipWrap.innerHTML = toolTipHtml;
-          setupToolTip(nodeDetail.interfaces);
+          if ( nodeDetail.interfaces ) {
+            setupToolTip(nodeDetail.interfaces);
+          }
         });
 
     };
