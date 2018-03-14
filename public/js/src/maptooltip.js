@@ -62,7 +62,7 @@
       offset: 40,
       position: 'start',
       labelOffset: {
-        x: 5,
+        x: 0,
         y: 4
       },
       showGrid: true,
@@ -74,8 +74,6 @@
     showLine: true,
     showPoint: true,
     lineSmooth: false,
-    low: 0,
-    high: 20,
     chartPadding: {
       top: 15,
       right: 15,
@@ -270,25 +268,39 @@
 
       function setupToolTip( interfaces ) {
         // initialize charts
-        const $chart1 = $toolTipWrap.querySelector('.tooltipV2 .m-chart-1');
-        const $chart2 = $toolTipWrap.querySelector('.tooltipV2 .m-chart-2');
-        const chartData1 = {
-          labels: labelsArr,
-          series: [
-            interfaces[0].throughput.up_link,
-            interfaces[0].throughput.down_link,
-          ]
-        };
-        const chartData2 = {
-          labels: labelsArr,
-          series: [
-            interfaces[1].throughput.up_link,
-            interfaces[1].throughput.down_link,
-          ]
-        };
-
-        if ( $chart1 ) new window.Chartist.Line($chart1, chartData1, chartOptions); // eslint-disable-line
-        if ( $chart2 ) new window.Chartist.Line($chart2, chartData2, chartOptions); // eslint-disable-line
+        if ( interfaces[0] && interfaces[0].throughput ) {
+          const $chart1 = $toolTipWrap.querySelector('.tooltipV2 .m-chart-1');
+          const chartData1 = {
+            labels: labelsArr,
+            series: [
+              interfaces[0].throughput.up_link,
+              interfaces[0].throughput.down_link,
+            ]
+          };
+          if ( $chart1 ) new window.Chartist.Line($chart1, chartData1, chartOptions); // eslint-disable-line
+        }
+        if ( interfaces[1] && interfaces[1].throughput ) {
+          const $chart2 = $toolTipWrap.querySelector('.tooltipV2 .m-chart-2');
+          const chartData2 = {
+            labels: labelsArr,
+            series: [
+              interfaces[1].throughput.up_link,
+              interfaces[1].throughput.down_link,
+            ]
+          };
+          if ( $chart2 ) new window.Chartist.Line($chart2, chartData2, chartOptions); // eslint-disable-line
+        }
+        if ( interfaces[2] && interfaces[2].throughput ) {
+          const $chart3 = $toolTipWrap.querySelector('.tooltipV2 .m-chart-3');
+          const chartData3 = {
+            labels: labelsArr,
+            series: [
+              interfaces[2].throughput.up_link,
+              interfaces[2].throughput.down_link,
+            ]
+          };
+          if ( $chart3 ) new window.Chartist.Line($chart3, chartData3, chartOptions); // eslint-disable-line
+        }
         const $tooltipContainer = $toolTipWrap.querySelector('.tooltipV2');
         // const $tooltipX = toolTipWrap.querySelector('.tooltipV2__X');
 
