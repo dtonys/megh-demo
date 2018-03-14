@@ -1,3 +1,13 @@
+@font-face {
+  font-family: SFSemibold;
+  src: url("../fonts/SanFranciscoText-Semibold.otf") format("opentype");
+}
+
+@font-face {
+  font-family: SFBold;
+  src: url("../fonts/SanFranciscoText-Bold.otf") format("opentype");
+}
+
 .navbar,
 .sidebar,
 .content {

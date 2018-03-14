@@ -24,16 +24,6 @@ a {
   src: url("../fonts/SanFranciscoText-Regular.otf") format("opentype");
 }
 
-@font-face {
-  font-family: SFSemibold;
-  src: url("../fonts/SanFranciscoText-Semibold.otf") format("opentype");
-}
-
-@font-face {
-  font-family: SFBold;
-  src: url("../fonts/SanFranciscoText-Bold.otf") format("opentype");
-}
-
 * {
   font-size: 11px;
   font-family: SFRegular, Arial, sans-serif;
