@@ -1,4 +1,5 @@
 (function () {
+  const BASIC_AUTH_SECRET = 'Basic TWVnaE5ldHdvcmtzOm5qZTk3NnhzdzQ1Mw==';
   const TOOLTIP_WIDTH = 500;
   const infoBoxOptions = {
     disableAutoPan: false,
@@ -174,7 +175,8 @@
             name: 'Links',
             type: 'text',
             width: 20,
-            getValue: ( node ) => ( node.num_clients || 3 ),
+            // getValue: ( node ) => (  node.num_clients || 3 ),
+            getValue: () => (''),
           }
         ]
       });
@@ -241,8 +243,22 @@
       return true;
     };
 
-    this.openOnMarker = function ( node ) {
+    this.loadNodeDetail = function ( nodeID ) {
+      return window.unfetch(`/megh/api/v1.0/node/${encodeURIComponent(nodeID)}`, {
+        credentials: 'include',
+        headers: {
+          'Authorization': BASIC_AUTH_SECRET
+        }
+      })
+        .then(( response ) => {
+          return response.json();
+        })
+        .then(( data ) => {
+          return data;
+        });
+    };
 
+    this.openOnMarker = function ( node ) {
       const toolTipOptions = tooltipV2;
       let tooltipPositioning = null;
       let toolTipTemplate = null;
@@ -253,15 +269,15 @@
         toolTipTemplate = window.templates.CCWToolTipV2;
       }
 
-      const toolTipWrap = document.createElement('div');
-      toolTipWrap.style.cssText = 'margin-top: 0px; background: #fff; padding: 0px;';
-      const toolTipHtml = toolTipTemplate({
-        alarm_status: mapCodeToNodeStatus[node.alarm_status],
-        name: node.name,
-        type: node.type,
-      });
-      toolTipWrap.innerHTML = toolTipHtml;
-      infoBoxOptions.content = toolTipWrap;
+      const $toolTipWrap = document.createElement('div');
+      const widthHeightStr = node.type === nodeTypes.CCW
+        ? 'width: 500px; height: 308px;'
+        : 'width: 500px; height: 348px;';
+
+      $toolTipWrap.style.cssText = `margin-top: 0px; background: #fff; padding: 0px; ${widthHeightStr}`;
+      // Loading State -> Blank Screen
+      $toolTipWrap.innerHTML = '<div></div>';
+      infoBoxOptions.content = $toolTipWrap;
 
       // close existing tooltip
       this.close();
@@ -283,41 +299,69 @@
       );
       this.toolTip.open(window.googleMap, node.marker);
 
-      // initialize charts
-      const $chart1 = toolTipWrap.querySelector('.tooltipV2 .m-chart-1');
-      const $chart2 = toolTipWrap.querySelector('.tooltipV2 .m-chart-2');
-      const $chart3 = toolTipWrap.querySelector('.tooltipV2 .m-chart-3');
-      if ( $chart1 ) new window.Chartist.Line($chart1, chartData, chartOptions); // eslint-disable-line
-      if ( $chart2 ) new window.Chartist.Line($chart2, chartData, chartOptions); // eslint-disable-line
-      if ( $chart3 ) new window.Chartist.Line($chart3, chartData, chartOptions); // eslint-disable-line
-      const $tooltipContainer = toolTipWrap.querySelector('.tooltipV2');
-      // const $tooltipX = toolTipWrap.querySelector('.tooltipV2__X');
+      function setupToolTip() {
+        // initialize charts
+        const $chart1 = $toolTipWrap.querySelector('.tooltipV2 .m-chart-1');
+        const $chart2 = $toolTipWrap.querySelector('.tooltipV2 .m-chart-2');
+        const $chart3 = $toolTipWrap.querySelector('.tooltipV2 .m-chart-3');
+        if ( $chart1 ) new window.Chartist.Line($chart1, chartData, chartOptions); // eslint-disable-line
+        if ( $chart2 ) new window.Chartist.Line($chart2, chartData, chartOptions); // eslint-disable-line
+        if ( $chart3 ) new window.Chartist.Line($chart3, chartData, chartOptions); // eslint-disable-line
+        const $tooltipContainer = $toolTipWrap.querySelector('.tooltipV2');
+        // const $tooltipX = toolTipWrap.querySelector('.tooltipV2__X');
 
-      // // Setup tooltip events
-      // $tooltipX.addEventListener('click', (event) => {
-      //   // console.log('tooltip::click');
-      //   event.preventDefault();
-      //   event.stopPropagation();
-      //   _this.close();
-      // });
+        // // Setup tooltip events
+        // $tooltipX.addEventListener('click', (event) => {
+        //   // console.log('tooltip::click');
+        //   event.preventDefault();
+        //   event.stopPropagation();
+        //   _this.close();
+        // });
 
-      $tooltipContainer.addEventListener('mouseover', () => {
-        // console.log('tooltip::mouseover');
-        mouseState.mouseWithinTooltip = true;
-      });
-      $tooltipContainer.addEventListener('mouseleave', function () {
-        // console.log('tooltip::mouseleave');
+        $tooltipContainer.addEventListener('mouseover', () => {
+          // console.log('tooltip::mouseover');
+          mouseState.mouseWithinTooltip = true;
+        });
+        $tooltipContainer.addEventListener('mouseleave', function () {
+          // console.log('tooltip::mouseleave');
 
-        mouseState.mouseWithinTooltip = false;
-        setTimeout(() => {
-          if (
-            mouseState.mouseWithinMarker // mouse from tooltip to marker
-          ) {
-            return;
-          }
-          _this.close();
-        }, mouseConfig.MOUSEOUT_TIMER_DELAY_MS);
-      });
+          mouseState.mouseWithinTooltip = false;
+          setTimeout(() => {
+            if (
+              mouseState.mouseWithinMarker // mouse from tooltip to marker
+            ) {
+              return;
+            }
+            _this.close();
+          }, mouseConfig.MOUSEOUT_TIMER_DELAY_MS);
+        });
+      }
+
+      // HACK: Hardcode ID, node list passes wrong ID
+      if ( node.node_id === 'CNG1' ) node.node_id = 'CNG#1';
+
+      this.loadNodeDetail( node.node_id )
+        .then((data) => {
+          // collect
+          const nodeDetail = node.type === nodeTypes.CCW
+            ? data.node[0].ccw_info[0]
+            : data.node[0].cng_info[0];
+          const nodeBrief = data.node[0].node_brief;
+
+          const toolTipHtml = toolTipTemplate({
+            alarm_status: mapCodeToNodeStatus[nodeBrief.alarm_status],
+            name: nodeBrief.name,
+            type: nodeBrief.type,
+            cpu_utilization: nodeDetail.cpu_utilization,
+            memory_utilization: nodeDetail.memory_utilization,
+            bandwidth_utilization: nodeDetail.bandwidth_utilization,
+            num_clients: nodeDetail.num_clients,
+            region: nodeDetail.region,
+          });
+          // render data to view
+          $toolTipWrap.innerHTML = toolTipHtml;
+          setupToolTip();
+        });
 
     };
 

@@ -111,17 +111,23 @@ window.templates.CCWToolTipV2 = _.template(`
           CNG
         <% } %>
       </div>
-      <% [
+      <% const items = [
           { name: 'Name', value: name, type: 'text' },
-          { name: 'Region', value: 'San Jose', type: 'text' },
+          { name: 'Region', value: region, type: 'text', nodeType: 'CNG' },
           { name: 'Alarm Status', value: alarm_status, type: 'alarmStatus' },
-          { name: 'Branches Connected', value: '99', type: 'text' },
+          { name: 'CPU Utilization', value: cpu_utilization+'%', type: 'text', nodeType: 'CCW' },
+          { name: 'Memory Utilization', value: memory_utilization+'%', type: 'text', nodeType: 'CCW' },
+          { name: 'Branches Connected', value: num_clients, type: 'text', nodeType: 'CNG' },
           {
             name: 'Bandwidth Utilization',
-            value: ['Netflix', 'iTunes', 'Apple.com', 'YouTube', 'Facebook'],
+            value: bandwidth_utilization,
             type: 'list'
           },
-        ].forEach(function(item){ %>
+        ]
+        .filter(function(item) {
+          return ( !item.nodeType || ( item.nodeType && type === item.nodeType ) )
+        })
+        .forEach(function(item) { %>
           <div class="tooltipV2__itemWrap" >
             <div class="tooltipV2__itemLabel" > <%= item.name %> </div>
             <div class="tooltipV2__itemContent" >
