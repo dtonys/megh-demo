@@ -169,7 +169,6 @@
 }
 .tooltipV2__chartTitleWrap {
   display: flex;
-  margin-bottom: 10px;
 }
 .tooltipV2__linkText {
   font-size: 8px;
@@ -187,7 +186,9 @@
 }
 
 .tooltipV2__chartBody {
-  display: flex;
+  margin-left: -12px;
+  margin-top: -7px;
+  margin-bottom: -6px;
 }
 .tooltipV2__chartYWrap {
   text-align: right;
@@ -441,6 +442,30 @@
   border-right: none;
 }
 
-
+/* Chart Overrides */
+.ct-line {
+  stroke-width: 1px;
+}
+.ct-point {
+  stroke-width: 4px;
+}
+.ct-series-a .ct-line,
+.ct-series-a .ct-point {
+  stroke: #1bc2e2;
+}
+.ct-series-b .ct-line,
+.ct-series-b .ct-point {
+  stroke: #000;
+}
+.ct-grid {
+  stroke: #a4a4a4;
+  stroke-width: 1px;
+  opacity: 0.2;
+  stroke-dasharray: none;
+}
+.ct-label {
+  font-size: 8px;
+  color: #515151;
+}
 
 

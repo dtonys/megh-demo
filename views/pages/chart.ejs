@@ -14,12 +14,13 @@
   <body>
     <%- include('../partials/navbar') %>
     <%- include('../partials/sidebar') %>
-    <div class="content" id="mapRegion" >
+    <div class="content" style="background: white;">
+      Chart Page
+      <div class="ct-chart m-chart-1"></div>
+      <div class="ct-chart m-chart-2"></div>
     </div>
     <!-- *JS* -->
     <%- include('../partials/js-common') %>
-    <!-- build:js build/dashboard.min.js -->
-    <script src="js/src/dashboard.js" ></script>
-    <!-- endbuild -->
+    <script src="js/src/chartPage.js" ></script>
   </body>
 </html>

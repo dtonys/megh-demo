@@ -77,7 +77,6 @@ window.templates.CNGToolTip = _.template(`
 `);
 
 window.templates.SmallChart = _.template(`
-  <div style="margin-bottom: 20px;" ></div>
   <div class="tooltipV2__chart" >
     <div class="tooltipV2__chartTitleWrap" >
       <div class="tooltipV2__chartTitle"> <%= title %> </div>
@@ -94,14 +93,7 @@ window.templates.SmallChart = _.template(`
       <% } %>
     </div>
     <div class="tooltipV2__chartBody" >
-      <div class="tooltipV2__chartYWrap" >
-        <div class="tooltipV2__chartYText" > 20 MB </div>
-        <div class="tooltipV2__chartYText" > 15 MB </div>
-        <div class="tooltipV2__chartYText" > 10 MB </div>
-        <div class="tooltipV2__chartYText" > 5 MB </div>
-        <div class="tooltipV2__chartYText" > 0 MB </div>
-      </div>
-      <img src="http://via.placeholder.com/300x50" />
+      <div class="ct-chart m-chart-<%= index %>"></div>
     </div>
   </div>
 `);
@@ -167,17 +159,18 @@ window.templates.CCWToolTipV2 = _.template(`
       <%= window.templates.SmallChart({
         title: 'CCW Link',
         type: type,
+        index: 1,
       }) %>
-      <div style="margin-bottom: 20px;" ></div>
       <%= window.templates.SmallChart({
         title: 'Internet Link',
         type: type,
+        index: 2,
       }) %>
       <% if ( type === 'CNG' ) { %>
-        <div style="margin-bottom: 20px;" ></div>
         <%= window.templates.SmallChart({
           title: 'Data Center Link',
           type: type,
+          index: 3,
         }) %>
       <% } %>
     </div>

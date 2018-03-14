@@ -56,8 +56,64 @@
     }
   };
 
-// window.googleMap
-
+  const chartData = {
+    // A labels array that can contain any sort of values
+    labels: [
+      '1:00AM', '', '',
+      '3:00AM', '', '',
+      '5:00AM', '', '',
+      '7:00AM', '', '',
+      '9:00AM', '', '',
+      '11:00AM', '', '',
+    ],
+    // Our series array that contains series objects or in this case series data arrays
+    series: [
+      [ 5, 15, 13, 17, 7, 10, 5, 15, 13, 17, 7, 10, 5, 15, 13, 17, 7, 10 ],
+      [ 15, 5, 3, 17, 17, 3, 15, 5, 3, 9, 17, 3, 15, 5, 13, 9, 17, 3 ],
+    ]
+  };
+  const chartOptions = {
+    width: 350,
+    height: 100,
+    // X-Axis specific configuration
+    axisX: {
+      offset: 30,
+      position: 'end',
+      labelOffset: {
+        x: 0,
+        y: 0
+      },
+      showGrid: true,
+      showLabel: true,
+    },
+    axisY: {
+      type: window.Chartist.AutoScaleAxis,
+      scaleMinSpace: 10,
+      offset: 40,
+      position: 'start',
+      labelOffset: {
+        x: 5,
+        y: 4
+      },
+      showGrid: true,
+      showLabel: true,
+      labelInterpolationFnc: function (value) {
+        return value + ' MB';
+      }
+    },
+    showLine: true,
+    showPoint: true,
+    lineSmooth: false,
+    low: 0,
+    high: 20,
+    chartPadding: {
+      top: 15,
+      right: 15,
+      bottom: 5,
+      left: 0
+    },
+    fullWidth: false,
+  };
 
   function getPixelPosition( marker ) {
     const scale = Math.pow(2, window.googleMap.getZoom());
@@ -65,17 +121,12 @@
       window.googleMap.getBounds().getNorthEast().lat(),
       window.googleMap.getBounds().getSouthWest().lng()
     );
-    console.log('nw');
-    console.log(nw);
-
     const worldCoordinateNW = window.googleMap.getProjection().fromLatLngToPoint(nw);
     const worldCoordinate = window.googleMap.getProjection().fromLatLngToPoint(marker.getPosition());
     const pixelOffset = new window.google.maps.Point(
       Math.floor((worldCoordinate.x - worldCoordinateNW.x) * scale),
       Math.floor((worldCoordinate.y - worldCoordinateNW.y) * scale)
     );
-    console.log('pixelOffset');
-    console.log(pixelOffset);
     return pixelOffset;
   }
 
@@ -242,9 +293,16 @@
       );
       this.toolTip.open(window.googleMap, node.marker);
 
+      // initialize charts
+      const $chart1 = toolTipWrap.querySelector('.tooltipV2 .m-chart-1');
+      const $chart2 = toolTipWrap.querySelector('.tooltipV2 .m-chart-2');
+      const $chart3 = toolTipWrap.querySelector('.tooltipV2 .m-chart-3');
+      if ( $chart1 ) new window.Chartist.Line($chart1, chartData, chartOptions); // eslint-disable-line
+      if ( $chart2 ) new window.Chartist.Line($chart2, chartData, chartOptions); // eslint-disable-line
+      if ( $chart3 ) new window.Chartist.Line($chart3, chartData, chartOptions); // eslint-disable-line
       // TODO: Uncomment this section
-      // const tooltipContainer = toolTipWrap.querySelector('.tooltip');
-      // const tooltipX = toolTipWrap.querySelector('.tooltip__X');
+      // const tooltipContainer = toolTipWrap.querySelector('.tooltipV2');
+      // const tooltipX = toolTipWrap.querySelector('.tooltipV2__X');
 
       // // Setup tooltip events
       // tooltipX.addEventListener('click', (event) => {

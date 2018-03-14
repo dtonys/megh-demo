@@ -38,6 +38,12 @@ app.get('/node-summary', (req, res) => {
   });
 });
 
+app.get('/chart', (req, res) => {
+  res.render('pages/chart', {
+    title: 'Chart Page - Megh Networks',
+  });
+});
+
 app.listen( process.env.PORT, () => {
   console.log('HTTP server is listening on port ' + process.env.PORT);
 });
