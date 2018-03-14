@@ -199,33 +199,33 @@
 
 
       // Setup tooltip events
-      const tooltipContainer = toolTipWrap.querySelector('.tableList');
-      const tooltipX = toolTipWrap.querySelector('.tooltip__X');
-      const tableListHead = toolTipWrap.querySelector('.tableList__head');
-      const tableListContent = toolTipWrap.querySelector('.tableList__content');
+      const $tooltipContainer = toolTipWrap.querySelector('.tableList');
+      const $tooltipX = toolTipWrap.querySelector('.tooltip__X');
+      const $tableListHead = toolTipWrap.querySelector('.tableList__head');
+      const $tableListContent = toolTipWrap.querySelector('.tableList__content');
 
       // Add a scrollbar if the # of items exceedes threshhold
       if ( clusterNodes.length > 10 ) {
-        tableListHead.style.overflowY = 'scroll';
-        tableListContent.style.overflowY = 'scroll';
+        $tableListHead.style.overflowY = 'scroll';
+        $tableListContent.style.overflowY = 'scroll';
       }
       else {
-        tableListHead.style.overflowY = 'auto';
-        tableListContent.style.overflowY = 'auto';
+        $tableListHead.style.overflowY = 'auto';
+        $tableListContent.style.overflowY = 'auto';
       }
 
       // Setup tooltip events
-      tooltipX.addEventListener('click', (event) => {
+      $tooltipX.addEventListener('click', (event) => {
         event.preventDefault();
         event.stopPropagation();
         _this.close();
       });
 
-      tooltipContainer.addEventListener('mouseenter', () => {
+      $tooltipContainer.addEventListener('mouseenter', () => {
         // console.log('tooltip::mouseenter');
         mouseState.mouseWithinTooltip = true;
       });
-      tooltipContainer.addEventListener('mouseleave', function () {
+      $tooltipContainer.addEventListener('mouseleave', function () {
         // console.log('tooltip::mouseleave');
         mouseState.mouseWithinTooltip = false;
         setTimeout(() => {
@@ -252,24 +252,14 @@
       if ( node.type === nodeTypes.CNG ) {
         toolTipTemplate = window.templates.CCWToolTipV2;
       }
-      // {
-      //   "alarm_status": 0, //
-      //   "coords": {
-      //     "lat": 37.38559,
-      //     "lng": -122.031637
-      //   },
-      //   "name": "BR#3 name", //
-      //   "node_id": "BR#3",
-      //   "type": "CCW" //
-      // }
 
+      const toolTipWrap = document.createElement('div');
+      toolTipWrap.style.cssText = 'margin-top: 0px; background: #fff; padding: 0px;';
       const toolTipHtml = toolTipTemplate({
         alarm_status: mapCodeToNodeStatus[node.alarm_status],
         name: node.name,
         type: node.type,
       });
-      const toolTipWrap = document.createElement('div');
-      toolTipWrap.style.cssText = 'margin-top: 0px; background: #fff; padding: 0px;';
       toolTipWrap.innerHTML = toolTipHtml;
       infoBoxOptions.content = toolTipWrap;
 
@@ -300,35 +290,34 @@
       if ( $chart1 ) new window.Chartist.Line($chart1, chartData, chartOptions); // eslint-disable-line
       if ( $chart2 ) new window.Chartist.Line($chart2, chartData, chartOptions); // eslint-disable-line
       if ( $chart3 ) new window.Chartist.Line($chart3, chartData, chartOptions); // eslint-disable-line
-      // TODO: Uncomment this section
-      // const tooltipContainer = toolTipWrap.querySelector('.tooltipV2');
-      // const tooltipX = toolTipWrap.querySelector('.tooltipV2__X');
+      const $tooltipContainer = toolTipWrap.querySelector('.tooltipV2');
+      // const $tooltipX = toolTipWrap.querySelector('.tooltipV2__X');
 
       // // Setup tooltip events
-      // tooltipX.addEventListener('click', (event) => {
+      // $tooltipX.addEventListener('click', (event) => {
       //   // console.log('tooltip::click');
       //   event.preventDefault();
       //   event.stopPropagation();
       //   _this.close();
       // });
 
-      // tooltipContainer.addEventListener('mouseover', () => {
-      //   // console.log('tooltip::mouseover');
-      //   mouseState.mouseWithinTooltip = true;
-      // });
-      // tooltipContainer.addEventListener('mouseleave', function () {
-      //   // console.log('tooltip::mouseleave');
+      $tooltipContainer.addEventListener('mouseover', () => {
+        // console.log('tooltip::mouseover');
+        mouseState.mouseWithinTooltip = true;
+      });
+      $tooltipContainer.addEventListener('mouseleave', function () {
+        // console.log('tooltip::mouseleave');
 
-      //   mouseState.mouseWithinTooltip = false;
-      //   setTimeout(() => {
-      //     if (
-      //       mouseState.mouseWithinMarker // mouse from tooltip to marker
-      //     ) {
-      //       return;
-      //     }
-      //     _this.close();
-      //   }, mouseConfig.MOUSEOUT_TIMER_DELAY_MS);
-      // });
+        mouseState.mouseWithinTooltip = false;
+        setTimeout(() => {
+          if (
+            mouseState.mouseWithinMarker // mouse from tooltip to marker
+          ) {
+            return;
+          }
+          _this.close();
+        }, mouseConfig.MOUSEOUT_TIMER_DELAY_MS);
+      });
 
     };
 

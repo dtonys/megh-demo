@@ -1,0 +1,1034 @@
+{
+  "nodes": [
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "45.8696",
+        "lng": "-119.688"
+      },
+      "name": "CNG Oregon",
+      "node_id": "CNG1",
+      "type": "CNG"
+    },
+    {
+      "alarm_status": "n/a",
+      "coords": {
+        "lat": 36.104935,
+        "lng": -115.172299
+      },
+      "name": "Main Data Center",
+      "node_id": "DC1",
+      "type": "DataCenter"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "37.693719",
+        "lng": "-122.471859"
+      },
+      "name": "BR#1 name",
+      "node_id": "BR#1",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "37.666555",
+        "lng": "-122.102525"
+      },
+      "name": "BR#2 name",
+      "node_id": "BR#2",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "37.38559",
+        "lng": "-122.031637"
+      },
+      "name": "BR#3 name",
+      "node_id": "BR#3",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "37.51282",
+        "lng": "-121.967547"
+      },
+      "name": "BR#4 name",
+      "node_id": "BR#4",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "37.720342",
+        "lng": "-121.852962"
+      },
+      "name": "BR#5 name",
+      "node_id": "BR#5",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "37.177947",
+        "lng": "-121.652213"
+      },
+      "name": "BR#6 name",
+      "node_id": "BR#6",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "37.190733",
+        "lng": "-121.654836"
+      },
+      "name": "BR#7 name",
+      "node_id": "BR#7",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "37.974087",
+        "lng": "-122.061324"
+      },
+      "name": "BR#8 name",
+      "node_id": "BR#8",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "38.052332",
+        "lng": "-121.315326"
+      },
+      "name": "BR#9 name",
+      "node_id": "BR#9",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "38.14684",
+        "lng": "-121.262206"
+      },
+      "name": "BR#10 name",
+      "node_id": "BR#10",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "38.292005",
+        "lng": "-122.629484"
+      },
+      "name": "BR#11 name",
+      "node_id": "BR#11",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "38.306505",
+        "lng": "-122.056705"
+      },
+      "name": "BR#12 name",
+      "node_id": "BR#12",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "38.505589",
+        "lng": "-122.726486"
+      },
+      "name": "BR#13 name",
+      "node_id": "BR#13",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "38.511011",
+        "lng": "-121.500094"
+      },
+      "name": "BR#14 name",
+      "node_id": "BR#14",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "38.473049",
+        "lng": "-121.400781"
+      },
+      "name": "BR#15 name",
+      "node_id": "BR#15",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "38.714938",
+        "lng": "-121.160584"
+      },
+      "name": "BR#16 name",
+      "node_id": "BR#16",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "38.833778",
+        "lng": "-121.269135"
+      },
+      "name": "BR#17 name",
+      "node_id": "BR#17",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "37.265446",
+        "lng": "-121.669438"
+      },
+      "name": "BR#18 name",
+      "node_id": "BR#18",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "36.791828",
+        "lng": "-121.674923"
+      },
+      "name": "BR#19 name",
+      "node_id": "BR#19",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "36.923685",
+        "lng": "-119.873166"
+      },
+      "name": "BR#20 name",
+      "node_id": "BR#20",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "36.417",
+        "lng": "-119.323849"
+      },
+      "name": "BR#21 name",
+      "node_id": "BR#21",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "35.388706",
+        "lng": "-120.706209"
+      },
+      "name": "BR#22 name",
+      "node_id": "BR#22",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "35.532369",
+        "lng": "-119.118809"
+      },
+      "name": "BR#23 name",
+      "node_id": "BR#23",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "35.063193",
+        "lng": "-120.431843"
+      },
+      "name": "BR#24 name",
+      "node_id": "BR#24",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "34.596683",
+        "lng": "-117.355031"
+      },
+      "name": "BR#25 name",
+      "node_id": "BR#25",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "34.300402",
+        "lng": "-118.099737"
+      },
+      "name": "BR#26 name",
+      "node_id": "BR#26",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "34.035559",
+        "lng": "-118.406765"
+      },
+      "name": "BR#27 name",
+      "node_id": "BR#27",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "33.654542",
+        "lng": "-117.170559"
+      },
+      "name": "BR#28 name",
+      "node_id": "BR#28",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "33.850933",
+        "lng": "-116.401516"
+      },
+      "name": "BR#29 name",
+      "node_id": "BR#29",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "33.759644",
+        "lng": "-112.254177"
+      },
+      "name": "BR#30 name",
+      "node_id": "BR#30",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "33.82812",
+        "lng": "-112.058662"
+      },
+      "name": "BR#31 name",
+      "node_id": "BR#31",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "33.608805",
+        "lng": "-111.913601"
+      },
+      "name": "BR#32 name",
+      "node_id": "BR#32",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "33.466866",
+        "lng": "-111.985012"
+      },
+      "name": "BR#33 name",
+      "node_id": "BR#33",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "33.283376",
+        "lng": "-117.362819"
+      },
+      "name": "BR#34 name",
+      "node_id": "BR#34",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "33.191485",
+        "lng": "-117.263943"
+      },
+      "name": "BR#35 name",
+      "node_id": "BR#35",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "33.242037",
+        "lng": "-117.104641"
+      },
+      "name": "BR#36 name",
+      "node_id": "BR#36",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "32.873724",
+        "lng": "-117.22549"
+      },
+      "name": "BR#37 name",
+      "node_id": "BR#37",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "36.247503",
+        "lng": "-115.182033"
+      },
+      "name": "BR#38 name",
+      "node_id": "BR#38",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "37.246636",
+        "lng": "-113.556057"
+      },
+      "name": "BR#39 name",
+      "node_id": "BR#39",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "41.173399",
+        "lng": "-111.979519"
+      },
+      "name": "BR#40 name",
+      "node_id": "BR#40",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "40.733643",
+        "lng": "-111.864163"
+      },
+      "name": "BR#41 name",
+      "node_id": "BR#41",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "40.49596",
+        "lng": "-111.831204"
+      },
+      "name": "BR#42 name",
+      "node_id": "BR#42",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "40.37471",
+        "lng": "-111.704861"
+      },
+      "name": "BR#43 name",
+      "node_id": "BR#43",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "43.706517",
+        "lng": "-116.59927"
+      },
+      "name": "BR#44 name",
+      "node_id": "BR#44",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "43.714459",
+        "lng": "-116.291653"
+      },
+      "name": "BR#45 name",
+      "node_id": "BR#45",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "42.705566",
+        "lng": "-114.456936"
+      },
+      "name": "BR#46 name",
+      "node_id": "BR#46",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "43.007576",
+        "lng": "-112.462918"
+      },
+      "name": "BR#47 name",
+      "node_id": "BR#47",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "47.790016",
+        "lng": "-117.198025"
+      },
+      "name": "BR#48 name",
+      "node_id": "BR#48",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "48.870962",
+        "lng": "-122.504421"
+      },
+      "name": "BR#49 name",
+      "node_id": "BR#49",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "48.551993",
+        "lng": "-122.339626"
+      },
+      "name": "BR#50 name",
+      "node_id": "BR#50",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "48.249292",
+        "lng": "-122.202297"
+      },
+      "name": "BR#51 name",
+      "node_id": "BR#51",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "47.753097",
+        "lng": "-122.713161"
+      },
+      "name": "BR#52 name",
+      "node_id": "BR#52",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "47.804776",
+        "lng": "-122.339626"
+      },
+      "name": "BR#53 name",
+      "node_id": "BR#53",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "47.716152",
+        "lng": "-122.136379"
+      },
+      "name": "BR#54 name",
+      "node_id": "BR#54",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "47.634781",
+        "lng": "-122.042995"
+      },
+      "name": "BR#55 name",
+      "node_id": "BR#55",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "47.534742",
+        "lng": "-122.273708"
+      },
+      "name": "BR#56 name",
+      "node_id": "BR#56",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "47.404778",
+        "lng": "-122.30667"
+      },
+      "name": "BR#57 name",
+      "node_id": "BR#57",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "47.311749",
+        "lng": "-122.482448"
+      },
+      "name": "BR#58 name",
+      "node_id": "BR#58",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "47.255854",
+        "lng": "-122.31216"
+      },
+      "name": "BR#59 name",
+      "node_id": "BR#59",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "47.132675",
+        "lng": "-122.983381"
+      },
+      "name": "BR#60 name",
+      "node_id": "BR#60",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "45.688042",
+        "lng": "-122.688495"
+      },
+      "name": "BR#61 name",
+      "node_id": "BR#61",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "45.634293",
+        "lng": "-122.919208"
+      },
+      "name": "BR#62 name",
+      "node_id": "BR#62",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "45.499697",
+        "lng": "-122.74892"
+      },
+      "name": "BR#63 name",
+      "node_id": "BR#63",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "45.553574",
+        "lng": "-122.584125"
+      },
+      "name": "BR#64 name",
+      "node_id": "BR#64",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "45.592026",
+        "lng": "-122.43581"
+      },
+      "name": "BR#65 name",
+      "node_id": "BR#65",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "45.028009",
+        "lng": "-122.979633"
+      },
+      "name": "BR#66 name",
+      "node_id": "BR#66",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "44.202971",
+        "lng": "-123.100482"
+      },
+      "name": "BR#67 name",
+      "node_id": "BR#67",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "42.477946",
+        "lng": "-122.891768"
+      },
+      "name": "BR#68 name",
+      "node_id": "BR#68",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "40.731242",
+        "lng": "-122.350417"
+      },
+      "name": "BR#69 name",
+      "node_id": "BR#69",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "39.864342",
+        "lng": "-121.782089"
+      },
+      "name": "BR#70 name",
+      "node_id": "BR#70",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "39.608145",
+        "lng": "-119.802738"
+      },
+      "name": "BR#71 name",
+      "node_id": "BR#71",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "38.889806",
+        "lng": "-121.279085"
+      },
+      "name": "BR#72 name",
+      "node_id": "BR#72",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "38.573861",
+        "lng": "-122.72302"
+      },
+      "name": "BR#73 name",
+      "node_id": "BR#73",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "43.000388",
+        "lng": "-106.275386"
+      },
+      "name": "BR#74 name",
+      "node_id": "BR#74",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "39.766592",
+        "lng": "-105.119132"
+      },
+      "name": "BR#75 name",
+      "node_id": "BR#75",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "36.881991",
+        "lng": "-108.169814"
+      },
+      "name": "BR#76 name",
+      "node_id": "BR#76",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "32.457089",
+        "lng": "-106.758792"
+      },
+      "name": "BR#77 name",
+      "node_id": "BR#77",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "31.219565",
+        "lng": "-97.678603"
+      },
+      "name": "BR#78 name",
+      "node_id": "BR#78",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "32.732272",
+        "lng": "-96.953495"
+      },
+      "name": "BR#79 name",
+      "node_id": "BR#79",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "33.044946",
+        "lng": "-97.325848"
+      },
+      "name": "BR#80 name",
+      "node_id": "BR#80",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "33.356513",
+        "lng": "-96.790182"
+      },
+      "name": "BR#81 name",
+      "node_id": "BR#81",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "33.050422",
+        "lng": "-96.47089"
+      },
+      "name": "BR#82 name",
+      "node_id": "BR#82",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "33.077795",
+        "lng": "-96.829377"
+      },
+      "name": "BR#83 name",
+      "node_id": "BR#83",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "35.447583",
+        "lng": "-97.495693"
+      },
+      "name": "BR#84 name",
+      "node_id": "BR#84",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "35.479506",
+        "lng": "-94.412349"
+      },
+      "name": "BR#85 name",
+      "node_id": "BR#85",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "36.204975",
+        "lng": "-95.875631"
+      },
+      "name": "BR#86 name",
+      "node_id": "BR#86",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "37.852828",
+        "lng": "-97.273588"
+      },
+      "name": "BR#87 name",
+      "node_id": "BR#87",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "38.105137",
+        "lng": "-100.84687"
+      },
+      "name": "BR#88 name",
+      "node_id": "BR#88",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "38.933109",
+        "lng": "-97.606746"
+      },
+      "name": "BR#89 name",
+      "node_id": "BR#89",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "39.05496",
+        "lng": "-94.412349"
+      },
+      "name": "BR#90 name",
+      "node_id": "BR#90",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "39.171537",
+        "lng": "-95.758045"
+      },
+      "name": "BR#91 name",
+      "node_id": "BR#91",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "39.93103",
+        "lng": "-94.836962"
+      },
+      "name": "BR#92 name",
+      "node_id": "BR#92",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "41.074484",
+        "lng": "-98.403712"
+      },
+      "name": "BR#93 name",
+      "node_id": "BR#93",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "40.931516",
+        "lng": "-96.639934"
+      },
+      "name": "BR#94 name",
+      "node_id": "BR#94",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "41.393801",
+        "lng": "-96.065073"
+      },
+      "name": "BR#95 name",
+      "node_id": "BR#95",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "43.694391",
+        "lng": "-97.780158"
+      },
+      "name": "BR#96 name",
+      "node_id": "BR#96",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "44.647848",
+        "lng": "-94.956427"
+      },
+      "name": "BR#97 name",
+      "node_id": "BR#97",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "47.475171",
+        "lng": "-101.669073"
+      },
+      "name": "BR#98 name",
+      "node_id": "BR#98",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "47.080131",
+        "lng": "-100.779181"
+      },
+      "name": "BR#99 name",
+      "node_id": "BR#99",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 0,
+      "coords": {
+        "lat": "46.51069",
+        "lng": "-94.3192"
+      },
+      "name": "BR#100 name",
+      "node_id": "BR#100",
+      "type": "CCW"
+    },
+    {
+      "alarm_status": 2,
+      "coords": {
+        "lat": "37.3874",
+        "lng": "-121.9024"
+      },
+      "name": "San Jose",
+      "node_id": "BR#101",
+      "type": "CCW"
+    }
+  ]
+}
