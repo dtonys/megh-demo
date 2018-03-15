@@ -9,7 +9,6 @@
     CCW: 'CCW'
   };
 
-
   // const ALARM_STATUS_NA = 'n/a';
   const BASIC_AUTH_SECRET = 'Basic TWVnaE5ldHdvcmtzOm5qZTk3NnhzdzQ1Mw==';
   const ICON_GREEN_BRANCH = 'img/icons/ccw-green.svg';
