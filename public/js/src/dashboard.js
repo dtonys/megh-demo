@@ -303,13 +303,6 @@
     });
   }
 
-  // function pollAlarms () {
-  //   // set timeout
-  //   // fetch alarms
-  //   // diff alarms
-  //   // apply updates
-  // }
-
   function loadAlarms() {
     return window.unfetch('/megh/api/v1.0/alarms', {
       credentials: 'include',
@@ -386,65 +379,6 @@
       }
     });
   }
-  // const mockAlarmHistory1 = [
-  //   {
-  //     alarm_id: '1',
-  //     description: 'Lan line is down',
-  //     instance: '1',
-  //     node_id: 'BR#1',
-  //     occurrence_date: '2018-03-01 19:43:13',
-  //     severity: 'Minor',
-  //     type: 'LINE_DOWN'
-  //   },
-  //   {
-  //     alarm_id: '2',
-  //     description: 'Lan line is down',
-  //     instance: '1',
-  //     node_id: 'BR#2',
-  //     occurrence_date: '2018-03-01 19:43:13',
-  //     severity: 'Major',
-  //     type: 'LINE_DOWN'
-  //   },
-  //   {
-  //     alarm_id: '3',
-  //     description: 'Lan line is down',
-  //     instance: '1',
-  //     node_id: 'BR#3',
-  //     occurrence_date: '2018-03-01 19:43:13',
-  //     severity: 'Major',
-  //     type: 'LINE_DOWN'
-  //   },
-  // ];
-
-  // const mockAlarmHistory2 = [
-  //   {
-  //     alarm_id: '1',
-  //     description: 'Lan line is down',
-  //     instance: '1',
-  //     node_id: 'BR#2',
-  //     occurrence_date: '2018-03-01 19:43:13',
-  //     severity: 'Minor',
-  //     type: 'LINE_DOWN'
-  //   },
-  //   {
-  //     alarm_id: '2',
-  //     description: 'Lan line is down',
-  //     instance: '1',
-  //     node_id: 'BR#3',
-  //     occurrence_date: '2018-03-01 19:43:13',
-  //     severity: 'Major',
-  //     type: 'LINE_DOWN'
-  //   },
-  //   {
-  //     alarm_id: '2',
-  //     description: 'Lan line is down',
-  //     instance: '1',
-  //     node_id: 'BR#4',
-  //     occurrence_date: '2018-03-01 19:43:13',
-  //     severity: 'Major',
-  //     type: 'LINE_DOWN'
-  //   }
-  // ];
 
   function initialize() {
     let alarmHistory = null;
@@ -457,16 +391,10 @@
       mouseConfig: mouseConfig,
     });
 
-    // let i = 0;
     // Load alarms once per second, waiting for the prev request to finish
     function pollAlarms() {
       window.setTimeout(() => {
         loadAlarms().then(( alarmData ) => {
-          // mock set history response
-          // if ( i % 2 === 0 ) {
-          //   alarmData.alarms[0].alarm_history = mockAlarmHistory2;
-          //   alarmData.alarms[0].num_alarms = mockAlarmHistory2.length;
-          // }
 
           // Render alarms in the alarm dropdown, as a list
           alarmDropDown.updateAlarmData(alarmData);
@@ -474,7 +402,6 @@
 
           diffAlarmHistoryAndUpdateNodes(alarmHistory, alarmData.alarms[0].alarm_history );
           alarmHistory = alarmData.alarms[0].alarm_history;
-          // i++;
           pollAlarms();
         });
       }, 1000);
