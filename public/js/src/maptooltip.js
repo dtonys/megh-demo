@@ -336,6 +336,7 @@
 
       this.loadNodeDetail( node.node_id )
         .then((data) => {
+          if ( !data || !data.node || !data.node[0] || JSON.stringify(data.node[0]) === '{}' ) return;
           // collect
           const nodeDetail = node.type === nodeTypes.CCW
             ? data.node[0].ccw_info[0]

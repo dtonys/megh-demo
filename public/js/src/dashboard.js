@@ -80,16 +80,14 @@
   const mapRegionDOM = document.querySelector('#mapRegion');
 
   let nodes = null;
+  let nextNodes = null;
   let nodeMap = {};
 
-  function processNodes( data ) {
-    nodes = data.nodes;
-    nodes.forEach(( node ) => {
+  function processNodes( nodesToProcess ) {
+    nodesToProcess.forEach(( node ) => {
       // convert to number
       node.coords.lat = parseFloat(node.coords.lat);
       node.coords.lng = parseFloat(node.coords.lng);
-      // populate nodeMap,
-      nodeMap[node.node_id] = node;
     });
   }
 
@@ -104,7 +102,53 @@
         return response.json();
       })
       .then(( data ) => {
-        processNodes(data);
+        // first time, set nodes
+        if ( !nodes ) {
+          nodes = data.nodes;
+          processNodes(nodes);
+          // populate nodeMap,
+          nodes.forEach((node) => {
+            nodeMap[node.node_id] = node;
+          });
+          return undefined;
+        }
+        // second time, diff and add new nodes
+        nextNodes = data.nodes;
+        processNodes(nextNodes);
+        const currNodesMap = mapArrayToIdObject(nodes);
+        const nextNodesMap = mapArrayToIdObject(nextNodes);
+        nodes = nextNodes;
+        // diff
+        // nextNodesMap['BR#301'] = {
+        //   alarm_status: 0,
+        //   name: 'BR#101 Oregon',
+        //   node_id: 'BR#301',
+        //   type: 'CCW',
+        //   coords: {
+        //     lat: 37.215639,
+        //     lng: -122.223050,
+        //   }
+        // };
+        const diffResult = differ.diff(currNodesMap, nextNodesMap);
+        if ( !diffResult ) return undefined;
+        const nodesToAdd = [];
+        const nodesToRemove = [];
+        Object.keys(diffResult).forEach(( nodeId ) => {
+          const diffItem = diffResult[nodeId];
+          if ( Array.isArray(diffItem) ) {
+            // remove
+            if ( diffItem[1] === 0 && diffItem[2] === 0 ) {
+              nodesToRemove.push(diffItem[0]);
+              return;
+            }
+            // add
+            nodesToAdd.push(diffItem[0]);
+          }
+        });
+        nodesToAdd.forEach((node) => {
+          nodeMap[node.node_id] = node;
+        });
+        return nodesToAdd;
       });
   }
 
@@ -458,6 +502,21 @@
       return addMarker(node, mapToolTip, index);
     });
     addClusterer(markers, mapToolTip);
+
+    // check for new nodes, append them
+    function pollNodes() {
+      setTimeout(() => {
+        loadNodeList().then(( nodesToAdd ) => {
+          if ( nodesToAdd ) {
+            nodesToAdd.forEach(( node ) => {
+              addMarker(node, mapToolTip, 1000);
+            });
+          }
+          pollNodes();
+        });
+      }, 3000);
+    }
+    pollNodes();
   }
 
   /**
