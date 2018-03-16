@@ -76,10 +76,8 @@
     };
 
     this.updateAlarmData = function ( alarmData ) {
-      this.state.alarmHistory = alarmData.alarms[0].alarm_history || [];
-      this.state.num_alarms = alarmData.alarms[0].num_alarms;
-
-      // update events
+      this.state.alarmHistory = _.get(alarmData, 'alarms[0].alarm_history', []);
+      this.state.num_alarms = _.get(alarmData, 'alarms[0].num_alarms', 0);
 
       if ( this.state.num_alarms > 0 ) {
         this.setupEvents();
