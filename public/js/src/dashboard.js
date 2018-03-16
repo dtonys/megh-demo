@@ -279,6 +279,7 @@
 
     // Setup events, for tooltip
     window.google.maps.event.addListener(markerClusters, 'click', function () {
+      mouseState.mouseWithinCluster = false;
       mapToolTip.close();
     });
     window.google.maps.event.addListener(markerClusters, 'mouseover', function (cluster) {
