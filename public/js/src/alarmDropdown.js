@@ -87,6 +87,7 @@
       }
       this.renderDropDown();
       this.setupDropdownEvents();
+      this.updateAlarmCount();
     };
 
     this.updateAlarmCount = function () {

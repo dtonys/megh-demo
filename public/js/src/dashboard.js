@@ -78,15 +78,30 @@
   window.googleMap = null;
   const mapRegionDOM = document.querySelector('#mapRegion');
 
-  let nodes = null;
-  let nextNodes = null;
-  let nodeMap = {};
+  function NodeDataManager() {
+    this.nodeList = [];
+    this.nodeMap = [];
 
-  function processNodes( nodesToProcess ) {
-    nodesToProcess.forEach(( node ) => {
+    this.update = function ( apiNodeData ) {
+      this.nodeList = apiNodeData.nodes;
+      apiNodeData.nodes.forEach((node) => {
+        this.nodeMap[node.node_id] = node;
+      });
+    };
+  }
+
+  // Do any client side data processing
+  function processNodes( nodesToModify ) {
+    nodesToModify.forEach(( node ) => {
       // convert to number
-      node.coords.lat = parseFloat(node.coords.lat);
-      node.coords.lng = parseFloat(node.coords.lng);
+      node.coords.lat = ( typeof node.coords.lat === 'string'
+        ? parseFloat(node.coords.lat)
+        : node.coords.lat
+      );
+      node.coords.lng = ( typeof node.coords.lng === 'string'
+        ? parseFloat(node.coords.lng)
+        : node.coords.lng
+      );
     });
   }
 
@@ -100,55 +115,43 @@
       .then(( response ) => {
         return response.json();
       })
-      .then(( data ) => {
-        // first time, set nodes
-        if ( !nodes ) {
-          nodes = data.nodes;
-          processNodes(nodes);
-          // populate nodeMap,
-          nodes.forEach((node) => {
-            nodeMap[node.node_id] = node;
-          });
-          return undefined;
-        }
-        // second time, diff and add new nodes
-        nextNodes = data.nodes;
-        processNodes(nextNodes);
-        const currNodesMap = mapArrayToIdObject(nodes);
-        const nextNodesMap = mapArrayToIdObject(nextNodes);
-        nodes = nextNodes;
-        // diff
-        // nextNodesMap['BR#301'] = {
-        //   alarm_status: 0,
-        //   name: 'BR#101 Oregon',
-        //   node_id: 'BR#301',
-        //   type: 'CCW',
-        //   coords: {
-        //     lat: 37.215639,
-        //     lng: -122.223050,
-        //   }
-        // };
-        const diffResult = differ.diff(currNodesMap, nextNodesMap);
-        if ( !diffResult ) return undefined;
-        const nodesToAdd = [];
-        const nodesToRemove = [];
-        Object.keys(diffResult).forEach(( nodeId ) => {
-          const diffItem = diffResult[nodeId];
-          if ( Array.isArray(diffItem) ) {
-            // remove
-            if ( diffItem[1] === 0 && diffItem[2] === 0 ) {
-              nodesToRemove.push(diffItem[0]);
-              return;
-            }
-            // add
-            nodesToAdd.push(diffItem[0]);
-          }
-        });
-        nodesToAdd.forEach((node) => {
-          nodeMap[node.node_id] = node;
-        });
-        return nodesToAdd;
+      .then(( nodeData ) => {
+        processNodes(nodeData.nodes);
+        return nodeData;
       });
+  }
+
+  function mapArrayToIdObject( array ) {
+    const obj = {};
+    if ( !array ) return obj;
+    array.forEach(( item ) => {
+      obj[item.node_id] = item;
+    });
+    return obj;
+  }
+
+  function diffNodeArrays( nodeList, newNodeList ) {
+    // convert
+    const currNodesMap = mapArrayToIdObject(nodeList);
+    const nextNodesMap = mapArrayToIdObject(newNodeList);
+
+    const diffResult = differ.diff(currNodesMap, nextNodesMap);
+    if ( !diffResult ) return [];
+    const nodesAdded = [];
+    const nodesRemoved = [];
+    Object.keys(diffResult).forEach(( nodeId ) => {
+      const diffItem = diffResult[nodeId];
+      if ( Array.isArray(diffItem) ) {
+        // remove
+        if ( diffItem[1] === 0 && diffItem[2] === 0 ) {
+          nodesRemoved.push(diffItem[0]);
+          return;
+        }
+        // add
+        nodesAdded.push(diffItem[0]);
+      }
+    });
+    return [ nodesAdded, nodesRemoved ];
   }
 
   /**
@@ -176,18 +179,6 @@
       mapTypeId: window.google.maps.MapTypeId.ROADMAP,
     }, mapOptions);
     window.googleMap = new window.google.maps.Map(mapRegionDOM, options);
-  }
-
-  function updateNodeIcon( node ) {
-    node.marker.setIcon({
-      url: mapNodeToIcon( node.type, node.alarm_status ),
-      // ( width, height )
-      scaledSize: new window.google.maps.Size(40, 40),
-      // ( originX, originY )
-      origin: new window.google.maps.Point(0, 0),
-      // Image anchor
-      anchor: new window.google.maps.Point(20, 20)
-    });
   }
 
   function addMarker( node, mapToolTip, index ) {
@@ -266,7 +257,7 @@
     });
 
     // setup cluster
-    const markerClusters = new window.MarkerClusterer(window.googleMap, CCWMarkers, {
+    const markerClusterer = new window.MarkerClusterer(window.googleMap, CCWMarkers, {
       clusterClass: 'markerCluster',
       styles: [ {
         url: ICON_GROUP_CIRCLE,
@@ -278,17 +269,17 @@
     });
 
     // Setup events, for tooltip
-    window.google.maps.event.addListener(markerClusters, 'click', function () {
+    window.google.maps.event.addListener(markerClusterer, 'click', function () {
       mouseState.mouseWithinCluster = false;
       mapToolTip.close();
     });
-    window.google.maps.event.addListener(markerClusters, 'mouseover', function (cluster) {
+    window.google.maps.event.addListener(markerClusterer, 'mouseover', function (cluster) {
       mouseState.mouseWithinCluster = cluster;
       if ( !mapToolTip.toolTip ) {
         mapToolTip.openOnCluster(cluster);
       }
     });
-    window.google.maps.event.addListener(markerClusters, 'mouseout', function () {
+    window.google.maps.event.addListener(markerClusterer, 'mouseout', function () {
       mouseState.mouseWithinCluster = false;
       setTimeout(() => {
         if ( mouseState.mouseWithinTooltip ) {
@@ -301,6 +292,7 @@
         }
       }, mouseConfig.MOUSEOUT_TIMER_DELAY_MS);
     });
+    return markerClusterer;
   }
 
   function loadAlarms() {
@@ -315,19 +307,22 @@
       });
   }
 
-  function mapArrayToIdObject( array ) {
-    const obj = {};
-    if ( !array ) return obj;
-    array.forEach(( item ) => {
-      obj[item.node_id] = item;
+  function updateNodeAlarmStatus( node, alarmStatusNumber ) {
+    node.marker.setIcon({
+      url: mapNodeToIcon( node.type, alarmStatusNumber ),
+      scaledSize: new window.google.maps.Size(40, 40),
+      origin: new window.google.maps.Point(0, 0),
+      anchor: new window.google.maps.Point(20, 20)
     });
-    return obj;
+    node.alarm_status = alarmStatusNumber;
   }
 
-  function syncNodesWithAlarmHistory(alarmHistory) {
+  // Updates all node colors to match state in the alarmHistory
+  function syncNodesWithAlarmHistory(nodeDataManager, alarmData) {
+    const alarmHistory = _.get(alarmData, 'alarms[0].alarm_history', []);
     // get all nodes in alarm state
     const alarmNodesMap = {};
-    nodes
+    nodeDataManager.nodeList
       .filter(( node ) => (
         node.alarm_status === ALARM_STATUS_MINOR || node.alarm_status === ALARM_STATUS_MAJOR
       ))
@@ -337,52 +332,108 @@
 
     // update all alarm history nodes
     alarmHistory.forEach(( alarm ) => {
-      nodeMap[alarm.node_id].alarm_status = mapNodeStatusToCode[alarm.severity];
-      updateNodeIcon(nodeMap[alarm.node_id]);
+      updateNodeAlarmStatus(alarmNodesMap[alarm.node_id], mapNodeStatusToCode[alarm.severity] );
       // remove node from map once it's updated
       delete alarmNodesMap[alarm.node_id];
     });
     // any remaining nodes in alarmNodesMap are no longer in alarm state, set them to clear
     Object.keys(alarmNodesMap).forEach(( nodeId ) => {
-      alarmNodesMap[nodeId].alarm_status = ALARM_STATUS_CLEAR;
-      updateNodeIcon(nodeMap[nodeId]);
+      updateNodeAlarmStatus(alarmNodesMap[nodeId], ALARM_STATUS_CLEAR );
     });
   }
 
-  function diffAlarmHistoryAndUpdateNodes(alarmHistoryArray, nextAlarmHistoryArray ) {
+  function diffAlarmHistoryAndUpdateNodes(alarmHistoryArray, nextAlarmHistoryArray, nodeDataManager ) {
     const currObj = mapArrayToIdObject(alarmHistoryArray);
     const nextObj = mapArrayToIdObject(nextAlarmHistoryArray);
     const diffResult = differ.diff(currObj, nextObj);
 
-    if ( !diffResult ) return;
-
+    if ( !diffResult ) return false;
     Object.keys(diffResult).forEach(( nodeId ) => {
       const diffItem = diffResult[nodeId];
+
       // alarm is added or removed
       if ( Array.isArray(diffItem) ) {
         if ( diffItem[1] === 0 && diffItem[2] === 0 ) {
           // alarm removed, set alarm_status to Clear
-          nodeMap[nodeId].alarm_status = mapNodeStatusToCode['Clear'];
-          updateNodeIcon(nodeMap[nodeId]);
+          updateNodeAlarmStatus( nodeDataManager.nodeMap[nodeId], mapNodeStatusToCode['Clear'] );
           return;
         }
         // alarm added, update alarm_status
-        nodeMap[nodeId].alarm_status = mapNodeStatusToCode[diffItem[0].severity];
-        updateNodeIcon(nodeMap[nodeId]);
+        updateNodeAlarmStatus( nodeDataManager.nodeMap[nodeId], mapNodeStatusToCode[diffItem[0].severity] );
         return;
       }
       // alarm value changed, update alarm_status
       if ( diffItem.severity ) {
-        nodeMap[nodeId].alarm_status = mapNodeStatusToCode[diffItem.severity[1]];
-        updateNodeIcon(nodeMap[nodeId]);
+        updateNodeAlarmStatus( nodeDataManager.nodeMap[nodeId], mapNodeStatusToCode[diffItem.severity[1]] );
         return;
       }
     });
+    return diffResult;
   }
 
-  function initialize() {
-    let alarmHistory = null;
-    createGoogleMap();
+  // Load alarms once per second, waiting for the prev request to finish
+  function pollAlarmHistoryAndUpdateNodeStatus( alarmData, alarmDropDown, nodeDataManager) {
+    const currentAlarmData = alarmData;
+    syncNodesWithAlarmHistory(nodeDataManager, alarmData);
+
+    function pollData() {
+      window.setTimeout(() => {
+        loadAlarms().then(( newAlarmData ) => {
+
+          // Render alarms in the alarm dropdown, as a list
+          alarmDropDown.updateAlarmData(newAlarmData);
+
+          // Update any changes in the alarm list -> Propagate to node list
+          const diffResult = diffAlarmHistoryAndUpdateNodes(
+            _.get(currentAlarmData, 'alarms[0].alarm_history', []),
+            _.get(newAlarmData, 'alarms[0].alarm_history', []),
+            nodeDataManager,
+          );
+          if ( diffResult ) {
+            // Update current alarm data, if there were any updates
+            currentAlarmData = newAlarmData;
+          }
+          pollData();
+        });
+      }, 1000);
+    }
+    pollData();
+  }
+
+  // check for new nodes, append them
+  function pollNodesAndAddOrRemove( nodeDataManager, mapToolTip, markerClusterer ) {
+    setTimeout(() => {
+      loadNodeList()
+        .then(( newNodeData ) => {
+          const [ nodesAdded, nodesRemoved ] = diffNodeArrays(nodeDataManager.nodeList, newNodeData.nodes);
+          // Update the data here
+          nodeDataManager.update(newNodeData);
+          return [ nodesAdded, nodesRemoved ];
+        })
+        .then(( [ nodesAdded, nodesRemoved ] ) => {
+          // Update node list view, only append and remove nodes.
+
+          // ADD markers to the map
+          if ( nodesAdded && nodesAdded.length ) {
+            const addedMarkers = nodesAdded.map((node) => ( addMarker(node, mapToolTip, 1000) ));
+            markerClusterer.addMarkers(addedMarkers);
+          }
+
+          // REMOVE markers from the map
+          if ( nodesRemoved && nodesRemoved.length ) {
+            nodesRemoved.forEach(( node ) => {
+              node.marker.setMap(null);
+              markerClusterer.removeMarker( node.marker );
+            });
+          }
+          pollNodesAndAddOrRemove(nodeDataManager, mapToolTip);
+        });
+    }, 3000);
+  }
+
+  function initialize([ nodeData, alarmData ]) {
+    const nodeDataManager = new NodeDataManager();
+    nodeDataManager.update(nodeData);
 
     const alarmDropDown = new window.AlarmDropDown({
       $trigger: document.querySelector('.navbar__alarmsTrigger'),
@@ -390,60 +441,28 @@
       template: window.templates.tableList,
       mouseConfig: mouseConfig,
     });
+    alarmDropDown.updateAlarmData( alarmData );
 
-    // Load alarms once per second, waiting for the prev request to finish
-    function pollAlarms() {
-      window.setTimeout(() => {
-        loadAlarms().then(( alarmData ) => {
+    // Check for alarm updates
+    pollAlarmHistoryAndUpdateNodeStatus(alarmData, alarmDropDown, nodeDataManager);
 
-          // Render alarms in the alarm dropdown, as a list
-          alarmDropDown.updateAlarmData(alarmData);
-          alarmDropDown.updateAlarmCount();
-
-          diffAlarmHistoryAndUpdateNodes(alarmHistory, alarmData.alarms[0].alarm_history );
-          alarmHistory = alarmData.alarms[0].alarm_history;
-          pollAlarms();
-        });
-      }, 1000);
-    }
-
-    // Fire once on page load
-    loadAlarms().then(( alarmData ) => {
-      // Render alarms in the alarm dropdown, as a list
-      alarmDropDown.updateAlarmData( alarmData );
-      alarmDropDown.updateAlarmCount();
-      alarmHistory = alarmData.alarms[0].alarm_history;
-      if ( alarmHistory ) {
-        syncNodesWithAlarmHistory(alarmHistory);
-      }
-      pollAlarms();
-    });
-
+    // Setup the popup, shows up on hover over marker or cluster
     const mapToolTip = new window.MapToolTip({
       nodeTypes: nodeTypes,
       mapNodeStatusToCode: mapNodeStatusToCode,
       mouseState: mouseState,
       mouseConfig: mouseConfig,
     });
-    const markers = nodes.map(( node, index ) => {
+
+    // Setup markers
+    const markers = nodeDataManager.nodeList.map(( node, index ) => {
       return addMarker(node, mapToolTip, index);
     });
-    addClusterer(markers, mapToolTip);
+    // Setup clusters
+    const markerClusterer = addClusterer(markers, mapToolTip);
 
-    // check for new nodes, append them
-    function pollNodes() {
-      setTimeout(() => {
-        loadNodeList().then(( nodesToAdd ) => {
-          if ( nodesToAdd ) {
-            nodesToAdd.forEach(( node ) => {
-              addMarker(node, mapToolTip, 1000);
-            });
-          }
-          pollNodes();
-        });
-      }, 3000);
-    }
-    pollNodes();
+    // Poll the node list, update the data, add and remove nodes from the map
+    pollNodesAndAddOrRemove(nodeDataManager, mapToolTip, markerClusterer);
   }
 
   /**
@@ -453,11 +472,14 @@
     window.google.maps.event.addDomListener(window, 'load', resolve);
   });
 
-  window.Promise.all([
-    loadNodeList(),
-    domLoadedPromise
-  ])
-    .then(initialize);
-
+  domLoadedPromise
+    .then(() => {
+      createGoogleMap();
+      return window.Promise.all([
+        loadNodeList(),
+        loadAlarms(),
+      ]);
+    })
+    .then( initialize );
 })();
 
