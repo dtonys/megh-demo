@@ -1,15 +1,12 @@
 <!-- TODO: Download source, concat and minify -->
-<script defer src="https://use.fontawesome.com/releases/v5.0.8/js/all.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.5/lodash.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/promise-polyfill@7/dist/polyfill.min.js"></script>
 <script src="https://maps.googleapis.com/maps/api/js?v=3&key=AIzaSyCuQdzHfDq_NrjkpiUk7mXGFJ3NxDLretY"></script>
-<script src="//unpkg.com/unfetch/dist/unfetch.umd.js"></script>
-<!-- these scripts breaks when minified... -->
-<!-- NOTE: Figure out how to minify UMD scripts -->
+<!-- build:js build/common.min.js -->
+<script src="js/lib/fontawesome.js"></script>
+<script src="js/lib/es6-promise.auto.js"></script>
+<script src="js/lib/lodash.js"></script>
+<script src="js/lib/unfetch.umd.js"></script>
 <script src="js/lib/jsondiffpath.umd.js"></script>
 <script src="js/lib/chartist.js" ></script>
-
-<!-- build:js build/common.min.js -->
 <script src="js/lib/infobox_packed.js"></script>
 <script src="js/lib/markerclusterer.js"></script>
 <script src="js/src/templates.js" ></script>

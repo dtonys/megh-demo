@@ -166,19 +166,22 @@
     mouseWithinCluster: false,
   };
   function createGoogleMap() {
-    const options = {
-      ...mapOptions,
-      center: {
-        lat: 37.417827, // Central Location
-        lng: -122.107340,
-        // lat: 37.437081, // CCW Node
-        // lng: -122.077481,
-        // lat: 45.8696, // CNG Node
-        // lng: -119.688,
-      },
-      zoom: 10,
-      mapTypeId: window.google.maps.MapTypeId.ROADMAP,
-    };
+    const options = Object.assign(
+      {},
+      mapOptions,
+      {
+        center: {
+          lat: 37.417827, // Central Location
+          lng: -122.107340,
+          // lat: 37.437081, // CCW Node
+          // lng: -122.077481,
+          // lat: 45.8696, // CNG Node
+          // lng: -119.688,
+        },
+        zoom: 10,
+        mapTypeId: window.google.maps.MapTypeId.ROADMAP,
+      }
+    );
     window.googleMap = new window.google.maps.Map(mapRegionDOM, options);
   }
 

@@ -1,7 +1,6 @@
 // const path = require('path');
 const gulp = require('gulp');
 const del = require('del');
-
 const gulpLoadPlugins = require('gulp-load-plugins');
 const $ = gulpLoadPlugins();
 
@@ -26,7 +25,9 @@ gulp.task('buildAssets', () => {
   return gulp.src('views/**/*.ejs')
     .pipe( $.useref({ searchPath: 'public' }) )
     .pipe( $.if('*.js', $.sourcemaps.init()) )
-    .pipe( $.if('*.js', $.babel({ presets: [ 'env' ] })) )
+    .pipe( $.if('*.js', $.babel({
+      presets: [ [ 'env', { 'modules': false } ] ]
+    })) )
     .pipe( $.if('*.js', $.uglify()) )
     .pipe( $.if('*.js', $.size({ title: 'scripts' })) )
     .pipe( $.if('*.js', $.sourcemaps.write()) )
