@@ -225,6 +225,96 @@
         });
     };
 
+    this.drawInterfaceCharts = function ( $toolTipWrap, interfaces ) {
+      interfaces.forEach(( _interface, index ) => {
+        if ( _interface.throughput ) {
+          const $chart = $toolTipWrap.querySelector(`.tooltipV2 .m-chart-${index + 1}`);
+          const chartData = {
+            labels: labelsArr,
+            series: [
+              _interface.throughput.up_link,
+              _interface.throughput.down_link,
+            ]
+          };
+          const chart = new window.Chartist.Line($chart, chartData, chartOptions); // eslint-disable-line
+          let lineNum = 0;
+
+          // draw the tic marks on the grid
+          chart.on('draw', (ctx) => {
+            if (ctx.type === 'grid' && ctx.axis.units.pos === 'x') {
+              const tickCount = 1;
+              const tickLength = ctx.axis.stepLength / tickCount;
+
+              for (let i = 0; i < tickCount; i++) {
+                const x = ctx.x1 + (i * tickLength);
+                ctx.group.elem('line', {
+                  x1: x,
+                  x2: x,
+                  y1: ctx.y2,
+                  y2: ctx.y2 + ( lineNum % 3 === 0 ? -5 : -2 ),
+                }, 'ct-tick');
+              }
+              lineNum++;
+            }
+          });
+        }
+      });
+    };
+
+    this.setupTooltip = function ( $toolTipWrap ) {
+      const $tooltipContainer = $toolTipWrap.querySelector('.tooltipV2');
+
+      $tooltipContainer.addEventListener('mouseover', () => {
+        // console.log('tooltip::mouseover');
+        mouseState.mouseWithinTooltip = true;
+      });
+      $tooltipContainer.addEventListener('mouseleave', () => {
+        // console.log('tooltip::mouseleave');
+
+        mouseState.mouseWithinTooltip = false;
+        setTimeout(() => {
+          if (
+            mouseState.mouseWithinMarker // mouse from tooltip to marker
+          ) {
+            return;
+          }
+          _this.close();
+        }, mouseConfig.MOUSEOUT_TIMER_DELAY_MS);
+      });
+    };
+
+    this.renderNodeSummaryTooltip = function (data, $toolTipWrap, node) {
+      if ( !data || !data.node || !data.node[0] || JSON.stringify(data.node[0]) === '{}' ) return;
+      const nodeDetail = node.type === nodeTypes.CCW
+        ? data.node[0].ccw_info[0]
+        : data.node[0].cng_info[0];
+      const nodeBrief = data.node[0].node_brief;
+
+      // get the correct node status format
+      nodeDetail.interfaces.forEach((item) => {
+        item.alarm_status = mapCodeToNodeStatus[item.alarm_status];
+      });
+
+      // render the tooltip
+      const toolTipHtml = window.templates.CCWToolTipV2({ // eslint-disable-line
+        alarm_status: mapCodeToNodeStatus[nodeBrief.alarm_status],
+        name: nodeBrief.name,
+        type: nodeBrief.type,
+        cpu_utilization: nodeDetail.cpu_utilization,
+        memory_utilization: nodeDetail.memory_utilization,
+        bandwidth_utilization: nodeDetail.bandwidth_utilization,
+        num_clients: nodeDetail.num_clients,
+        region: nodeDetail.region,
+        interfaces: nodeDetail.interfaces,
+      });
+      // render data to view
+      $toolTipWrap.innerHTML = toolTipHtml;
+      if ( nodeDetail.interfaces ) {
+        this.drawInterfaceCharts( $toolTipWrap, nodeDetail.interfaces );
+      }
+      this.setupTooltip( $toolTipWrap );
+    };
+
     this.openOnMarker = function ( node ) {
       const toolTipOptions = tooltipV2;
       let tooltipPositioning = null;
@@ -258,108 +348,13 @@
         Object.assign({}, infoBoxOptions, toolTipOptions, tooltipPositioning),
       );
       this.toolTip.open(window.googleMap, node.marker);
-
-      function setupToolTip( interfaces ) {
-        // initialize charts
-        interfaces.forEach(( _interface, index ) => {
-          if ( _interface.throughput ) {
-            const $chart = $toolTipWrap.querySelector(`.tooltipV2 .m-chart-${index + 1}`);
-            const chartData = {
-              labels: labelsArr,
-              series: [
-                _interface.throughput.up_link,
-                _interface.throughput.down_link,
-              ]
-            };
-            const chart = new window.Chartist.Line($chart, chartData, chartOptions); // eslint-disable-line
-            let lineNum = 0;
-            chart.on('draw', (ctx) => {
-              if (ctx.type === 'grid' && ctx.axis.units.pos === 'x') {
-                const tickCount = 1;
-                const tickLength = ctx.axis.stepLength / tickCount;
-
-                for (let i = 0; i < tickCount; i++) {
-                  const x = ctx.x1 + (i * tickLength);
-                  ctx.group.elem('line', {
-                    x1: x,
-                    x2: x,
-                    y1: ctx.y2,
-                    y2: ctx.y2 + ( lineNum % 3 === 0 ? -5 : -2 ),
-                  }, 'ct-tick');
-                }
-                lineNum++;
-              }
-            });
-          }
-        });
-
-
-        const $tooltipContainer = $toolTipWrap.querySelector('.tooltipV2');
-        // const $tooltipX = toolTipWrap.querySelector('.tooltipV2__X');
-
-        // // Setup tooltip events
-        // $tooltipX.addEventListener('click', (event) => {
-        //   // console.log('tooltip::click');
-        //   event.preventDefault();
-        //   event.stopPropagation();
-        //   _this.close();
-        // });
-
-        $tooltipContainer.addEventListener('mouseover', () => {
-          // console.log('tooltip::mouseover');
-          mouseState.mouseWithinTooltip = true;
-        });
-        $tooltipContainer.addEventListener('mouseleave', () => {
-          // console.log('tooltip::mouseleave');
-
-          mouseState.mouseWithinTooltip = false;
-          setTimeout(() => {
-            if (
-              mouseState.mouseWithinMarker // mouse from tooltip to marker
-            ) {
-              return;
-            }
-            _this.close();
-          }, mouseConfig.MOUSEOUT_TIMER_DELAY_MS);
-        });
-      }
-
-
       // HACK: Hardcode ID, node list passes wrong ID
       const nodeId = node.node_id === 'CNG1' ? 'CNG#1' : node.node_id;
 
       this.loadNodeDetail( nodeId )
         .then((data) => {
-          if ( !data || !data.node || !data.node[0] || JSON.stringify(data.node[0]) === '{}' ) return;
-          // collect
-          const nodeDetail = node.type === nodeTypes.CCW
-            ? data.node[0].ccw_info[0]
-            : data.node[0].cng_info[0];
-          const nodeBrief = data.node[0].node_brief;
-
-          // do the mapping
-          nodeDetail.interfaces.forEach((item) => {
-            item.alarm_status = mapCodeToNodeStatus[item.alarm_status];
-          });
-
-          const toolTipHtml = window.templates.CCWToolTipV2({ // eslint-disable-line
-            alarm_status: mapCodeToNodeStatus[nodeBrief.alarm_status],
-            name: nodeBrief.name,
-            type: nodeBrief.type,
-            cpu_utilization: nodeDetail.cpu_utilization,
-            memory_utilization: nodeDetail.memory_utilization,
-            bandwidth_utilization: nodeDetail.bandwidth_utilization,
-            num_clients: nodeDetail.num_clients,
-            region: nodeDetail.region,
-            interfaces: nodeDetail.interfaces,
-          });
-          // render data to view
-          $toolTipWrap.innerHTML = toolTipHtml;
-          if ( nodeDetail.interfaces ) {
-            setupToolTip(nodeDetail.interfaces);
-          }
+          this.renderNodeSummaryTooltip(data, $toolTipWrap, node);
         });
-
     };
 
     this.close = function () {
