@@ -139,7 +139,7 @@
   padding: 15px;
 }
 .tooltipV2__title {
-  font-size: 16px;
+  font-size: 10px;
   padding-left: 25px;
   padding-bottom: 15px;
   font-family: SFSemibold;
@@ -149,13 +149,13 @@
 }
 .tooltipV2__headIcon--branch {
   position: absolute;
-  top: 14px;
+  top: 17px;
   left: 16px;
   width: 17px;
 }
 .tooltipV2__headIcon--cloud {
   position: absolute;
-  top: 14px;
+  top: 18px;
   left: 16px;
   width: 27px;
 }

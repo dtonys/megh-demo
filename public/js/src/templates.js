@@ -106,11 +106,11 @@ window.templates.CCWToolTipV2 = _.template(`
       <div class="tooltipV2__title" >
         <% if ( type === 'CCW' ) { %>
           <img class="tooltipV2__headIcon--branch" src="img/icons/ccw-black.svg" />
-          CCW
+          Cloud Wan Connector
         <% } %>
         <% if ( type === 'CNG' ) { %>
           <img class="tooltipV2__headIcon--cloud" src="img/icons/cng-icon-black.svg" />
-          CNG
+          Cloud Native Gateway
         <% } %>
       </div>
       <% const items = [

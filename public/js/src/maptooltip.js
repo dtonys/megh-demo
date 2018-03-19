@@ -331,10 +331,11 @@
         });
       }
 
-      // HACK: Hardcode ID, node list passes wrong ID
-      if ( node.node_id === 'CNG1' ) node.node_id = 'CNG#1';
 
-      this.loadNodeDetail( node.node_id )
+      // HACK: Hardcode ID, node list passes wrong ID
+      const nodeId = node.node_id === 'CNG1' ? 'CNG#1' : node.node_id;
+
+      this.loadNodeDetail( nodeId )
         .then((data) => {
           if ( !data || !data.node || !data.node[0] || JSON.stringify(data.node[0]) === '{}' ) return;
           // collect

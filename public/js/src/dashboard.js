@@ -199,7 +199,7 @@
         // Image anchor
         anchor: new window.google.maps.Point(20, 20)
       },
-      // label: node.node_id.toString(),
+      label: node.node_id.toString(),
     });
     node.marker = marker;
     marker.node = node;
@@ -426,7 +426,7 @@
               markerClusterer.removeMarker( node.marker );
             });
           }
-          pollNodesAndAddOrRemove(nodeDataManager, mapToolTip);
+          pollNodesAndAddOrRemove(nodeDataManager, mapToolTip, markerClusterer);
         });
     }, 3000);
   }
@@ -443,9 +443,6 @@
     });
     alarmDropDown.updateAlarmData( alarmData );
 
-    // Check for alarm updates
-    pollAlarmHistoryAndUpdateNodeStatus(alarmData, alarmDropDown, nodeDataManager);
-
     // Setup the popup, shows up on hover over marker or cluster
     const mapToolTip = new window.MapToolTip({
       nodeTypes: nodeTypes,
@@ -460,6 +457,9 @@
     });
     // Setup clusters
     const markerClusterer = addClusterer(markers, mapToolTip);
+
+    // Check for alarm updates
+    pollAlarmHistoryAndUpdateNodeStatus(alarmData, alarmDropDown, nodeDataManager);
 
     // Poll the node list, update the data, add and remove nodes from the map
     pollNodesAndAddOrRemove(nodeDataManager, mapToolTip, markerClusterer);
