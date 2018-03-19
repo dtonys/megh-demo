@@ -487,4 +487,26 @@
   color: #515151;
 }
 
+.ct-grid.ct-horizontal {
+  display: none;
+}
+.ct-grid.ct-horizontal:first-child {
+  display: inline;
+  opacity: 1;
+  stroke: #a4a4a4;
+}
+.ct-grid.ct-horizontal:nth-child(3n+1) {
+  display: inline;
+}
+
+.ct-tick + .ct-grid.ct-vertical {
+  opacity: 1;
+  stroke: #a4a4a4;
+}
+
+.ct-tick {
+  opacity: 1;
+  stroke: #a4a4a4;
+}
+
 

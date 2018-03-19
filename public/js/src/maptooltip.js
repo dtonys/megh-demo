@@ -80,7 +80,7 @@
       bottom: 5,
       left: 0
     },
-    fullWidth: false,
+    fullWidth: true,
   };
 
   function getPixelPosition( marker ) {
@@ -261,39 +261,39 @@
 
       function setupToolTip( interfaces ) {
         // initialize charts
-        if ( interfaces[0] && interfaces[0].throughput ) {
-          const $chart1 = $toolTipWrap.querySelector('.tooltipV2 .m-chart-1');
-          const chartData1 = {
-            labels: labelsArr,
-            series: [
-              interfaces[0].throughput.up_link,
-              interfaces[0].throughput.down_link,
-            ]
-          };
-          if ( $chart1 ) new window.Chartist.Line($chart1, chartData1, chartOptions); // eslint-disable-line
-        }
-        if ( interfaces[1] && interfaces[1].throughput ) {
-          const $chart2 = $toolTipWrap.querySelector('.tooltipV2 .m-chart-2');
-          const chartData2 = {
-            labels: labelsArr,
-            series: [
-              interfaces[1].throughput.up_link,
-              interfaces[1].throughput.down_link,
-            ]
-          };
-          if ( $chart2 ) new window.Chartist.Line($chart2, chartData2, chartOptions); // eslint-disable-line
-        }
-        if ( interfaces[2] && interfaces[2].throughput ) {
-          const $chart3 = $toolTipWrap.querySelector('.tooltipV2 .m-chart-3');
-          const chartData3 = {
-            labels: labelsArr,
-            series: [
-              interfaces[2].throughput.up_link,
-              interfaces[2].throughput.down_link,
-            ]
-          };
-          if ( $chart3 ) new window.Chartist.Line($chart3, chartData3, chartOptions); // eslint-disable-line
-        }
+        interfaces.forEach(( _interface, index ) => {
+          if ( _interface.throughput ) {
+            const $chart = $toolTipWrap.querySelector(`.tooltipV2 .m-chart-${index + 1}`);
+            const chartData = {
+              labels: labelsArr,
+              series: [
+                _interface.throughput.up_link,
+                _interface.throughput.down_link,
+              ]
+            };
+            const chart = new window.Chartist.Line($chart, chartData, chartOptions); // eslint-disable-line
+            let lineNum = 0;
+            chart.on('draw', (ctx) => {
+              if (ctx.type === 'grid' && ctx.axis.units.pos === 'x') {
+                const tickCount = 1;
+                const tickLength = ctx.axis.stepLength / tickCount;
+
+                for (let i = 0; i < tickCount; i++) {
+                  const x = ctx.x1 + (i * tickLength);
+                  ctx.group.elem('line', {
+                    x1: x,
+                    x2: x,
+                    y1: ctx.y2,
+                    y2: ctx.y2 + ( lineNum % 3 === 0 ? -5 : -2 ),
+                  }, 'ct-tick');
+                }
+                lineNum++;
+              }
+            });
+          }
+        });
+
+
         const $tooltipContainer = $toolTipWrap.querySelector('.tooltipV2');
         // const $tooltipX = toolTipWrap.querySelector('.tooltipV2__X');
 
