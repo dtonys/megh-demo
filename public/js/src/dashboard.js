@@ -199,7 +199,7 @@
         // Image anchor
         anchor: new window.google.maps.Point(20, 20)
       },
-      label: node.node_id.toString(),
+      // label: node.node_id.toString(),
     });
     node.marker = marker;
     marker.node = node;
