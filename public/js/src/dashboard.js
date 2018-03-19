@@ -166,7 +166,8 @@
     mouseWithinCluster: false,
   };
   function createGoogleMap() {
-    const options = Object.assign({
+    const options = {
+      ...mapOptions,
       center: {
         lat: 37.417827, // Central Location
         lng: -122.107340,
@@ -177,7 +178,7 @@
       },
       zoom: 10,
       mapTypeId: window.google.maps.MapTypeId.ROADMAP,
-    }, mapOptions);
+    };
     window.googleMap = new window.google.maps.Map(mapRegionDOM, options);
   }
 
@@ -269,17 +270,17 @@
     });
 
     // Setup events, for tooltip
-    window.google.maps.event.addListener(markerClusterer, 'click', function () {
+    window.google.maps.event.addListener(markerClusterer, 'click', () => {
       mouseState.mouseWithinCluster = false;
       mapToolTip.close();
     });
-    window.google.maps.event.addListener(markerClusterer, 'mouseover', function (cluster) {
+    window.google.maps.event.addListener(markerClusterer, 'mouseover', (cluster) => {
       mouseState.mouseWithinCluster = cluster;
       if ( !mapToolTip.toolTip ) {
         mapToolTip.openOnCluster(cluster);
       }
     });
-    window.google.maps.event.addListener(markerClusterer, 'mouseout', function () {
+    window.google.maps.event.addListener(markerClusterer, 'mouseout', () => {
       mouseState.mouseWithinCluster = false;
       setTimeout(() => {
         if ( mouseState.mouseWithinTooltip ) {
@@ -302,7 +303,7 @@
         'Authorization': BASIC_AUTH_SECRET
       }
     })
-      .then(function ( response ) {
+      .then(( response ) => {
         return response.json();
       });
   }

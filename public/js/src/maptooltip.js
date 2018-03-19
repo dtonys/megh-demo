@@ -67,7 +67,7 @@
       },
       showGrid: true,
       showLabel: true,
-      labelInterpolationFnc: function (value) {
+      labelInterpolationFnc: (value) => {
         return value + ' MB';
       }
     },
@@ -194,7 +194,7 @@
         // console.log('tooltip::mouseenter');
         mouseState.mouseWithinTooltip = true;
       });
-      $tooltipContainer.addEventListener('mouseleave', function () {
+      $tooltipContainer.addEventListener('mouseleave', () => {
         // console.log('tooltip::mouseleave');
         mouseState.mouseWithinTooltip = false;
         setTimeout(() => {
@@ -228,13 +228,6 @@
     this.openOnMarker = function ( node ) {
       const toolTipOptions = tooltipV2;
       let tooltipPositioning = null;
-      let toolTipTemplate = null;
-      if ( node.type === nodeTypes.CCW ) {
-        toolTipTemplate = window.templates.CCWToolTipV2;
-      }
-      if ( node.type === nodeTypes.CNG ) {
-        toolTipTemplate = window.templates.CCWToolTipV2;
-      }
 
       const $toolTipWrap = document.createElement('div');
       const widthHeightStr = node.type === nodeTypes.CCW
@@ -316,7 +309,7 @@
           // console.log('tooltip::mouseover');
           mouseState.mouseWithinTooltip = true;
         });
-        $tooltipContainer.addEventListener('mouseleave', function () {
+        $tooltipContainer.addEventListener('mouseleave', () => {
           // console.log('tooltip::mouseleave');
 
           mouseState.mouseWithinTooltip = false;
@@ -349,7 +342,7 @@
             item.alarm_status = mapCodeToNodeStatus[item.alarm_status];
           });
 
-          const toolTipHtml = toolTipTemplate({
+          const toolTipHtml = window.templates.CCWToolTipV2({ // eslint-disable-line
             alarm_status: mapCodeToNodeStatus[nodeBrief.alarm_status],
             name: nodeBrief.name,
             type: nodeBrief.type,
