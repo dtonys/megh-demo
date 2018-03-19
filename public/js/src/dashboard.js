@@ -373,7 +373,7 @@
 
   // Load alarms once per second, waiting for the prev request to finish
   function pollAlarmHistoryAndUpdateNodeStatus( alarmData, alarmDropDown, nodeDataManager) {
-    const currentAlarmData = alarmData;
+    let currentAlarmData = alarmData;
     syncNodesWithAlarmHistory(nodeDataManager, alarmData);
 
     function pollData() {
