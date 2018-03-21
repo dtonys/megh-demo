@@ -3,48 +3,6 @@
    * config, constants
    */
   const differ = window.jsondiffpatch.create();
-  const nodeTypes = {
-    DATACENTER: 'DataCenter',
-    CNG: 'CNG',
-    CCW: 'CCW'
-  };
-
-  // const ALARM_STATUS_NA = 'n/a';
-  const ICON_GREEN_BRANCH = 'img/icons/ccw-green.svg';
-  const ICON_YELLOW_BRANCH = 'img/icons/ccw-yellow.svg';
-  const ICON_RED_BRANCH = 'img/icons/ccw-red.svg';
-
-  const ICON_GREEN_CLOUD = 'img/icons/cng-green.svg';
-  const ICON_YELLOW_CLOUD = 'img/icons/cng-yellow.svg';
-  const ICON_RED_CLOUD = 'img/icons/cng-red.svg';
-
-  const ICON_GROUP_CIRCLE = 'img/icons/group-circle.svg';
-  const ICON_DATA_CENTER = 'img/icons/dc.svg';
-
-  const ALARM_STATUS_CLEAR = 0;
-  const ALARM_STATUS_MINOR = 1;
-  const ALARM_STATUS_MAJOR = 2;
-  const mapNodeStatusToCode = {
-    Clear: ALARM_STATUS_CLEAR,
-    Minor: ALARM_STATUS_MINOR,
-    Major: ALARM_STATUS_MAJOR,
-  };
-  const mapNodeToIcon = ( nodeType, nodeStatus ) => {
-    if ( nodeType === nodeTypes.DATACENTER ) return ICON_DATA_CENTER;
-    if ( nodeStatus === ALARM_STATUS_CLEAR ) {
-      if ( nodeType === nodeTypes.CNG ) return ICON_GREEN_CLOUD;
-      if ( nodeType === nodeTypes.CCW ) return ICON_GREEN_BRANCH;
-    }
-    if ( nodeStatus === ALARM_STATUS_MINOR ) {
-      if ( nodeType === nodeTypes.CNG ) return ICON_YELLOW_CLOUD;
-      if ( nodeType === nodeTypes.CCW ) return ICON_YELLOW_BRANCH;
-    }
-    if ( nodeStatus === ALARM_STATUS_MAJOR ) {
-      if ( nodeType === nodeTypes.CNG ) return ICON_RED_CLOUD;
-      if ( nodeType === nodeTypes.CCW ) return ICON_RED_BRANCH;
-    }
-    return ICON_GREEN_BRANCH;
-  };
 
   const mapOptions = {
     // mapTypeControl: Map / Satellite toggle
@@ -163,7 +121,7 @@
       },
       map: window.googleMap,
       icon: {
-        url: mapNodeToIcon( node.type, node.alarm_status ),
+        url: window.mapNodeToIcon( node.type, node.alarm_status ),
         // ( width, height )
         scaledSize: new window.google.maps.Size(40, 40),
         // ( originX, originY )
@@ -176,7 +134,7 @@
     node.marker = marker;
     marker.node = node;
     // don't show tooltip for HQ
-    if ( node.type === nodeTypes.DATACENTER ) return marker;
+    if ( node.type === window.nodeTypes.DATACENTER ) return marker;
 
     // if ( node.node_id === 'BR#3' ) {
     //   setTimeout(() => {
@@ -193,7 +151,7 @@
     // Setup events, for tooltip
     marker.addListener('click', () => {
       if ( mouseState.mouseWithinMarker ) {
-        window.location.href = `node-summary?ip=${encodeURIComponent(node.node_id)}`;
+        window.location.href = `node-detail?id=${encodeURIComponent(node.node_id)}&type=${node.type}`;
         return;
       }
       mapToolTip.toggleMarker( node );
@@ -225,14 +183,14 @@
   function addClusterer( markers, mapToolTip ) {
     // Only cluster CCW nodes
     const CCWMarkers = markers.filter(( marker ) => {
-      return ( marker.node.type === nodeTypes.CCW );
+      return ( marker.node.type === window.nodeTypes.CCW );
     });
 
     // setup cluster
     const markerClusterer = new window.MarkerClusterer(window.googleMap, CCWMarkers, {
       clusterClass: 'markerCluster',
       styles: [ {
-        url: ICON_GROUP_CIRCLE,
+        url: window.ICON_GROUP_CIRCLE,
         width: 60,
         height: 60,
         textColor: '#515151',
@@ -269,7 +227,7 @@
 
   function updateNodeAlarmStatus( node, alarmStatusNumber ) {
     node.marker.setIcon({
-      url: mapNodeToIcon( node.type, alarmStatusNumber ),
+      url: window.mapNodeToIcon( node.type, alarmStatusNumber ),
       scaledSize: new window.google.maps.Size(40, 40),
       origin: new window.google.maps.Point(0, 0),
       anchor: new window.google.maps.Point(20, 20)
@@ -284,7 +242,7 @@
     const alarmNodesMap = {};
     nodeDataManager.nodeList
       .filter(( node ) => (
-        node.alarm_status === ALARM_STATUS_MINOR || node.alarm_status === ALARM_STATUS_MAJOR
+        node.alarm_status === window.ALARM_STATUS_MINOR || node.alarm_status === window.ALARM_STATUS_MAJOR
       ))
       .forEach(( node ) => {
         alarmNodesMap[node.node_id] = node;
@@ -292,13 +250,13 @@
 
     // update all alarm history nodes
     alarmHistory.forEach(( alarm ) => {
-      updateNodeAlarmStatus(alarmNodesMap[alarm.node_id], mapNodeStatusToCode[alarm.severity] );
+      updateNodeAlarmStatus(alarmNodesMap[alarm.node_id], window.mapNodeStatusToCode[alarm.severity] );
       // remove node from map once it's updated
       delete alarmNodesMap[alarm.node_id];
     });
     // any remaining nodes in alarmNodesMap are no longer in alarm state, set them to clear
     Object.keys(alarmNodesMap).forEach(( nodeId ) => {
-      updateNodeAlarmStatus(alarmNodesMap[nodeId], ALARM_STATUS_CLEAR );
+      updateNodeAlarmStatus(alarmNodesMap[nodeId], window.ALARM_STATUS_CLEAR );
     });
   }
 
@@ -315,16 +273,16 @@
       if ( Array.isArray(diffItem) ) {
         if ( diffItem[1] === 0 && diffItem[2] === 0 ) {
           // alarm removed, set alarm_status to Clear
-          updateNodeAlarmStatus( nodeDataManager.nodeMap[nodeId], mapNodeStatusToCode['Clear'] );
+          updateNodeAlarmStatus( nodeDataManager.nodeMap[nodeId], window.mapNodeStatusToCode['Clear'] );
           return;
         }
         // alarm added, update alarm_status
-        updateNodeAlarmStatus( nodeDataManager.nodeMap[nodeId], mapNodeStatusToCode[diffItem[0].severity] );
+        updateNodeAlarmStatus( nodeDataManager.nodeMap[nodeId], window.mapNodeStatusToCode[diffItem[0].severity] );
         return;
       }
       // alarm value changed, update alarm_status
       if ( diffItem.severity ) {
-        updateNodeAlarmStatus( nodeDataManager.nodeMap[nodeId], mapNodeStatusToCode[diffItem.severity[1]] );
+        updateNodeAlarmStatus( nodeDataManager.nodeMap[nodeId], window.mapNodeStatusToCode[diffItem.severity[1]] );
         return;
       }
     });
@@ -405,8 +363,8 @@
 
     // Setup the popup, shows up on hover over marker or cluster
     const mapToolTip = new window.MapToolTip({
-      nodeTypes: nodeTypes,
-      mapNodeStatusToCode: mapNodeStatusToCode,
+      nodeTypes: window.nodeTypes,
+      mapNodeStatusToCode: window.mapNodeStatusToCode,
       mouseState: mouseState,
       mouseConfig: mouseConfig,
     });

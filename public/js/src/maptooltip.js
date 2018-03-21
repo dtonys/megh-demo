@@ -1,5 +1,4 @@
 (function () {
-  const BASIC_AUTH_SECRET = 'Basic TWVnaE5ldHdvcmtzOm5qZTk3NnhzdzQ1Mw==';
   const TOOLTIP_WIDTH = 500;
   const infoBoxOptions = {
     disableAutoPan: false,
@@ -100,12 +99,8 @@
 
   // Expose tooltip constructor for single instance of tooltip
   window.MapToolTip = function ( options ) {
-    const nodeTypes = options.nodeTypes;
-    const mapNodeStatusToCode = options.mapNodeStatusToCode;
     const mouseState = options.mouseState;
     const mouseConfig = options.mouseConfig;
-
-    const mapCodeToNodeStatus = _.invert(mapNodeStatusToCode);
 
     this.toolTip = null;
     const _this = this;
@@ -136,7 +131,7 @@
             name: 'Alarm Status',
             type: 'alarmStatus',
             width: 40,
-            getValue: ( node ) => ( mapCodeToNodeStatus[node.alarm_status] ),
+            getValue: ( node ) => ( window.mapCodeToNodeStatus[node.alarm_status] ),
           },
           {
             name: 'Links',
@@ -210,21 +205,6 @@
       return true;
     };
 
-    this.loadNodeDetail = function ( nodeID ) {
-      return window.unfetch(`/megh/api/v1.0/node/${encodeURIComponent(nodeID)}`, {
-        credentials: 'include',
-        headers: {
-          'Authorization': BASIC_AUTH_SECRET
-        }
-      })
-        .then(( response ) => {
-          return response.json();
-        })
-        .then(( data ) => {
-          return data;
-        });
-    };
-
     this.drawInterfaceCharts = function ( $toolTipWrap, interfaces ) {
       interfaces.forEach(( _interface, index ) => {
         if ( _interface.throughput ) {
@@ -285,19 +265,19 @@
 
     this.renderNodeSummaryTooltip = function (data, $toolTipWrap, node) {
       if ( !data || !data.node || !data.node[0] || JSON.stringify(data.node[0]) === '{}' ) return;
-      const nodeDetail = node.type === nodeTypes.CCW
+      const nodeDetail = node.type === window.nodeTypes.CCW
         ? data.node[0].ccw_info[0]
         : data.node[0].cng_info[0];
       const nodeBrief = data.node[0].node_brief;
 
       // get the correct node status format
       nodeDetail.interfaces.forEach((item) => {
-        item.alarm_status = mapCodeToNodeStatus[item.alarm_status];
+        item.alarm_status = window.mapCodeToNodeStatus[item.alarm_status];
       });
 
       // render the tooltip
       const toolTipHtml = window.templates.CCWToolTipV2({ // eslint-disable-line
-        alarm_status: mapCodeToNodeStatus[nodeBrief.alarm_status],
+        alarm_status: window.mapCodeToNodeStatus[nodeBrief.alarm_status],
         name: nodeBrief.name,
         type: nodeBrief.type,
         cpu_utilization: nodeDetail.cpu_utilization,
@@ -320,7 +300,7 @@
       let tooltipPositioning = null;
 
       const $toolTipWrap = document.createElement('div');
-      const widthHeightStr = node.type === nodeTypes.CCW
+      const widthHeightStr = node.type === window.nodeTypes.CCW
         ? 'width: 500px; height: 308px;'
         : 'width: 500px; height: 348px;';
 
