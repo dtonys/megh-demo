@@ -147,9 +147,14 @@ window.templates.CCWToolTipV2 = _.template(`
 `);
 
 window.templates.detailSideView = _.template(`
+  <%  let nodeIcon = window.mapNodeToIcon( type, alarm_status_code )
+      nodeIcon = nodeIcon.replace('.svg', '.png');
+  %>
   <div>
-    <i class="sideView__arrowIcon fas fa-arrow-left"></i>
-    <div class="sideView__backText" >Back to map view</div>
+    <a href="/">
+      <i class="sideView__arrowIcon fas fa-arrow-left"></i>
+      <div class="sideView__backText" >Back to map view</div>
+    </a>
   </div>
   <div style="margin-bottom: 20px" ></div>
   <div class="sideView__itemWrap sideView__title">
@@ -160,26 +165,26 @@ window.templates.detailSideView = _.template(`
   <div class="sideView__itemWrap" >
     <div class="sideView__itemLabel" >Alarm Status</div>
     <div class="sideView__itemContent" >
-      <div class="statusDot--Major" ></div>
-      Major
+      <div class="statusDot--<%= alarm_status %>" ></div>
+      <%= alarm_status %>
     </div>
   </div>
   <div style="margin-bottom: 20px" ></div>
   <div class="sideView__itemWrap" >
     <div class="sideView__itemLabel" >Uptime</div>
     <div class="sideView__itemContent" >
-      1001 days, 14 hours
+      <%= uptime %>
     </div>
   </div>
   <div style="margin-bottom: 20px" ></div>
   <div class="sideView__itemWrap" >
     <div class="sideView__itemLabel" >Number of Links</div>
-    <div class="sideView__itemContent" > 2 </div>
+    <div class="sideView__itemContent" > <%= num_clients %> </div>
   </div>
   <div style="margin-bottom: 20px" ></div>
   <div class="sideView__itemWrap" >
     <div class="sideView__itemLabel" >Location</div>
-    <img src="http://maps.googleapis.com/maps/api/staticmap?key=AIzaSyCCAbZiKsTAjUlrndGI56yVYzVeo8nt5uk&zoom=12&size=270x209&maptype=roadmap&markers=icon:http://52.8.48.118/img/icons/ccw-green.png|37.417827,-122.107340" />
+    <img src="http://maps.googleapis.com/maps/api/staticmap?key=AIzaSyCCAbZiKsTAjUlrndGI56yVYzVeo8nt5uk&zoom=12&size=270x209&maptype=roadmap&markers=icon:http://52.8.48.118/<%= nodeIcon %>|<%= coords.lat %>,<%= coords.lng %>" />
   </div>
   <div style="margin-bottom: 20px" ></div>
   <div class="sideView__itemWrap" >

@@ -150,10 +150,10 @@
 
     // Setup events, for tooltip
     marker.addListener('click', () => {
-      if ( mouseState.mouseWithinMarker ) {
-        window.location.href = `node-detail?id=${encodeURIComponent(node.node_id)}&type=${node.type}`;
-        return;
-      }
+      // if ( mouseState.mouseWithinMarker ) {
+      //   window.location.href = `node-detail?id=${encodeURIComponent(node.node_id)}&type=${node.type}`;
+      //   return;
+      // }
       mapToolTip.toggleMarker( node );
     });
     marker.addListener('mouseover', () => {

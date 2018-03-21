@@ -24,13 +24,14 @@
     // setup sidebar
     const $sideView = document.querySelector('.sideView');
     $sideView.innerHTML = window.templates.detailSideView({
-      alarm_status: '',
+      alarm_status: window.mapCodeToNodeStatus[nodeBrief.alarm_status],
+      alarm_status_code: nodeBrief.alarm_status,
       name: nodeBrief.name,
       type: nodeBrief.type,
-      num_clients: '',
-      uptime: '',
-      coords: '',
-      cng_name: '',
+      num_clients: nodeDetail.num_clients,
+      uptime: '1001 days, 14 hours',
+      coords: nodeBrief.coords,
+      cng_name: nodeDetail.cng_name,
     });
 
     // setup tabbed content region
