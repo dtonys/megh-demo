@@ -146,3 +146,45 @@ window.templates.CCWToolTipV2 = _.template(`
   </div>
 `);
 
+window.templates.detailSideView = _.template(`
+  <div>
+    <i class="sideView__arrowIcon fas fa-arrow-left"></i>
+    <div class="sideView__backText" >Back to map view</div>
+  </div>
+  <div style="margin-bottom: 20px" ></div>
+  <div class="sideView__itemWrap sideView__title">
+    <img class="sideView__titleIcon" src="img/icons/ccw-black.svg" />
+    Starbucks store #110
+  </div>
+  <div style="margin-bottom: 20px" ></div>
+  <div class="sideView__itemWrap" >
+    <div class="sideView__itemLabel" >Alarm Status</div>
+    <div class="sideView__itemContent" >
+      <div class="statusDot--Major" ></div>
+      Major
+    </div>
+  </div>
+  <div style="margin-bottom: 20px" ></div>
+  <div class="sideView__itemWrap" >
+    <div class="sideView__itemLabel" >Uptime</div>
+    <div class="sideView__itemContent" >
+      1001 days, 14 hours
+    </div>
+  </div>
+  <div style="margin-bottom: 20px" ></div>
+  <div class="sideView__itemWrap" >
+    <div class="sideView__itemLabel" >Number of Links</div>
+    <div class="sideView__itemContent" > 2 </div>
+  </div>
+  <div style="margin-bottom: 20px" ></div>
+  <div class="sideView__itemWrap" >
+    <div class="sideView__itemLabel" >Location</div>
+    <img src="http://maps.googleapis.com/maps/api/staticmap?key=AIzaSyCCAbZiKsTAjUlrndGI56yVYzVeo8nt5uk&zoom=12&size=270x209&maptype=roadmap&markers=icon:http://52.8.48.118/img/icons/ccw-green.png|37.417827,-122.107340" />
+  </div>
+  <div style="margin-bottom: 20px" ></div>
+  <div class="sideView__itemWrap" >
+    <div class="sideView__itemLabel" >CNG Connected to</div>
+    <div class="sideView__itemContent" > CNG #1 </div>
+  </div>
+`);
+

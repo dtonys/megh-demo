@@ -351,7 +351,7 @@
       // HACK: Hardcode ID, node list passes wrong ID
       const nodeId = node.node_id === 'CNG1' ? 'CNG#1' : node.node_id;
 
-      this.loadNodeDetail( nodeId )
+      window.DataLoader.loadNodeDetail( nodeId )
         .then((data) => {
           this.renderNodeSummaryTooltip(data, $toolTipWrap, node);
         });

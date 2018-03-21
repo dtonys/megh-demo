@@ -7,15 +7,25 @@
     <title> <%= title %> </title>
     <!-- *CSS* -->
     <%- include('../partials/css-common') %>
-    <link rel="stylesheet" type="text/css" href="css/main.css">
+    <!-- build:js build/node-detail.min.css -->
+    <link rel="stylesheet" type="text/css" href="css/node-detail.css">
+    <!-- endbuild -->
+
   </head>
   <body>
     <%- include('../partials/navbar') %>
     <%- include('../partials/sidebar') %>
     <div class="content" id="mapRegion" >
-      Node Summary
+      <div class="sideView" >
+      </div>
+      <div class="contentView">
+        contentView
+      </div>
     </div>
     <!-- *JS* -->
-    <%- include('../partials/js-common') %>
+    <%- include('../partials/js-common') %>'
+    <!-- build:js build/node-detail.min.js -->
+    <script src="js/src/node-detail.js" ></script>
+    <!-- endbuild -->
   </body>
 </html>

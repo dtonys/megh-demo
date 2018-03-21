@@ -10,7 +10,6 @@
   };
 
   // const ALARM_STATUS_NA = 'n/a';
-  const BASIC_AUTH_SECRET = 'Basic TWVnaE5ldHdvcmtzOm5qZTk3NnhzdzQ1Mw==';
   const ICON_GREEN_BRANCH = 'img/icons/ccw-green.svg';
   const ICON_YELLOW_BRANCH = 'img/icons/ccw-yellow.svg';
   const ICON_RED_BRANCH = 'img/icons/ccw-red.svg';
@@ -88,37 +87,6 @@
         this.nodeMap[node.node_id] = node;
       });
     };
-  }
-
-  // Do any client side data processing
-  function processNodes( nodesToModify ) {
-    nodesToModify.forEach(( node ) => {
-      // convert to number
-      node.coords.lat = ( typeof node.coords.lat === 'string'
-        ? parseFloat(node.coords.lat)
-        : node.coords.lat
-      );
-      node.coords.lng = ( typeof node.coords.lng === 'string'
-        ? parseFloat(node.coords.lng)
-        : node.coords.lng
-      );
-    });
-  }
-
-  function loadNodeList() {
-    return window.unfetch('/megh/api/v1.0/nodes', {
-      credentials: 'include',
-      headers: {
-        'Authorization': BASIC_AUTH_SECRET
-      }
-    })
-      .then(( response ) => {
-        return response.json();
-      })
-      .then(( nodeData ) => {
-        processNodes(nodeData.nodes);
-        return nodeData;
-      });
   }
 
   function mapArrayToIdObject( array ) {
@@ -225,7 +193,7 @@
     // Setup events, for tooltip
     marker.addListener('click', () => {
       if ( mouseState.mouseWithinMarker ) {
-        window.location.href = `node-summary?ip=${node.node_id}`;
+        window.location.href = `node-summary?ip=${encodeURIComponent(node.node_id)}`;
         return;
       }
       mapToolTip.toggleMarker( node );
@@ -299,18 +267,6 @@
     return markerClusterer;
   }
 
-  function loadAlarms() {
-    return window.unfetch('/megh/api/v1.0/alarms', {
-      credentials: 'include',
-      headers: {
-        'Authorization': BASIC_AUTH_SECRET
-      }
-    })
-      .then(( response ) => {
-        return response.json();
-      });
-  }
-
   function updateNodeAlarmStatus( node, alarmStatusNumber ) {
     node.marker.setIcon({
       url: mapNodeToIcon( node.type, alarmStatusNumber ),
@@ -382,7 +338,7 @@
 
     function pollData() {
       window.setTimeout(() => {
-        loadAlarms().then(( newAlarmData ) => {
+        window.DataLoader.loadAlarms().then(( newAlarmData ) => {
 
           // Render alarms in the alarm dropdown, as a list
           alarmDropDown.updateAlarmData(newAlarmData);
@@ -407,7 +363,7 @@
   // check for new nodes, append them
   function pollNodesAndAddOrRemove( nodeDataManager, mapToolTip, markerClusterer ) {
     setTimeout(() => {
-      loadNodeList()
+      window.DataLoader.loadNodeList()
         .then(( newNodeData ) => {
           const [ nodesAdded, nodesRemoved ] = diffNodeArrays(nodeDataManager.nodeList, newNodeData.nodes);
           // Update the data here
@@ -480,8 +436,8 @@
     .then(() => {
       createGoogleMap();
       return window.Promise.all([
-        loadNodeList(),
-        loadAlarms(),
+        window.DataLoader.loadNodeList(),
+        window.DataLoader.loadAlarms(),
       ]);
     })
     .then( initialize );

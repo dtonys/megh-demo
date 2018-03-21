@@ -32,8 +32,8 @@ app.get('/', (req, res) => {
   });
 });
 
-app.get('/node-summary', (req, res) => {
-  res.render('pages/node-summary', {
+app.get('/node-detail', (req, res) => {
+  res.render('pages/node-detail', {
     title: 'Node Summary - Megh Networks',
   });
 });
