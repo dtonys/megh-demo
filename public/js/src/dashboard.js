@@ -325,17 +325,22 @@
     setTimeout(() => {
       window.DataLoader.loadNodeList()
         .then(( newNodeData ) => {
-          const [ nodesAdded, nodesRemoved ] = diffNodeArrays(nodeDataManager.nodeList, newNodeData.nodes);
-          // Update the data here
+          let [ nodesAdded, nodesRemoved ] = diffNodeArrays(nodeDataManager.nodeList, newNodeData.nodes);
+          // Remove nulls
           nodeDataManager.update(newNodeData);
+          if ( nodesAdded ) {
+            nodesAdded = _.compact(nodesAdded);
+          }
+          if ( nodesRemoved ) {
+            nodesRemoved = _.compact(nodesRemoved);
+          }
           return [ nodesAdded, nodesRemoved ];
         })
         .then(( [ nodesAdded, nodesRemoved ] ) => {
-          // Update node list view, only append and remove nodes.
-
           // ADD markers to the map
           if ( nodesAdded && nodesAdded.length ) {
-            const addedMarkers = nodesAdded.map((node) => ( addMarker(node, mapToolTip, 1000) ));
+            const addedMarkers = nodesAdded
+              .map((node) => ( addMarker(node, mapToolTip, 1000) ));
             markerClusterer.addMarkers(addedMarkers);
           }
 
