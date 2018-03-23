@@ -45,6 +45,17 @@
         this.nodeMap[node.node_id] = node;
       });
     };
+    this.add = function ( node ) {
+      this.nodeList.push(node);
+      this.nodeMap[node.node_id] = node;
+    };
+    this.remove = function ( node ) {
+      const index = _.findIndex(this.nodeList, { node_id: node.node_id });
+      if ( index !== -1 ) {
+        this.nodeList.splice(index, 1);
+        delete this.nodeMap[node.node_id];
+      }
+    };
   }
 
   function mapArrayToIdObject( array ) {
@@ -327,20 +338,18 @@
         .then(( newNodeData ) => {
           let [ nodesAdded, nodesRemoved ] = diffNodeArrays(nodeDataManager.nodeList, newNodeData.nodes);
           // Remove nulls
-          nodeDataManager.update(newNodeData);
-          if ( nodesAdded ) {
-            nodesAdded = _.compact(nodesAdded);
-          }
-          if ( nodesRemoved ) {
-            nodesRemoved = _.compact(nodesRemoved);
-          }
+          // nodeDataManager.update(newNodeData);
           return [ nodesAdded, nodesRemoved ];
         })
         .then(( [ nodesAdded, nodesRemoved ] ) => {
           // ADD markers to the map
           if ( nodesAdded && nodesAdded.length ) {
             const addedMarkers = nodesAdded
-              .map((node) => ( addMarker(node, mapToolTip, 1000) ));
+              .map((node) => {
+                const marker = addMarker(node, mapToolTip, 1000);
+                nodeDataManager.add(node);
+                return marker;
+              });
             markerClusterer.addMarkers(addedMarkers);
           }
 
@@ -349,6 +358,7 @@
             nodesRemoved.forEach(( node ) => {
               node.marker.setMap(null);
               markerClusterer.removeMarker( node.marker );
+              nodeDataManager.remove( node );
             });
           }
           pollNodesAndAddOrRemove(nodeDataManager, mapToolTip, markerClusterer);
