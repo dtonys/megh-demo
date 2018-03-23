@@ -226,13 +226,15 @@
   }
 
   function updateNodeAlarmStatus( node, alarmStatusNumber ) {
-    node.marker.setIcon({
-      url: window.mapNodeToIcon( node.type, alarmStatusNumber ),
-      scaledSize: new window.google.maps.Size(40, 40),
-      origin: new window.google.maps.Point(0, 0),
-      anchor: new window.google.maps.Point(20, 20)
-    });
-    node.alarm_status = alarmStatusNumber;
+    if ( node.marker ) {
+      node.marker.setIcon({
+        url: window.mapNodeToIcon( node.type, alarmStatusNumber ),
+        scaledSize: new window.google.maps.Size(40, 40),
+        origin: new window.google.maps.Point(0, 0),
+        anchor: new window.google.maps.Point(20, 20)
+      });
+      node.alarm_status = alarmStatusNumber;
+    }
   }
 
   // Updates all node colors to match state in the alarmHistory
