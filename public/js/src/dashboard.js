@@ -237,7 +237,7 @@
   }
 
   function updateNodeAlarmStatus( node, alarmStatusNumber ) {
-    if ( node.marker ) {
+    if ( node && node.marker ) {
       node.marker.setIcon({
         url: window.mapNodeToIcon( node.type, alarmStatusNumber ),
         scaledSize: new window.google.maps.Size(40, 40),
@@ -337,8 +337,6 @@
       window.DataLoader.loadNodeList()
         .then(( newNodeData ) => {
           let [ nodesAdded, nodesRemoved ] = diffNodeArrays(nodeDataManager.nodeList, newNodeData.nodes);
-          // Remove nulls
-          // nodeDataManager.update(newNodeData);
           return [ nodesAdded, nodesRemoved ];
         })
         .then(( [ nodesAdded, nodesRemoved ] ) => {
