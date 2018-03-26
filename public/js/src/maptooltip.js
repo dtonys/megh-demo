@@ -67,7 +67,7 @@
       showGrid: true,
       showLabel: true,
       labelInterpolationFnc: (value) => {
-        return value + ' MB';
+        return value + ' MBs';
       }
     },
     showLine: true,
@@ -119,6 +119,7 @@
 
       const toolTipHtml = window.templates.tableList({
         nodes: clusterNodes,
+        tooltipX: false,
         type: 'cluster',
         columns: [
           {
@@ -179,12 +180,6 @@
       }
 
       // Setup tooltip events
-      $tooltipX.addEventListener('click', (event) => {
-        event.preventDefault();
-        event.stopPropagation();
-        _this.close();
-      });
-
       $tooltipContainer.addEventListener('mouseenter', () => {
         // console.log('tooltip::mouseenter');
         mouseState.mouseWithinTooltip = true;

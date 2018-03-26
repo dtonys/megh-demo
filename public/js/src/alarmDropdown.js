@@ -107,6 +107,7 @@
       // Update alarms dropdown view
       this.$container.innerHTML = window.templates.tableList({
         nodes: this.state.alarmHistory,
+        tooltipX: true,
         type: 'alarms',
         columns: [
           {

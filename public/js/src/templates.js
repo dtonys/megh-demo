@@ -11,7 +11,9 @@ window.templates.tableList = _.template(`
         <i class="fas fa-exclamation-triangle"></i>
         Alarms
       <% } %>
-      <img class="tooltip__X" src="img/icons/close-popup-icon.svg" />
+      <% if ( tooltipX ) { %>
+        <img class="tooltip__X" src="img/icons/close-popup-icon.svg" />
+      <% } %>
     </div>
     <div class="tableList__head" >
       <div class="tableList__row--darker" >
@@ -59,7 +61,7 @@ window.templates.SmallChart = _.template(`
         <div class="tooltipV2__linkSpeedText" > Up/Down Link Speed </div>
         <div style="margin-right: 10px;" ></div>
         <div class="tooltipV2__linkSpeedStats">
-          <%= interface.provider.up_mb_per_second %> MB/<%= interface.provider._mb_per_second %> MB
+          <%= interface.provider.up_mb_per_second %> MBs/<%= interface.provider._mb_per_second %> MBs
         </div>
       <% } %>
     </div>
@@ -125,13 +127,16 @@ window.templates.CCWToolTipV2 = _.template(`
             <div class="linkIcon__circle" ></div>
             <div class="linkIcon__line" ></div>
           </div>
-          <div class="tooltipV2__linkText" > Up Link Throughput </div>
+          <div class="tooltipV2__linkText" >
+            <%= type === 'CNG' ? 'Tx' : 'Up Link' %> Throughput </div>
           <div style="margin-right: 20px;" ></div>
           <div class="linkIcon--black" >
             <div class="linkIcon__circle" ></div>
             <div class="linkIcon__line" ></div>
           </div>
-          <div class="tooltipV2__linkText" > Down Link Throughput </div>
+          <div class="tooltipV2__linkText" >
+            <%= type === 'CNG' ? 'Rx' : 'Down Link' %> Throughput
+          </div>
         </div>
         <div style="margin-bottom: 15px;" ></div>
       <% } %>
