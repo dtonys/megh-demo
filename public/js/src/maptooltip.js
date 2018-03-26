@@ -165,7 +165,6 @@
 
       // Setup tooltip events
       const $tooltipContainer = toolTipWrap.querySelector('.tableList');
-      const $tooltipX = toolTipWrap.querySelector('.tooltip__X');
       const $tableListHead = toolTipWrap.querySelector('.tableList__head');
       const $tableListContent = toolTipWrap.querySelector('.tableList__content');
 
