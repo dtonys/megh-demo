@@ -147,6 +147,7 @@
         // Image anchor
         anchor: new window.google.maps.Point(20, 20)
       },
+      zIndex: 10,
     });
     region.marker = marker;
     return marker;
@@ -172,6 +173,7 @@
           ? new window.google.maps.Point(40, 0)
           : new window.google.maps.Point(20, 20),
       },
+      zIndex: 11,
       // label: node.node_id.toString(),
     });
     node.marker = marker;
