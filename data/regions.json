@@ -1,0 +1,116 @@
+{
+  "regions": [
+    {
+      "coords": {
+        "lat": 38.13,
+        "lng": -78.45
+      },
+      "name": "N Virgina"
+    },
+    {
+      "coords": {
+        "lat": 40.08,
+        "lng": -82.91
+      },
+      "name": "Ohio"
+    },
+    {
+      "coords": {
+        "lat": 41.48,
+        "lng": -120.53
+      },
+      "name": "N Calif"
+    },
+    {
+      "coords": {
+        "lat": 46.15,
+        "lng": -123.88
+      },
+      "name": "Oregon"
+    },
+    {
+      "coords": {
+        "lat": 53,
+        "lng": -8
+      },
+      "name": "Ireland"
+    },
+    {
+      "coords": {
+        "lat": 51,
+        "lng": -0.1
+      },
+      "name": "London"
+    },
+    {
+      "coords": {
+        "lat": 50,
+        "lng": 8
+      },
+      "name": "Frankfurt"
+    },
+    {
+      "coords": {
+        "lat": -23.34,
+        "lng": -46.38
+      },
+      "name": "Sao Paulo"
+    },
+    {
+      "coords": {
+        "lat": 1.37,
+        "lng": 103.8
+      },
+      "name": "Singapore"
+    },
+    {
+      "coords": {
+        "lat": -33.86,
+        "lng": 151.2
+      },
+      "name": "Sydney"
+    },
+    {
+      "coords": {
+        "lat": 35.41,
+        "lng": 139.42
+      },
+      "name": "Tokyo"
+    },
+    {
+      "coords": {
+        "lat": 45.57,
+        "lng": -73.56
+      },
+      "name": "Canada"
+    },
+    {
+      "coords": {
+        "lat": 35.53,
+        "lng": 127.03
+      },
+      "name": "Seoul"
+    },
+    {
+      "coords": {
+        "lat": 19.03,
+        "lng": 72.91
+      },
+      "name": "Mubai"
+    },
+    {
+      "coords": {
+        "lat": 13,
+        "lng": 45
+      },
+      "name": "N"
+    },
+    {
+      "coords": {
+        "lat": 39.88,
+        "lng": 116.43
+      },
+      "name": "China"
+    }
+  ]
+}

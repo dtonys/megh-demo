@@ -21,14 +21,22 @@
     }
   };
 
-  const toolTipAboveMarker = {
+
+  const CNGOffset = 20;
+  const toolTipAboveMarker = ( isCNG ) => ({
     alignBottom: true,
-    pixelOffset: new window.google.maps.Size( (-1) * (TOOLTIP_WIDTH / 2), -21),
-  };
-  const toolTipBelowMarker = {
+    pixelOffset: new window.google.maps.Size(
+      (-1) * (TOOLTIP_WIDTH / 2) - (isCNG ? CNGOffset : 0),
+      -21 + (isCNG ? CNGOffset : 0)
+    ),
+  });
+  const toolTipBelowMarker = ( isCNG ) => ({
     alignBottom: false,
-    pixelOffset: new window.google.maps.Size( (-1) * (TOOLTIP_WIDTH / 2), 21),
-  };
+    pixelOffset: new window.google.maps.Size(
+      (-1) * (TOOLTIP_WIDTH / 2) - (isCNG ? CNGOffset : 0),
+      21 + (isCNG ? CNGOffset : 0) ),
+  });
+
 
   const clusterOptions = {
     alignBottom: false,
@@ -311,10 +319,10 @@
       const midY = Math.floor( mapNode.offsetHeight / 2 );
       const markerPosition = getPixelPosition( node.marker );
       if ( markerPosition.y > midY ) {
-        tooltipPositioning = toolTipAboveMarker;
+        tooltipPositioning = toolTipAboveMarker( node.type === 'CNG' );
       }
       else {
-        tooltipPositioning = toolTipBelowMarker;
+        tooltipPositioning = toolTipBelowMarker( node.type === 'CNG' );
       }
 
       // create and show new tooltip

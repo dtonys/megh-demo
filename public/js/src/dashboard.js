@@ -37,25 +37,34 @@
 
   function NodeDataManager() {
     this.nodeList = [];
-    this.nodeMap = [];
+    this.nodeMap = {};
+    this.regionList = {};
+    this.regionMap = {};
 
-    this.update = function ( apiNodeData ) {
+    this.updateNodeData = function ( apiNodeData ) {
       this.nodeList = apiNodeData.nodes;
       apiNodeData.nodes.forEach((node) => {
         this.nodeMap[node.node_id] = node;
       });
     };
-    this.add = function ( node ) {
+    this.addNode = function ( node ) {
       this.nodeList.push(node);
       this.nodeMap[node.node_id] = node;
     };
-    this.remove = function ( node ) {
+    this.removeNode = function ( node ) {
       const index = _.findIndex(this.nodeList, { node_id: node.node_id });
       if ( index !== -1 ) {
         this.nodeList.splice(index, 1);
         delete this.nodeMap[node.node_id];
       }
     };
+    this.updateRegionData = function ( apiRegionData ) {
+      this.regionList = apiRegionData.regions;
+      apiRegionData.regions.forEach((region) => {
+        this.regionMap[region.lat_lng_id] = region;
+      });
+    };
+
   }
 
   function mapArrayToIdObject( array ) {
@@ -122,7 +131,28 @@
     window.googleMap = new window.google.maps.Map(mapRegionDOM, options);
   }
 
-  function addMarker( node, mapToolTip, index ) {
+  function addRegionMarker( region ) {
+    const marker = new window.google.maps.Marker({
+      position: {
+        lat: region.coords.lat,
+        lng: region.coords.lng,
+      },
+      map: window.googleMap,
+      icon: {
+        url: window.ICON_AWS_REGION,
+        // ( width, height )
+        scaledSize: new window.google.maps.Size(40, 40),
+        // ( originX, originY )
+        origin: new window.google.maps.Point(0, 0),
+        // Image anchor
+        anchor: new window.google.maps.Point(20, 20)
+      },
+    });
+    region.marker = marker;
+    return marker;
+  }
+
+  function addNodeMarker( node, mapToolTip, index ) {
     const coords = node.coords;
     // create marker
     const marker = new window.google.maps.Marker({
@@ -138,7 +168,9 @@
         // ( originX, originY )
         origin: new window.google.maps.Point(0, 0),
         // Image anchor
-        anchor: new window.google.maps.Point(20, 20)
+        anchor: node.type === 'CNG'
+          ? new window.google.maps.Point(40, 0)
+          : new window.google.maps.Point(20, 20),
       },
       // label: node.node_id.toString(),
     });
@@ -344,8 +376,8 @@
           if ( nodesAdded && nodesAdded.length ) {
             const addedMarkers = nodesAdded
               .map((node) => {
-                const marker = addMarker(node, mapToolTip, 1000);
-                nodeDataManager.add(node);
+                const marker = addNodeMarker(node, mapToolTip, 1000);
+                nodeDataManager.addNode(node);
                 return marker;
               });
             markerClusterer.addMarkers(addedMarkers);
@@ -356,7 +388,7 @@
             nodesRemoved.forEach(( node ) => {
               node.marker.setMap(null);
               markerClusterer.removeMarker( node.marker );
-              nodeDataManager.remove( node );
+              nodeDataManager.removeNode( node );
             });
           }
           pollNodesAndAddOrRemove(nodeDataManager, mapToolTip, markerClusterer);
@@ -364,9 +396,10 @@
     }, 3000);
   }
 
-  function initialize([ nodeData, alarmData ]) {
+  function initialize([ nodeData, alarmData, regionData ]) {
     const nodeDataManager = new NodeDataManager();
-    nodeDataManager.update(nodeData);
+    nodeDataManager.updateNodeData(nodeData);
+    nodeDataManager.updateRegionData(regionData);
 
     const alarmDropDown = new window.AlarmDropDown({
       $trigger: document.querySelector('.navbar__alarmsTrigger'),
@@ -384,10 +417,16 @@
       mouseConfig: mouseConfig,
     });
 
-    // Setup markers
-    const markers = nodeDataManager.nodeList.map(( node, index ) => {
-      return addMarker(node, mapToolTip, index);
+    // Setup region markers
+    nodeDataManager.regionList.forEach(( region ) => {
+      addRegionMarker(region);
     });
+
+    // Setup node markers
+    const markers = nodeDataManager.nodeList.map(( node, index ) => {
+      return addNodeMarker(node, mapToolTip, index);
+    });
+
     // Setup clusters
     const markerClusterer = addClusterer(markers, mapToolTip);
 
@@ -411,6 +450,7 @@
       return window.Promise.all([
         window.DataLoader.loadNodeList(),
         window.DataLoader.loadAlarms(),
+        window.DataLoader.loadRegions(),
       ]);
     })
     .then( initialize );

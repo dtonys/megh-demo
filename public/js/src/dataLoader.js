@@ -1,6 +1,17 @@
 (function () {
   const BASIC_AUTH_SECRET = 'Basic TWVnaE5ldHdvcmtzOm5qZTk3NnhzdzQ1Mw==';
 
+  function createLatLngId( lat, lng ) {
+    return `${lat}_${lng}`;
+  }
+
+  function processRegions( regionsToModify ) {
+    regionsToModify.forEach(( region ) => {
+      // region
+      region.lat_lng_id = createLatLngId( region.coords.lat, region.coords.lng );
+    });
+  }
+
   // Do any client side data processing
   function processNodes( nodesToModify ) {
     nodesToModify.forEach(( node ) => {
@@ -13,6 +24,8 @@
         ? parseFloat(node.coords.lng)
         : node.coords.lng
       );
+      // Add latlng as string to connect it to region
+      node.lat_lng_id = createLatLngId( node.coords.lat, node.coords.lng );
     });
   }
 
@@ -55,6 +68,21 @@
         })
         .then(( data ) => {
           return data;
+        });
+    },
+    loadRegions: () => {
+      return window.unfetch('/megh/api/v1.0/regions', {
+        credentials: 'include',
+        headers: {
+          'Authorization': BASIC_AUTH_SECRET
+        }
+      })
+        .then(( response ) => {
+          return response.json();
+        })
+        .then(( regionData ) => {
+          processRegions(regionData.regions);
+          return regionData;
         });
     },
   };
