@@ -112,23 +112,52 @@
     mouseWithinCluster: false,
   };
   function createGoogleMap() {
+    // const CNGCenter = {
+    //   lat: 45.8696,
+    //   lng: -119.688,
+    // };
+    const defaultCenter = {
+      lat: 37.417827,
+      lng: -122.107340,
+    };
+    const defaultZoom = 10;
+    let zoom = defaultZoom;
+    let center = defaultCenter;
+    // get saved lat / lng from sessionStorage
+    const savedCenterLat = sessionStorage.getItem('map_center_lat');
+    const savedCenterLng = sessionStorage.getItem('map_center_lng');
+    const savedZoom = sessionStorage.getItem('map_zoom');
+    if ( savedCenterLat && savedCenterLng ) {
+      center = {
+        lat: parseFloat(savedCenterLat),
+        lng: parseFloat(savedCenterLng),
+      };
+    }
+    if ( savedZoom ) {
+      zoom = parseInt(savedZoom, 10);
+    }
+
     const options = Object.assign(
       {},
       mapOptions,
       {
-        center: {
-          lat: 37.417827, // Central Location
-          lng: -122.107340,
-          // lat: 37.437081, // CCW Node
-          // lng: -122.077481,
-          // lat: 45.8696, // CNG Node
-          // lng: -119.688,
-        },
-        zoom: 10,
+        center: center,
+        zoom: zoom,
         mapTypeId: window.google.maps.MapTypeId.ROADMAP,
       }
     );
     window.googleMap = new window.google.maps.Map(mapRegionDOM, options);
+
+    // setup map events
+    window.googleMap.addListener('center_changed', () => {
+      const currentCenter = window.googleMap.getCenter();
+      sessionStorage.setItem('map_center_lat', currentCenter.lat().toString());
+      sessionStorage.setItem('map_center_lng', currentCenter.lng().toString());
+    });
+    window.googleMap.addListener('zoom_changed', () => {
+      const currentZoom = window.googleMap.getZoom();
+      sessionStorage.setItem('map_zoom', currentZoom.toString());
+    });
   }
 
   function addRegionMarker( region ) {
