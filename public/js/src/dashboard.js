@@ -38,7 +38,7 @@
   function NodeDataManager() {
     this.nodeList = [];
     this.nodeMap = {};
-    this.regionList = {};
+    this.regionList = [];
     this.regionMap = {};
 
     this.updateNodeData = function ( apiNodeData ) {
@@ -234,13 +234,37 @@
     // setup cluster
     const markerClusterer = new window.MarkerClusterer(window.googleMap, CCWMarkers, {
       clusterClass: 'markerCluster',
-      styles: [ {
-        url: window.ICON_GROUP_CIRCLE,
-        width: 60,
-        height: 60,
-        textColor: '#515151',
-        textSize: 30
-      } ]
+      styles: [
+        {
+          url: window.ICON_CWC_GROUP_GREEN,
+          width: 45,
+          height: 45,
+          textColor: '#515151',
+          textSize: 10
+        },
+        {
+          url: window.ICON_CWC_GROUP_YELLOW,
+          width: 45,
+          height: 45,
+          textColor: '#515151',
+          textSize: 10
+        },
+        {
+          url: window.ICON_CWC_GROUP_RED,
+          width: 45,
+          height: 45,
+          textColor: '#515151',
+          textSize: 10
+        },
+      ],
+      // `calculator` function controls the style and text to appear on each cluster
+      calculator: ( markersArray /* , numStyles */ ) => {
+        const maxStatus = Math.max.apply(null, markersArray.map((marker) => (marker.node.alarm_status) ) );
+        return {
+          index: maxStatus + 1, // index + 1 of the styles array to be used
+          text: markersArray.length, // text to show on the marker
+        };
+      }
     });
 
     // Setup events, for tooltip
@@ -401,7 +425,9 @@
   function initialize([ nodeData, alarmData, regionData ]) {
     const nodeDataManager = new NodeDataManager();
     nodeDataManager.updateNodeData(nodeData);
-    nodeDataManager.updateRegionData(regionData);
+    if ( regionData ) {
+      nodeDataManager.updateRegionData(regionData);
+    }
 
     const alarmDropDown = new window.AlarmDropDown({
       $trigger: document.querySelector('.navbar__alarmsTrigger'),
@@ -420,9 +446,11 @@
     });
 
     // Setup region markers
-    nodeDataManager.regionList.forEach(( region ) => {
-      addRegionMarker(region);
-    });
+    if ( nodeDataManager.regionList.length ) {
+      nodeDataManager.regionList.forEach(( region ) => {
+        addRegionMarker(region);
+      });
+    }
 
     // Setup node markers
     const markers = nodeDataManager.nodeList.map(( node, index ) => {

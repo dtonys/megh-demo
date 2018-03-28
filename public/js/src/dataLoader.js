@@ -29,6 +29,8 @@
     });
   }
 
+  // const mockAlarmPayload = JSON.parse('{"alarms":[{"alarm_history":[{"alarm_id":5,"description":"BR#101 Link#enp0s20f1 down","instance":"enp0s20f1","node_id":"BR#1","occurrence_date":"03/13/18 22:29:17","severity":"Major","type":"Link down"},{"alarm_id":11,"description":"BR#101 Link#enp0s20f3 down","instance":"enp0s20f3","node_id":"BR#2","occurrence_date":"03/13/18 22:36:02","severity":"Major","type":"Link down"}],"highest_severity":"Major","node_alarms":[{"node_id":"BR#101","severity":"Major"}],"num_alarms":2}]}');
+
   window.DataLoader = {
     loadAlarms: () => {
       return window.unfetch('/megh/api/v1.0/alarms', {
@@ -83,6 +85,10 @@
         .then(( regionData ) => {
           processRegions(regionData.regions);
           return regionData;
+        })
+        .catch(() => {
+          // handle failure for regions API
+          return null;
         });
     },
   };

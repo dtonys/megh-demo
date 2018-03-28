@@ -4,7 +4,7 @@ window.templates.tableList = _.template(`
   <div class="tableList" >
     <div class="tableList__header--<%= type %>" >
       <% if ( type === 'cluster' ) { %>
-        <img class="tableList__headerIcon--branch" src="img/icons/ccw-black.svg" />
+        <img class="tableList__headerIcon--branch" src="img/icons/cwc-group-black.svg" />
         <%= nodes.length %> Branches
       <% } %>
       <% if ( type === 'alarms' ) { %>
