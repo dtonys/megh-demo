@@ -66,7 +66,7 @@
     axisY: {
       type: window.Chartist.AutoScaleAxis,
       scaleMinSpace: 10,
-      offset: 40,
+      offset: 50,
       position: 'start',
       labelOffset: {
         x: 0,

@@ -303,5 +303,8 @@
   opacity: 1;
   stroke: #a4a4a4;
 }
-
+/* Y Axis labels */
+.ct-label.ct-vertical.ct-start {
+  white-space: nowrap;
+}
 
