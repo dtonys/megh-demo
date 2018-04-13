@@ -123,10 +123,10 @@
     const defaultZoom = 10;
     let zoom = defaultZoom;
     let center = defaultCenter;
-    // get saved lat / lng from sessionStorage
-    const savedCenterLat = sessionStorage.getItem('map_center_lat');
-    const savedCenterLng = sessionStorage.getItem('map_center_lng');
-    const savedZoom = sessionStorage.getItem('map_zoom');
+    // get saved lat / lng from localStorage
+    const savedCenterLat = window.localStorage.getItem('map_center_lat');
+    const savedCenterLng = window.localStorage.getItem('map_center_lng');
+    const savedZoom = window.localStorage.getItem('map_zoom');
     if ( savedCenterLat && savedCenterLng ) {
       center = {
         lat: parseFloat(savedCenterLat),
@@ -151,12 +151,12 @@
     // setup map events
     window.googleMap.addListener('center_changed', () => {
       const currentCenter = window.googleMap.getCenter();
-      sessionStorage.setItem('map_center_lat', currentCenter.lat().toString());
-      sessionStorage.setItem('map_center_lng', currentCenter.lng().toString());
+      window.localStorage.setItem('map_center_lat', currentCenter.lat().toString());
+      window.localStorage.setItem('map_center_lng', currentCenter.lng().toString());
     });
     window.googleMap.addListener('zoom_changed', () => {
       const currentZoom = window.googleMap.getZoom();
-      sessionStorage.setItem('map_zoom', currentZoom.toString());
+      window.localStorage.setItem('map_zoom', currentZoom.toString());
     });
   }
 
