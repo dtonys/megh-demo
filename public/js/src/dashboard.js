@@ -295,6 +295,7 @@
       ],
       // `calculator` function controls the style and text to appear on each cluster
       calculator: ( markersArray /* , numStyles */ ) => {
+        // console.log('calculator run');
         const maxStatus = Math.max.apply(null, markersArray.map((marker) => (marker.node.alarm_status) ) );
         return {
           index: maxStatus + 1, // index + 1 of the styles array to be used
@@ -367,7 +368,7 @@
     });
   }
 
-  function diffAlarmHistoryAndUpdateNodes(alarmHistoryArray, nextAlarmHistoryArray, nodeDataManager ) {
+  function diffAlarmHistoryAndUpdateNodes(alarmHistoryArray, nextAlarmHistoryArray, nodeDataManager) {
     const currObj = mapArrayToIdObject(alarmHistoryArray);
     const nextObj = mapArrayToIdObject(nextAlarmHistoryArray);
     const diffResult = differ.diff(currObj, nextObj);
@@ -397,7 +398,9 @@
   }
 
   // Load alarms once per second, waiting for the prev request to finish
-  function pollAlarmHistoryAndUpdateNodeStatus( alarmData, alarmDropDown, nodeDataManager) {
+  function pollAlarmHistoryAndUpdateNodeStatus(
+    alarmData, alarmDropDown, nodeDataManager, markerClusterer,
+  ) {
     let currentAlarmData = alarmData;
     syncNodesWithAlarmHistory(nodeDataManager, alarmData);
 
@@ -417,6 +420,8 @@
           if ( diffResult ) {
             // Update current alarm data, if there were any updates
             currentAlarmData = newAlarmData;
+            // Redraw marker clusters, the icon may have changed
+            markerClusterer.repaint();
           }
           pollData();
         });
@@ -460,6 +465,7 @@
 
   function initialize([ nodeData, alarmData, regionData ]) {
     const nodeDataManager = new NodeDataManager();
+    // window._nodeDataManager = nodeDataManager;
     nodeDataManager.updateNodeData(nodeData);
     if ( regionData ) {
       nodeDataManager.updateRegionData(regionData);
@@ -495,9 +501,10 @@
 
     // Setup clusters
     const markerClusterer = addClusterer(markers, mapToolTip);
+    // window._markerClusterer = markerClusterer;
 
     // Check for alarm updates
-    pollAlarmHistoryAndUpdateNodeStatus(alarmData, alarmDropDown, nodeDataManager);
+    pollAlarmHistoryAndUpdateNodeStatus(alarmData, alarmDropDown, nodeDataManager, markerClusterer);
 
     // Poll the node list, update the data, add and remove nodes from the map
     pollNodesAndAddOrRemove(nodeDataManager, mapToolTip, markerClusterer);
