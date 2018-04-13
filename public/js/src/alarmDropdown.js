@@ -114,7 +114,7 @@
             name: 'Name',
             type: 'text',
             width: 16,
-            getValue: ( alarm ) => ( alarm.node_id ),
+            getValue: ( alarm ) => ( alarm.name ),
           },
           {
             name: 'Type',
