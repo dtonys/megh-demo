@@ -146,8 +146,7 @@
             name: 'Links',
             type: 'text',
             width: 20,
-            // getValue: ( node ) => (  node.num_clients || 3 ),
-            getValue: () => (''),
+            getValue: ( node ) => ( node.links ),
           }
         ]
       });
