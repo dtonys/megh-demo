@@ -160,7 +160,14 @@
     });
   }
 
+  // "type": "AWS"
+  // "type": "Azure"
   function addRegionMarker( region ) {
+    let iconUrl = window.ICON_AWS_REGION;
+    if ( region.type === 'Azure' ) {
+      iconUrl = window.ICON_AZURE_REGION;
+    }
+
     const marker = new window.google.maps.Marker({
       position: {
         lat: region.coords.lat,
@@ -168,7 +175,7 @@
       },
       map: window.googleMap,
       icon: {
-        url: window.ICON_AWS_REGION,
+        url: iconUrl,
         // ( width, height )
         scaledSize: new window.google.maps.Size(40, 40),
         // ( originX, originY )

@@ -10,6 +10,7 @@
   // img/icons/cwc-group-green.svg
 
   window.ICON_AWS_REGION = 'img/icons/aws-icon.svg';
+  window.ICON_AZURE_REGION = 'img/icons/azure-icon.svg';
   window.ICON_GREEN_BRANCH = 'img/icons/ccw-green.svg';
   window.ICON_YELLOW_BRANCH = 'img/icons/ccw-yellow.svg';
   window.ICON_RED_BRANCH = 'img/icons/ccw-red.svg';
