@@ -154,9 +154,28 @@
       window.localStorage.setItem('map_center_lat', currentCenter.lat().toString());
       window.localStorage.setItem('map_center_lng', currentCenter.lng().toString());
     });
+
+    window.sameLatLngMarkers = [];
+    let currZoom = window.googleMap.getZoom();
+    let nextZoom = null;
     window.googleMap.addListener('zoom_changed', () => {
-      const currentZoom = window.googleMap.getZoom();
-      window.localStorage.setItem('map_zoom', currentZoom.toString());
+      nextZoom = window.googleMap.getZoom();
+      window.localStorage.setItem('map_zoom', nextZoom.toString());
+
+      // when zooming IN past threshold, remove nodes from cluster
+      if ( currZoom < 10 && nextZoom >= 10 ) {
+        window._markerClusterer.removeMarkers(window.sameLatLngMarkers);
+        // The markers need to be re-drawn after they are removed from cluster, otherwise they don't appear.
+        window.sameLatLngMarkers.forEach((marker) => {
+          marker.setMap(window.googleMap);
+        });
+      }
+      // when zooming OUT past threshold, add nodes to cluster
+      if ( currZoom >= 10 && nextZoom < 10 ) {
+        window._markerClusterer.addMarkers(window.sameLatLngMarkers);
+      }
+
+      currZoom = nextZoom;
     });
   }
 
@@ -263,9 +282,62 @@
 
   function addClusterer( markers, mapToolTip ) {
     // Only cluster CCW nodes
-    const CCWMarkers = markers.filter(( marker ) => {
+    let CCWMarkers = markers.filter(( marker ) => {
       return ( marker.node.type === window.nodeTypes.CCW );
     });
+    window._CCWMarkers = CCWMarkers;
+
+    /** Identify all nodes with same lat_lng **/
+    // map { [lat_lng]: nodeIndex }
+    const lat_lng_map = {};
+    const markerIndexesToRemoveFromCluster = [];
+    CCWMarkers.forEach((marker, index) => {
+      // If node @ lat_lng has not been visited, create value in map
+      if ( !lat_lng_map[marker.node.lat_lng_id] ) {
+        lat_lng_map[marker.node.lat_lng_id] = {
+          index,
+          flaggedForRemove: false,
+          sameNodeNum: 0,
+        };
+        return;
+      }
+      // If node @ lat_lng has been visited...
+      // if not already flagged for removal, flag original marker for removal from cluster
+      if ( lat_lng_map[marker.node.lat_lng_id].flaggedForRemove === false ) {
+        lat_lng_map[marker.node.lat_lng_id].flaggedForRemove = true;
+        markerIndexesToRemoveFromCluster.push( lat_lng_map[marker.node.lat_lng_id].index );
+        window.sameLatLngMarkers.push( CCWMarkers[lat_lng_map[marker.node.lat_lng_id].index] );
+      }
+      // add this current marker for removal
+      markerIndexesToRemoveFromCluster.push( index );
+      window.sameLatLngMarkers.push( marker );
+      // window.removedMarkers
+      // keep track of how many nodes in the same lat_lng
+      lat_lng_map[marker.node.lat_lng_id].sameNodeNum++;
+      // Offset the node, to the right
+      const anchorOffsetX = -20 * lat_lng_map[marker.node.lat_lng_id].sameNodeNum;
+      const anchorOffsetY = 0 * lat_lng_map[marker.node.lat_lng_id].sameNodeNum;
+
+      const markerIcon = CCWMarkers[index].getIcon();
+      CCWMarkers[index].setIcon({
+        url: markerIcon.url,
+        scaledSize: markerIcon.scaledSize,
+        origin: markerIcon.origin,
+        anchor: new window.google.maps.Point(
+          markerIcon.anchor.x + anchorOffsetX,
+          markerIcon.anchor.y + anchorOffsetY,
+        ),
+      });
+    });
+
+    // If past zoomed in threshhold, exclude CCW marker nodes at same lat lang from cluster.
+    const expandNodesAtSameLatLng = ( window.googleMap.getZoom() >= 10 );
+    if ( expandNodesAtSameLatLng ) {
+      // remove all markers with same lat_lng, from inclusion to cluster
+      CCWMarkers = CCWMarkers.filter(( marker, index ) => {
+        return ( markerIndexesToRemoveFromCluster.indexOf(index) === -1 );
+      });
+    }
 
     // setup cluster
     const markerClusterer = new window.MarkerClusterer(window.googleMap, CCWMarkers, {
@@ -295,7 +367,6 @@
       ],
       // `calculator` function controls the style and text to appear on each cluster
       calculator: ( markersArray /* , numStyles */ ) => {
-        // console.log('calculator run');
         const maxStatus = Math.max.apply(null, markersArray.map((marker) => (marker.node.alarm_status) ) );
         return {
           index: maxStatus + 1, // index + 1 of the styles array to be used
@@ -333,11 +404,12 @@
 
   function updateNodeAlarmStatus( node, alarmStatusNumber ) {
     if ( node && node.marker ) {
+      const markerIcon = node.marker.getIcon();
       node.marker.setIcon({
         url: window.mapNodeToIcon( node.type, alarmStatusNumber ),
         scaledSize: new window.google.maps.Size(40, 40),
         origin: new window.google.maps.Point(0, 0),
-        anchor: new window.google.maps.Point(20, 20)
+        anchor: markerIcon.anchor,
       });
       node.alarm_status = alarmStatusNumber;
     }
@@ -501,7 +573,7 @@
 
     // Setup clusters
     const markerClusterer = addClusterer(markers, mapToolTip);
-    // window._markerClusterer = markerClusterer;
+    window._markerClusterer = markerClusterer;
 
     // Check for alarm updates
     pollAlarmHistoryAndUpdateNodeStatus(alarmData, alarmDropDown, nodeDataManager, markerClusterer);
