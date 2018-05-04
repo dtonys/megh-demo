@@ -17,6 +17,7 @@
   width: 500px;
   height: 308px;
 }
+.tooltipV2--Line,
 .tooltipV2--CNG {
   width: 500px;
   height: 348px;
@@ -38,6 +39,10 @@
   padding-left: 25px;
   padding-bottom: 15px;
   font-family: SFSemibold;
+}
+.tooltipV2--Line .tooltipV2__title {
+  font-size: 20px;
+  padding-left: 0px;
 }
 .tooltipV2--CNG .tooltipV2__title {
   padding-left: 35px;

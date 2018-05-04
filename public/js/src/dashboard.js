@@ -2,6 +2,7 @@
   /**
    * config, constants
    */
+  window.DEMO_MODE = window.location.search.includes('demo=1');
   const differ = window.jsondiffpatch.create();
 
   const mapOptions = {
@@ -123,18 +124,28 @@
     const defaultZoom = 10;
     let zoom = defaultZoom;
     let center = defaultCenter;
-    // get saved lat / lng from localStorage
-    const savedCenterLat = window.localStorage.getItem('map_center_lat');
-    const savedCenterLng = window.localStorage.getItem('map_center_lng');
-    const savedZoom = window.localStorage.getItem('map_zoom');
-    if ( savedCenterLat && savedCenterLng ) {
+
+    if ( window.DEMO_MODE ) {
       center = {
-        lat: parseFloat(savedCenterLat),
-        lng: parseFloat(savedCenterLng),
+        lat: 26.94376090794909,
+        lng: 151.84776942578137,
       };
+      zoom = 3;
     }
-    if ( savedZoom ) {
-      zoom = parseInt(savedZoom, 10);
+    else {
+      // get saved lat / lng from localStorage
+      const savedCenterLat = window.localStorage.getItem('map_center_lat');
+      const savedCenterLng = window.localStorage.getItem('map_center_lng');
+      const savedZoom = window.localStorage.getItem('map_zoom');
+      if ( savedCenterLat && savedCenterLng ) {
+        center = {
+          lat: parseFloat(savedCenterLat),
+          lng: parseFloat(savedCenterLng),
+        };
+      }
+      if ( savedZoom ) {
+        zoom = parseInt(savedZoom, 10);
+      }
     }
 
     const options = Object.assign(
@@ -158,6 +169,10 @@
     window.sameLatLngMarkers = [];
     let currZoom = window.googleMap.getZoom();
     let nextZoom = null;
+    window.googleMap.addListener('click', ( /* event */ ) => {
+      // console.log(event.latLng.lat());
+      // console.log(event.latLng.lng());
+    });
     window.googleMap.addListener('zoom_changed', () => {
       nextZoom = window.googleMap.getZoom();
       window.localStorage.setItem('map_zoom', nextZoom.toString());
@@ -311,7 +326,6 @@
       // add this current marker for removal
       markerIndexesToRemoveFromCluster.push( index );
       window.sameLatLngMarkers.push( marker );
-      // window.removedMarkers
       // keep track of how many nodes in the same lat_lng
       lat_lng_map[marker.node.lat_lng_id].sameNodeNum++;
       // Offset the node, to the right
@@ -535,6 +549,384 @@
     }, 3000);
   }
 
+  function drawLineInterfaceCharts( $toolTipWrap, interfaces ) {
+    const labelsArr = [];
+    for ( let i = 0; i < 37; i++ ) labelsArr.push('');
+    const chartOptions = {
+      width: 350,
+      height: 100,
+      // X-Axis specific configuration
+      axisX: {
+        offset: 30,
+        position: 'end',
+        labelOffset: {
+          x: 0,
+          y: 0
+        },
+        showGrid: true,
+        showLabel: true,
+      },
+      axisY: {
+        type: window.Chartist.AutoScaleAxis,
+        scaleMinSpace: 10,
+        offset: 50,
+        position: 'start',
+        labelOffset: {
+          x: 0,
+          y: 4
+        },
+        showGrid: true,
+        showLabel: true,
+        labelInterpolationFnc: (value) => {
+          return value + ' MBs';
+        }
+      },
+      showLine: true,
+      showPoint: true,
+      lineSmooth: false,
+      chartPadding: {
+        top: 15,
+        right: 15,
+        bottom: 5,
+        left: 0
+      },
+      fullWidth: true,
+    };
+
+    interfaces.forEach(( _interface, index ) => {
+      // Customize Y axis units
+      if ( _interface.link_id === 'Throughput' || _interface.link_id === 'Latency' ) {
+        chartOptions.axisY.labelInterpolationFnc = ( value ) => ( value + ' ms' );
+      }
+      if ( _interface.link_id === 'Jitter' ) {
+        chartOptions.axisY.labelInterpolationFnc = ( value ) => ( value + ' ps' );
+      }
+
+      if ( _interface.throughput ) {
+        const $chart = $toolTipWrap.querySelector(`.tooltipV2 .m-chart-${index + 1}`);
+        const chartData = {
+          labels: labelsArr,
+          series: [
+            _interface.throughput.up_link,
+            _interface.throughput.down_link,
+          ]
+        };
+        const chart = new window.Chartist.Line($chart, chartData, chartOptions); // eslint-disable-line
+        let lineNum = 0;
+
+        // draw the tic marks on the grid
+        chart.on('draw', (ctx) => {
+          if (ctx.type === 'grid' && ctx.axis.units.pos === 'x') {
+            const tickCount = 1;
+            const tickLength = ctx.axis.stepLength / tickCount;
+
+            for (let i = 0; i < tickCount; i++) {
+              const x = ctx.x1 + (i * tickLength);
+              ctx.group.elem('line', {
+                x1: x,
+                x2: x,
+                y1: ctx.y2,
+                y2: ctx.y2 + ( lineNum % 3 === 0 ? -5 : -2 ),
+              }, 'ct-tick');
+            }
+            lineNum++;
+          }
+        });
+      }
+    });
+  }
+
+  function drawLine( node1, node2 ) {
+    const $lineToolTip = document.querySelector('.lineToolTip');
+    const startLatLng = node1.marker.getPosition();
+    const endLatLng = node2.marker.getPosition();
+
+    // draw the line
+    const line = new window.google.maps.Polyline({
+      path: [ endLatLng, startLatLng ],
+      strokeColor: '#29ca1e',
+      strokeOpacity: 1.0,
+      strokeWeight: 8,
+      zindex: 12,
+      geodesic: false,
+      map: window.googleMap,
+    });
+
+    const mockInterfaces = [
+      {
+        alarm_status: -1,
+        link_id: 'Throughput',
+        throughput: {
+          down_link: [
+            212.0,
+            220.3,
+            315.9,
+            316.9,
+            417.0,
+            420.9,
+            483.8,
+            466.8,
+            444.8,
+            218.0,
+            220.1,
+            313.3,
+            311.1,
+            448.8,
+            507.7,
+            514.4,
+            514.1,
+            413.2,
+            448.8,
+            313.3,
+            315.5,
+            508.8,
+            511.551,
+            443.3,
+            420.0,
+            418.8,
+            316.6,
+            415.5,
+            314.4,
+            217.7,
+            417.3,
+            224.2,
+            412.2,
+            519.3,
+            311.1,
+            415.5,
+            416.6
+          ],
+          up_link: [
+            448.8,
+            313.3,
+            315.5,
+            508.8,
+            511.551,
+            443.3,
+            420.0,
+            418.8,
+            316.6,
+            415.5,
+            314.4,
+            217.7,
+            417.3,
+            224.2,
+            412.2,
+            519.3,
+            311.1,
+            415.5,
+            416.6,
+            212.0,
+            220.3,
+            315.9,
+            316.9,
+            417.0,
+            420.9,
+            483.8,
+            466.8,
+            444.8,
+            218.0,
+            220.1,
+            313.3,
+            311.1,
+            448.8,
+            507.7,
+            514.4,
+            514.1,
+            413.2,
+          ]
+        }
+      },
+      {
+        alarm_status: -1,
+        link_id: 'Latency',
+        throughput: {
+          down_link: [
+            244,
+            222,
+            225,
+            240,
+            230,
+            244,
+            239,
+            235,
+            241,
+            244,
+            243,
+            238,
+            237,
+            242,
+            222,
+            233,
+            244,
+            250,
+            223,
+            233,
+            244,
+            240,
+            200,
+            220,
+            230,
+            240,
+            250,
+            240,
+            240,
+            230,
+            220,
+            240,
+            241,
+            244,
+            249,
+            233,
+            239
+          ],
+          up_link: [
+            200,
+            220,
+            230,
+            240,
+            250,
+            240,
+            240,
+            230,
+            220,
+            240,
+            241,
+            244,
+            249,
+            233,
+            239,
+            244,
+            222,
+            225,
+            240,
+            230,
+            244,
+            239,
+            235,
+            241,
+            244,
+            243,
+            238,
+            237,
+            242,
+            222,
+            233,
+            244,
+            250,
+            223,
+            233,
+            244,
+            240
+          ]
+        }
+      },
+      {
+        alarm_status: -1,
+        link_id: 'Jitter',
+        throughput: {
+          down_link: [
+            0.1,
+            0.9,
+            1.7,
+            2.4,
+            3.8,
+            2.0,
+            2.6,
+            1.0,
+            1.5,
+            1.0,
+            0.5,
+            0.4,
+            2.3,
+            1.2,
+            3.8,
+            1.1,
+            1.4,
+            1.2,
+            0.2,
+            0.3,
+            1.7,
+            2.2,
+            1.5,
+            1.6,
+            0.7,
+            0.4,
+            0.4,
+            1.6,
+            1.4,
+            1.9,
+            2.6,
+            2.4,
+            2.1,
+            2.8,
+            1.7,
+            1.5,
+            0.2
+          ],
+          up_link: [
+            2.2,
+            1.5,
+            1.6,
+            0.7,
+            0.4,
+            0.4,
+            1.6,
+            1.4,
+            1.9,
+            2.6,
+            2.4,
+            2.1,
+            2.8,
+            1.7,
+            1.5,
+            0.2,
+            0.1,
+            0.9,
+            1.7,
+            2.4,
+            3.8,
+            2.0,
+            2.6,
+            1.0,
+            1.5,
+            1.0,
+            0.5,
+            0.4,
+            2.3,
+            1.2,
+            3.8,
+            1.1,
+            1.4,
+            1.2,
+            0.2,
+            0.3,
+            1.7
+          ]
+        }
+      },
+    ];
+
+    // render data to the lineToolTip
+    const lineToolTipHtml = window.templates.LineToolTip({ // eslint-disable-line
+      interfaces: mockInterfaces,
+    });
+    $lineToolTip.innerHTML = lineToolTipHtml;
+
+    // draw the charts
+    drawLineInterfaceCharts( $lineToolTip, mockInterfaces );
+
+    line.addListener('mouseover', ( event ) => {
+      $lineToolTip.style.left = event.xa.x;
+      $lineToolTip.style.top = event.xa.y + 20;
+      $lineToolTip.style.display = 'block';
+    });
+
+    line.addListener('mouseout', ( /* event */ ) => {
+      $lineToolTip.style.display = 'none';
+    });
+  }
+
   function initialize([ nodeData, alarmData, regionData ]) {
     const nodeDataManager = new NodeDataManager();
     // window._nodeDataManager = nodeDataManager;
@@ -562,14 +954,30 @@
     // Setup region markers
     if ( nodeDataManager.regionList.length ) {
       nodeDataManager.regionList.forEach(( region ) => {
+        // Omit regions not related to demo
+        if (
+          window.DEMO_MODE &&
+          region.name !== 'Oregon' &&
+          region.name !== 'Mumbai'
+        ) {
+          return;
+        }
         addRegionMarker(region);
       });
+
     }
 
     // Setup node markers
     const markers = nodeDataManager.nodeList.map(( node, index ) => {
       return addNodeMarker(node, mapToolTip, index);
     });
+
+    // Draw lines in demo mode
+    if ( window.DEMO_MODE ) {
+      const oregonNode = _.find( nodeDataManager.nodeList, { name: 'CNG Oregon' } );
+      const mumbaiNode = _.find( nodeDataManager.nodeList, { name: 'CNG Mumbai' } );
+      drawLine(oregonNode, mumbaiNode);
+    }
 
     // Setup clusters
     const markerClusterer = addClusterer(markers, mapToolTip);

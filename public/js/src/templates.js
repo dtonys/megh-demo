@@ -52,10 +52,12 @@ window.templates.SmallChart = _.template(`
     <div class="tooltipV2__chartTitleWrap" >
       <div class="tooltipV2__chartTitle"> <%= interface.link_id %> </div>
       <div style="margin-right: 20px;" ></div>
-      <div class="tooltipV2__chartStatus">
-        <div style="width: 9px; height: 9px;" class="statusDot--<%= interface.alarm_status %> statusDot--small"></div>
-        <%= interface.alarm_status %>
-      </div>
+      <% if ( interface.alarm_status !== -1 ) { %>
+        <div class="tooltipV2__chartStatus">
+          <div style="width: 9px; height: 9px;" class="statusDot--<%= interface.alarm_status %> statusDot--small"></div>
+          <%= interface.alarm_status %>
+        </div>
+      <% } %>
       <% if ( type === 'CCW' ) { %>
         <div style="flex: 1;" ></div>
         <div class="tooltipV2__linkSpeedText" > Up/Down Link Speed </div>
@@ -67,6 +69,157 @@ window.templates.SmallChart = _.template(`
     </div>
     <div class="tooltipV2__chartBody" >
       <div class="ct-chart m-chart-<%= index %>"></div>
+    </div>
+  </div>
+`);
+
+window.templates.LineToolTip = _.template(`
+  <div class="tooltipV2 tooltipV2--Line" >
+    <div class="tooltipV2__left" >
+      <div class="tooltipV2__title" style="font-size: 14px;" >
+        Internet Backbone Stats
+      </div>
+      <% const items = [
+          { name: 'Endpoint 1', value: 'CNG Mumbai', type: 'text' },
+          { name: 'Endpoint 2', value: 'CNG Oregon', type: 'text' },
+        ]
+        .forEach(function(item) { %>
+          <div class="tooltipV2__itemWrap" >
+            <div class="tooltipV2__itemLabel" > <%= item.name %> </div>
+            <div class="tooltipV2__itemContent" >
+            <% if ( item.type === 'text' ) { %>
+               <%= item.value %>
+            <% } %>
+            <% if ( item.type === 'alarmStatus' ) { %>
+              <div style="width: 9px; height: 9px;" class="statusDot--<%= item.value %> statusDot--small"></div>
+              <%= item.value %>
+            <% } %>
+            <% if ( item.type === 'list' ) { %>
+              <% item.value.forEach(function( listItem ) { %>
+                <div class="tooltipV2__listItemContent" ><%= listItem %></div>
+              <% }) %>
+            <% } %>
+            </div>
+          </div>
+      <% }) %>
+    </div>
+    <div class="tooltipV2__right">
+      <div class="tooltipV2__flexWrap" >
+        <div class="linkIcon--blue" >
+          <div class="linkIcon__circle" ></div>
+          <div class="linkIcon__line" ></div>
+        </div>
+        <div class="tooltipV2__linkText" style="position: relative; top: 1px;" >
+          Up Link Throughput
+        </div>
+        <div style="margin-right: 20px;" ></div>
+        <div class="linkIcon--black" >
+          <div class="linkIcon__circle" ></div>
+          <div class="linkIcon__line" ></div>
+        </div>
+        <div class="tooltipV2__linkText" style="position: relative; top: 1px;" >
+          Down Link Throughput
+        </div>
+      </div>
+      <div style="margin-bottom: 15px;" ></div>
+      <% interfaces.forEach(function( interface, index ) { %>
+        <%= window.templates.SmallChart({
+          interface: interface,
+          type: 'CNG',
+          index: index + 1,
+        }) %>
+      <% }) %>
+    </div>
+  </div>
+`);
+
+window.templates.CCWToolTipV2Alt = _.template(`
+  <div class="tooltipV2 tooltipV2--<%= type %>" >
+    <div class="tooltipV2__left" >
+      <div class="tooltipV2__title" >
+        <% if ( type === 'CCW' ) { %>
+          <img class="tooltipV2__headIcon--branch" src="img/icons/ccw-black.svg" />
+          Cloud Wan Connector
+        <% } %>
+        <% if ( type === 'CNG' ) { %>
+          <img class="tooltipV2__headIcon--cloud" src="img/icons/cng-icon-black.svg" />
+          Cloud Native Gateway
+        <% } %>
+      </div>
+      <% const items = [
+          { name: 'Name', value: name, type: 'text' },
+          { name: 'Cloud', value: cloud, type: 'text' },
+          { name: 'Alarm Status', value: alarm_status, type: 'alarmStatus' },
+          {
+            name: 'Bandwidth Utilization',
+            value: bandwidth_utilization,
+            type: 'list'
+          },
+        ]
+        .filter(function(item) {
+          return ( !item.nodeType || ( item.nodeType && type === item.nodeType ) )
+        })
+        .forEach(function(item) { %>
+          <div class="tooltipV2__itemWrap" >
+            <div class="tooltipV2__itemLabel" > <%= item.name %> </div>
+            <div class="tooltipV2__itemContent" >
+            <% if ( item.type === 'text' ) { %>
+               <%= item.value %>
+            <% } %>
+            <% if ( item.type === 'alarmStatus' ) { %>
+              <div style="width: 9px; height: 9px;" class="statusDot--<%= item.value %> statusDot--small"></div>
+              <%= item.value %>
+            <% } %>
+            <% if ( item.type === 'list' ) { %>
+              <% item.value.forEach(function( listItem ) { %>
+                <div class="tooltipV2__listItemContent" ><%= listItem %></div>
+              <% }) %>
+            <% } %>
+            </div>
+          </div>
+      <% }) %>
+    </div>
+    <div class="tooltipV2__right">
+      <div class="tooltipV2__title" style="font-size: 16px; padding-left: 0;" >
+        Connected Resources
+      </div>
+      <div class="tableList__head" >
+        <div class="tableList__row--darker" >
+          <div class="tableList__column" style="width: 33%" >
+            IP Address
+          </div>
+          <div class="tableList__column" style="width: 33%" >
+            NAT Address
+          </div>
+          <div class="tableList__column" style="width: 33%" >
+            Hostname
+          </div>
+        </div>
+      </div>
+      <div class="tableList__content" >
+        <div class="tableList__row--light" >
+          <div class="tableList__column" style="width: 33%" >
+            14.0.1.30
+          </div>
+          <div class="tableList__column" style="width: 33%" >
+            10.1.15.10
+          </div>
+          <div class="tableList__column" style="width: 33%" >
+            A
+          </div>
+        </div>
+        <div class="tableList__row--dark" >
+          <div class="tableList__column" style="width: 33%" >
+            14.0.1.40
+          </div>
+          <div class="tableList__column" style="width: 33%" >
+            10.1.15.11
+          </div>
+          <div class="tableList__column" style="width: 33%" >
+            B
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 `);

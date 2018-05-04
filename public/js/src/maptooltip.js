@@ -276,20 +276,36 @@
         item.alarm_status = window.mapCodeToNodeStatus[item.alarm_status];
       });
 
+      const demoModeCCW = window.DEMO_MODE && nodeBrief.type === 'CCW';
       // render the tooltip
-      const toolTipHtml = window.templates.CCWToolTipV2({ // eslint-disable-line
-        alarm_status: window.mapCodeToNodeStatus[nodeBrief.alarm_status],
-        name: nodeBrief.name,
-        type: nodeBrief.type,
-        cpu_utilization: nodeDetail.cpu_utilization,
-        memory_utilization: nodeDetail.memory_utilization,
-        bandwidth_utilization: nodeDetail.bandwidth_utilization,
-        num_clients: nodeDetail.num_clients,
-        region: nodeDetail.region,
-        interfaces: nodeDetail.interfaces,
-      });
+      let toolTipHtml = '';
+      if ( demoModeCCW ) {
+        toolTipHtml = window.templates.CCWToolTipV2Alt({ // eslint-disable-line
+          alarm_status: window.mapCodeToNodeStatus[nodeBrief.alarm_status],
+          name: nodeBrief.name,
+          cloud: nodeBrief.cloud,
+          type: nodeBrief.type,
+          bandwidth_utilization: nodeDetail.bandwidth_utilization,
+        });
+      }
+      else {
+        toolTipHtml = window.templates.CCWToolTipV2({ // eslint-disable-line
+          alarm_status: window.mapCodeToNodeStatus[nodeBrief.alarm_status],
+          name: nodeBrief.name,
+          type: nodeBrief.type,
+          cpu_utilization: nodeDetail.cpu_utilization,
+          memory_utilization: nodeDetail.memory_utilization,
+          bandwidth_utilization: nodeDetail.bandwidth_utilization,
+          num_clients: nodeDetail.num_clients,
+          region: nodeDetail.region,
+          interfaces: nodeDetail.interfaces,
+        });
+      }
       // render data to view
       $toolTipWrap.innerHTML = toolTipHtml;
+      // Do not setup graphs or events if DEMO_MODE
+      if ( demoModeCCW ) return;
+
       if ( nodeDetail.interfaces ) {
         this.drawInterfaceCharts( $toolTipWrap, nodeDetail.interfaces );
       }

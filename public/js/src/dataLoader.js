@@ -9,12 +9,24 @@
     regionsToModify.forEach(( region ) => {
       // region
       region.lat_lng_id = createLatLngId( region.coords.lat, region.coords.lng );
+      // Hardcode hack this node's provider type for demo.
+      if ( window.DEMO_MODE && region.name === 'Mumbai' ) {
+        region.type = 'Azure';
+      }
     });
   }
 
   // Do any client side data processing
   function processNodes( nodesToModify ) {
     nodesToModify.forEach(( node ) => {
+      // Hardcode hack this node's position for demo.
+      if ( window.DEMO_MODE ) {
+        if ( node.name === 'Mumbai Node' ) {
+          node.coords.lat = '12.576009912063801';
+          node.coords.lng = '75.322265625';
+        }
+      }
+
       // convert to number
       node.coords.lat = ( typeof node.coords.lat === 'string'
         ? parseFloat(node.coords.lat)
@@ -26,6 +38,7 @@
       );
       // Add latlng as string to connect it to region
       node.lat_lng_id = createLatLngId( node.coords.lat, node.coords.lng );
+
     });
   }
 
